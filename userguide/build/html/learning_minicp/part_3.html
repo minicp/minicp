@@ -1,0 +1,328 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Part 3: State Management (Trail + Copy) and Search &#8212; MiniCP User-Guide  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 4: Sum and Element Constraints" href="part_4.html" />
+    <link rel="prev" title="Part 2: Domains, Variables, Constraints" href="part_2.html" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-125847974-1']);
+  _gaq.push(['_trackPageview']);
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="part_4.html" title="Part 4: Sum and Element Constraints"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="part_2.html" title="Part 2: Domains, Variables, Constraints"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" accesskey="U">Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 3: State Management (Trail + Copy) and Search</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="part-3-state-management-trail-copy-and-search">
+<h1>Part 3: State Management (Trail + Copy) and Search<a class="headerlink" href="#part-3-state-management-trail-copy-and-search" title="Permalink to this headline">¶</a></h1>
+<p><em>We ask you not to publish your solutions on a public repository.
+The instructors interested to get the source code of
+our solutions can contact us.</em></p>
+<section id="slides">
+<h2>Slides<a class="headerlink" href="#slides" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://youtube.com/playlist?list=PLq6RpCDkJMypASwwjt0XfPW0j27guprFT">Lectures on Youtube</a></p></li>
+<li><p><a class="reference external" href="https://www.icloud.com/keynote/0wmHrabdvZYKaDOBYv-wK09Wg#03-state-management-search">State Management: Copy and Trail, Search</a></p></li>
+</ul>
+</section>
+<section id="theoretical-questions">
+<h2>Theoretical Questions<a class="headerlink" href="#theoretical-questions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://inginious.org/course/minicp/statemanager">State Managers</a></p></li>
+</ul>
+</section>
+<section id="dfs-explicit-stack">
+<h2>DFS Explicit Stack<a class="headerlink" href="#dfs-explicit-stack" title="Permalink to this headline">¶</a></h2>
+<p>The search algorithm of MiniCP is <em>depth-first-search</em>.
+It is implemented using a recursive method in the class
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/search/DFSearch.java?at=master">DFSearch.java</a>.
+To avoid <cite>stack-overflow</cite> exceptions due to a too deep recursion in Java
+we ask you to reimplement the depth-first search with an explicit stack
+instead of relying on the recursion-call stack.</p>
+<p>Consider the following search tree where branches to execute are represented as letters:</p>
+<a class="reference internal image-reference" href="../_images/dfs.svg"><img alt="DFS" class="align-center" src="../_images/dfs.svg" width="125" /></a>
+<p>A DFS exploration should execute the above branches in the following sequence <cite>A, D, E, B, C, F, G</cite>.
+When backtracking, the previous state must be restored, requiring that the state is saved with the
+<cite>save</cite> operation before the branch is executed and restored with the <cite>restore</cite> operation when the branch terminates.
+For example; a valid sequence that successfully saves and restores the state when backtracking is:
+<cite>save-&gt;A-&gt;save-&gt;D-&gt;restore-&gt;save-&gt;E-&gt;restore-&gt;restore-&gt;save-&gt;B-&gt;restore-&gt;save-&gt;C-&gt;save-&gt;F-&gt;restore-&gt;save-&gt;G-&gt;restore-&gt;restore</cite>.
+Note that the state manager performs a <cite>save</cite> operation prior to searching and a <cite>restore</cite> operation after search
+concludes. The <cite>save</cite> operation is executed in pre-order fashion while the <cite>restore</cite> operation is executed in a post-order fashion.
+The following code snippet shows a recursive implementation. Note that the saving and restoring of states is performed
+in the method <cite>withNewState</cite> of the state manager <cite>sm</cite>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">SearchStatistics</span><span class="w"> </span><span class="n">statistics</span><span class="p">,</span><span class="w"> </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">SearchStatistics</span><span class="o">&gt;</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">limit</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="n">statistics</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StopSearchException</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Procedure</span><span class="o">[]</span><span class="w"> </span><span class="n">branches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">branching</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">branches</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrSolutions</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">notifySolution</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Procedure</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">branches</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">sm</span><span class="p">.</span><span class="na">withNewState</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// State is saved before procedure is called.</span><span class="w"></span>
+<span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrNodes</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="n">b</span><span class="p">.</span><span class="na">call</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="n">dfs</span><span class="p">(</span><span class="n">statistics</span><span class="p">,</span><span class="w"> </span><span class="n">limit</span><span class="p">);</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InconsistencyException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrFailures</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="n">notifyFailure</span><span class="p">();</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">});</span><span class="w"> </span><span class="c1">// State is restored when procedure terminates.</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Skeleton code for a solution is given below. However, there are many possible implementations, so feel free to not use
+the skeleton code.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">SearchStatistics</span><span class="w"> </span><span class="n">statistics</span><span class="p">,</span><span class="w"> </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">SearchStatistics</span><span class="o">&gt;</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Procedure</span><span class="o">&gt;</span><span class="w"> </span><span class="n">alternatives</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Procedure</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="hll"><span class="w">     </span><span class="n">expandNode</span><span class="p">(</span><span class="n">alternatives</span><span class="p">,</span><span class="w"> </span><span class="n">statistics</span><span class="p">);</span><span class="w"> </span><span class="c1">// root expansion</span><span class="w"></span>
+</span><span class="w">     </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">alternatives</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">limit</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="n">statistics</span><span class="p">))</span><span class="w"></span>
+<span class="w">             </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StopSearchException</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="n">alternatives</span><span class="p">.</span><span class="na">pop</span><span class="p">().</span><span class="na">call</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InconsistencyException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="n">notifyFailure</span><span class="p">();</span><span class="w"></span>
+<span class="w">             </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrFailures</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">expandNode</span><span class="p">(</span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Procedure</span><span class="o">&gt;</span><span class="w"> </span><span class="n">alternatives</span><span class="p">,</span><span class="w"> </span><span class="n">SearchStatistics</span><span class="w"> </span><span class="n">statistics</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="c1">// TODO</span><span class="w"></span>
+<span class="w"> </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The idea of this solution is wrap the save, restore, and branch executions inside <cite>Alternative</cite> closure objects,
+as illustrated on the next figure showing the stack after the root node expansion at line 3.</p>
+<a class="reference internal image-reference" href="../_images/stackalternatives.svg"><img alt="DFS" class="align-center" height="230" src="../_images/stackalternatives.svg" width="125" /></a>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/DFSearchTest.java?at=master">DFSearchTest.java</a>.</p>
+<p>Remark (optional): It is possible to reduce the number of operations by skipping the save and restore
+operations for the for the last branch of any node (the branches B, C, E, and G in the
+example above).
+The sequence of operations becomes <cite>save-&gt;A-&gt;save-&gt;D-&gt;restore-&gt;E-&gt;restore-&gt;save-&gt;B-&gt;restore-&gt;C-&gt;save-&gt;F-&gt;restore-&gt;G</cite>.
+As stated above, the state manager will perform a save operation before searching and a restore operation once searching
+concludes.</p>
+</section>
+<section id="implement-a-custom-search">
+<h2>Implement a Custom Search<a class="headerlink" href="#implement-a-custom-search" title="Permalink to this headline">¶</a></h2>
+<p>For the Quadratic Assignment Problem (see the slides on the Element
+constraint of <a class="reference internal" href="part_4.html#part-4-sum-and-element-constraints"><span class="std std-ref">Part 4: Sum and Element Constraints</span></a>), modify the model <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/QAP.java?at=master">QAP.java</a>,
+where variable <cite>x[i]</cite> denotes the location of facility <cite>i</cite>,
+in order to implement a custom search strategy (and ignore the
+instructions on discrepancy search). A skeleton code for a custom search is as follows:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">DFSearch</span><span class="w"> </span><span class="n">dfs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeDfs</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">IntVar</span><span class="w"> </span><span class="n">sel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selectMin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">vari</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">vari</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="c1">// filter</span><span class="w"></span>
+<span class="w">            </span><span class="n">vari</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">vari</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w">      </span><span class="c1">// variable selector</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sel</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EMPTY</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sel</span><span class="p">.</span><span class="na">min</span><span class="p">();</span><span class="w"> </span><span class="c1">// value selector (TODO)</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">branch</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="n">equal</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span><span class="n">v</span><span class="p">)),</span><span class="w"></span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="n">notEqual</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span><span class="n">v</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>As a variable selection heuristic, select an unfixed variable <cite>x[i]</cite> (a facility <cite>i</cite> not yet assigned to a location) that has a maximum weight <cite>w[i][j]</cite> with another facility <cite>j</cite> (where <cite>x[j]</cite> may be fixed or not).</p></li>
+<li><p>As a value selection heuristic, on the left branch place this facility on a location <span class="math">k</span> which is the closest possible to another location possible for the facility <cite>j</cite> you selected earlier. On the right branch remove the value <span class="math">k</span>.</p></li>
+<li><p>Hint: <cite>selectMin</cite> is a generic method parameterized by ‘T’ and ‘N’ (the type on which the minimum is computed). To implement this heuristic, adding pairs <cite>(i,j)</cite> as a type for <cite>T</cite> is probably the easiest way to go:</p></li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Comparable</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">selectMin</span><span class="p">(</span><span class="n">T</span><span class="o">[]</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="sequencer-combinator">
+<h2>Sequencer Combinator<a class="headerlink" href="#sequencer-combinator" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes we wish to branch in a given order on two families of variables, say <cite>x[]</cite> and then <cite>y[]</cite>, as shown in the next picture.
+A variable in <cite>y</cite> should not be branched on before all the variables in <cite>x</cite> have been fixed.
+Furthermore, we may want to apply a specific heuristic on <cite>x</cite> that is different from the heuristic we want to apply on <cite>y</cite>:</p>
+<a class="reference internal image-reference" href="../_images/combinator.svg"><img alt="combinator" class="align-center" src="../_images/combinator.svg" width="100" /></a>
+<p>This can be achieved as follows:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">IntVar</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"></span>
+<span class="n">IntVar</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w"></span>
+<span class="n">makeDfs</span><span class="p">(</span><span class="n">and</span><span class="p">(</span><span class="n">firstFail</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">firstFail</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The <cite>and</cite> factory method creates a  <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/search/Sequencer.java?at=master">Sequencer.java</a>.
+You must complete its implementation.</p>
+</section>
+<section id="check-on-inginious">
+<h2>Check on INGInious<a class="headerlink" href="#check-on-inginious" title="Permalink to this headline">¶</a></h2>
+<p>When you are done implementing your constraints and branching functions, do not forget to upload
+your code on INGInious to actually get your grade!</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/mini-cp.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Part 3: State Management (Trail + Copy) and Search</a><ul>
+<li><a class="reference internal" href="#slides">Slides</a></li>
+<li><a class="reference internal" href="#theoretical-questions">Theoretical Questions</a></li>
+<li><a class="reference internal" href="#dfs-explicit-stack">DFS Explicit Stack</a></li>
+<li><a class="reference internal" href="#implement-a-custom-search">Implement a Custom Search</a></li>
+<li><a class="reference internal" href="#sequencer-combinator">Sequencer Combinator</a></li>
+<li><a class="reference internal" href="#check-on-inginious">Check on INGInious</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="part_2.html"
+                          title="previous chapter">Part 2: Domains, Variables, Constraints</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="part_4.html"
+                          title="next chapter">Part 4: Sum and Element Constraints</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/learning_minicp/part_3.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="part_4.html" title="Part 4: Sum and Element Constraints"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="part_2.html" title="Part 2: Domains, Variables, Constraints"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" >Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 3: State Management (Trail + Copy) and Search</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Laurent Michel, Pierre Schaus, Pascal Van Hentenryck.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+<div class="footer">
+    <script type="text/javascript">
+  (function() {
+    var ga = document.createElement('script');
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    document.documentElement.firstChild.appendChild(ga);
+  })();
+</script>
+</div>
+
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+        var b = c[a];
+        if(b.getAttribute("href") && b.hostname !== location.hostname) {
+            b.target = "_blank";
+            b.rel = "noopener";
+        }
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window();
+external_new_window();
+</script>
+
+
+  </body>
+</html>

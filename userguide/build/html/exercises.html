@@ -1,0 +1,1081 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Exercises &#8212; MiniCP User-Guide  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-125847974-1']);
+  _gaq.push(['_trackPageview']);
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Exercises</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="exercises">
+<span id="minicp"></span><h1>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">¶</a></h1>
+<p>We propose a set of exercises to extend mini-cp with useful features.
+By doing these exercises you will gradually progress in your understanding of CP.
+For each exercise, we ask you to implement JUnit tests to make sure that
+your implementation works as expected.
+If you don’t test each feature independently you take the risk to
+loose a lot of time finding very difficult bugs.</p>
+<p><em>We ask you not to publish your solutions on a public repository.
+The instructors interested to get the source-code of
+the solutions can contact us.</em></p>
+<section id="learning-outcomes">
+<h2>Learning Outcomes<a class="headerlink" href="#learning-outcomes" title="Permalink to this headline">¶</a></h2>
+<p>Be able to</p>
+<ul class="simple">
+<li><p>Understand stateful data structures</p></li>
+<li><p>Understand a domain</p></li>
+<li><p>Implement global constraints</p></li>
+<li><p>Implement custom search</p></li>
+<li><p>Model CP easy problems</p></li>
+<li><p>Use LNS</p></li>
+<li><p>Write unit-tests for constraints and models</p></li>
+<li><p>Debug constraints, models, etc</p></li>
+</ul>
+</section>
+<section id="theoretical-exercises">
+<h2>Theoretical Exercises<a class="headerlink" href="#theoretical-exercises" title="Permalink to this headline">¶</a></h2>
+<p>Some theoretical <a class="reference external" href="https://inginious.org/course/minicp/">quizz</a></p>
+</section>
+<section id="less-or-equal-reified-constraint">
+<h2>Less or equal reified constraint<a class="headerlink" href="#less-or-equal-reified-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/IsLessOrEqual.java?at=master">IsLessOrEqual.java</a></p>
+<p>This is a reified constraint for <cite>b iff x &lt;= c</cite>
+that is boolean variable <cite>b</cite> is set true if and only if <cite>x</cite> variable is less than or equal to value <cite>c</cite>.</p>
+<p>For example, the constraint holds for</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w"></span>
+<span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
+</pre></div>
+</div>
+<p>but is violated for</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"></span>
+<span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsEqualTest.java?at=master">IsLessOrEqualTest.java</a></p>
+</section>
+<section id="dfs-explicit-stack">
+<h2>DFS Explicit Stack<a class="headerlink" href="#dfs-explicit-stack" title="Permalink to this headline">¶</a></h2>
+<p>The search algorithm of MiniCP is <em>depth-first-search</em>.
+It is implemented using a recursive method in the class
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/search/DFSearch.java?at=master">DFSearch.java</a>.
+To avoid <cite>stack-overflow</cite> exceptions due to a too deep recursion in Java
+we ask you to reimplement the depth-first search with an explicit stack
+instead of relying on the recursion-call stack.</p>
+<p>Consider the following search tree where branches to execute are represented as letters:</p>
+<a class="reference internal image-reference" href="../_static/dfs.svg"><img alt="DFS" class="align-center" src="../_static/dfs.svg" width="125" /></a>
+<p>A DFS exploration should execute the above branches in the following sequence <cite>A, D, E, B, C, F, G</cite>.
+When backtracking, the previous state must be restored, requiring that the state is saved with the
+<cite>save</cite> operation before the branch is executed and restored with the <cite>restore</cite> operation when the branch terminates.
+For example; a valid sequence that successfully saves and restores the state when backtracking is:
+<cite>save-&gt;A-&gt;save-&gt;D-&gt;restore-&gt;save-&gt;E-&gt;restore-&gt;restore-&gt;save-&gt;B-&gt;restore-&gt;save-&gt;C-&gt;save-&gt;F-&gt;restore-&gt;save-&gt;G-&gt;restore-&gt;restore</cite>.
+Note that the state manager performs a <cite>save</cite> operation prior to searching and a <cite>restore</cite> operation after search
+concludes. The <cite>save</cite> operation is executed in pre-order fashion while the <cite>restore</cite> operation is executed in a post-order fashion.
+The following code snippet shows a recursive implementation. Note that the saving and restoring of states is performed
+in the method <cite>withNewState</cite> of the state manager <cite>sm</cite>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">SearchStatistics</span><span class="w"> </span><span class="n">statistics</span><span class="p">,</span><span class="w"> </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">SearchStatistics</span><span class="o">&gt;</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">limit</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="n">statistics</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StopSearchException</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Procedure</span><span class="o">[]</span><span class="w"> </span><span class="n">branches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">branching</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">branches</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrSolutions</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">notifySolution</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Procedure</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">branches</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">sm</span><span class="p">.</span><span class="na">withNewState</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// State is saved before procedure is called.</span><span class="w"></span>
+<span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrNodes</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="n">b</span><span class="p">.</span><span class="na">call</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="n">dfs</span><span class="p">(</span><span class="n">statistics</span><span class="p">,</span><span class="w"> </span><span class="n">limit</span><span class="p">);</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InconsistencyException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrFailures</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="n">notifyFailure</span><span class="p">();</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">});</span><span class="w"> </span><span class="c1">// State is restored when procedure terminates.</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Skeleton code for a solution is given below. However, there are many possible implementations, so feel free to not use
+the skeleton code.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">SearchStatistics</span><span class="w"> </span><span class="n">statistics</span><span class="p">,</span><span class="w"> </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">SearchStatistics</span><span class="o">&gt;</span><span class="w"> </span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Procedure</span><span class="o">&gt;</span><span class="w"> </span><span class="n">alternatives</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Procedure</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="hll"><span class="w">     </span><span class="n">expandNode</span><span class="p">(</span><span class="n">alternatives</span><span class="p">,</span><span class="w"> </span><span class="n">statistics</span><span class="p">);</span><span class="w"> </span><span class="c1">// root expansion</span><span class="w"></span>
+</span><span class="w">     </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">alternatives</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">limit</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="n">statistics</span><span class="p">))</span><span class="w"></span>
+<span class="w">             </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StopSearchException</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="n">alternatives</span><span class="p">.</span><span class="na">pop</span><span class="p">().</span><span class="na">call</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InconsistencyException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="n">notifyFailure</span><span class="p">();</span><span class="w"></span>
+<span class="w">             </span><span class="n">statistics</span><span class="p">.</span><span class="na">incrFailures</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">expandNode</span><span class="p">(</span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Procedure</span><span class="o">&gt;</span><span class="w"> </span><span class="n">alternatives</span><span class="p">,</span><span class="w"> </span><span class="n">SearchStatistics</span><span class="w"> </span><span class="n">statistics</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="c1">// TODO</span><span class="w"></span>
+<span class="w"> </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The idea of this solution is wrap the save, restore, and branch executions inside <cite>Alternative</cite> closure objects,
+as illustrated on the next figure showing the stack after the root node expansion at line 3.</p>
+<a class="reference internal image-reference" href="../_static/stackalternatives.svg"><img alt="DFS" class="align-center" src="../_static/stackalternatives.svg" width="125" /></a>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/DFSearchTest.java?at=master">DFSearchTest.java</a>.</p>
+<p>Remark (optional): It is possible to reduce the number of operations by skipping the save and restore
+operations for the for the last branch of any node (the branches B, C, E, and G in the
+example above).
+The sequence of operations becomes <cite>save-&gt;A-&gt;save-&gt;D-&gt;restore-&gt;E-&gt;restore-&gt;save-&gt;B-&gt;restore-&gt;C-&gt;save-&gt;F-&gt;restore-&gt;G</cite>.
+As stated above, the state manager will perform a save operation before searching and a restore operation once searching
+concludes.</p>
+</section>
+<section id="domain-with-an-arbitrary-set-of-values">
+<h2>Domain with an arbitrary set of values<a class="headerlink" href="#domain-with-an-arbitrary-set-of-values" title="Permalink to this headline">¶</a></h2>
+<p>Implement the missing constructor in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVarImpl.java?at=master">IntVarImpl.java</a>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="nf">IntVarImpl</span><span class="p">(</span><span class="n">Solver</span><span class="w"> </span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NotImplementedException</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This exercise is straightforward: just create a dense domain and then remove the values not present in the set.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master">IntVarTest.java</a>.</p>
+</section>
+<section id="implement-a-domain-iterator">
+<h2>Implement a domain iterator<a class="headerlink" href="#implement-a-domain-iterator" title="Permalink to this headline">¶</a></h2>
+<p>Many filtering algorithms require iteration over the values of a domain.</p>
+<p>A naive (but correct) way of iterating over a domain is:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="na">min</span><span class="p">();</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="na">max</span><span class="p">();</span><span class="w"> </span><span class="n">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// do something</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This method is rather inefficient because it will also consider the values that are not present in the domain.
+Instead the <cite>fillArray</cite> method from <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/state/StateSparseSet.java?at=master">StateSparseSet.java</a>
+allows filling an array with all the values present in the sparse-set.
+In case of an offset value of 0, you could even use the very efficient <cite>System.arraycopy</cite>.</p>
+<p>The main advantage over the iterator mechanism is that no object is created (and thus garbage collected).
+Indeed <cite>dest</cite> is typically a container array stored as an instance variable and reused many times.
+It is important for efficiency to avoid creating objects on the heap at each execution of a propagator.
+Never forget that a <cite>propagate()</cite> method of <cite>Constraint</cite> may be called thousands of times per second.
+This implementation using <cite>fillArray</cite> avoids the <cite>ConcurrentModificationException</cite> discussion
+when implementing an Iterator: should we allow modifying a domain while iterating on it?
+The answer here is very clear: you get a snapshot of the domain at the time of the call to <cite>fillArray</cite> and you can thus
+safely iterate over this <cite>dest</cite> array and modify the domain at the same time.</p>
+<p>To do:</p>
+<ul class="simple">
+<li><p>Improve the efficiency of <cite>fillArray</cite> from <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/state/StateSparseSet.java?at=master">StateSparseSet.java</a> to use <cite>System.arraycopy</cite> when possible.</p></li>
+<li><p>Implement <cite>public int fillArray(int [] dest)</cite> in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVarImpl.java?at=master">IntVarImpl.java</a>.</p></li>
+<li><p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master">IntVarTest.java</a> and also add more tests.</p></li>
+</ul>
+</section>
+<section id="implement-a-custom-search">
+<h2>Implement a Custom Search<a class="headerlink" href="#implement-a-custom-search" title="Permalink to this headline">¶</a></h2>
+<p>Modify the Quadratic Assignment model <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/QAP.java?at=master">QAP.java</a>
+to implement a custom search strategy. A skeleton code for a custom search is the following one:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">DFSearch</span><span class="w"> </span><span class="n">dfs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeDfs</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">IntVar</span><span class="w"> </span><span class="n">sel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selectMin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">vari</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">vari</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="c1">// filter</span><span class="w"></span>
+<span class="w">            </span><span class="n">vari</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">vari</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w">      </span><span class="c1">// variable selector</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sel</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EMPTY</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sel</span><span class="p">.</span><span class="na">min</span><span class="p">();</span><span class="w"> </span><span class="c1">// value selector (TODO)</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">branch</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="n">equal</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span><span class="n">v</span><span class="p">)),</span><span class="w"></span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="n">notEqual</span><span class="p">(</span><span class="n">sel</span><span class="p">,</span><span class="n">v</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>As a variable heuristic, select an unbound variable <cite>x[i]</cite> (a facility <cite>i</cite> not yet assigned to a location) that has a maximum weight <cite>w[i][j]</cite> with another facility <cite>j</cite> (where <cite>x[j]</cite> may be bound or not).</p></li>
+<li><p>As a value heuristic, on the left branch place this facility on a location <span class="math">k</span> which is the closest possible to another location possible for the facility <cite>j</cite> you selected earlier. On the right branch remove the value <span class="math">k</span>.</p></li>
+<li><p>Hint: <cite>selectMin</cite> is a generic method parameterized by ‘T’ and ‘N’ (the type on which the minimum is computed). To implement this heuristic, adding pairs <cite>(i,j)</cite> as a type for <cite>T</cite> is probably the easiest way to go:</p></li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Comparable</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">selectMin</span><span class="p">(</span><span class="n">T</span><span class="o">[]</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="experiment-and-modify-lns">
+<h2>Experiment and modify LNS<a class="headerlink" href="#experiment-and-modify-lns" title="Permalink to this headline">¶</a></h2>
+<p>Experiment the Quadratic Assignment Model with LNS <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/QAPLNS.java?at=master">QAPLNS.java</a></p>
+<ul class="simple">
+<li><p>Does it converge faster to good solutions than the standard DFS ? Use the larger instance with 26 facilities.</p></li>
+<li><p>What is the impact of the percentage of variables relaxed (experiment with 5, 10 and 20%) ?</p></li>
+<li><p>What is the impact of the failure limit (experiment with 50, 100 and 1000)?</p></li>
+<li><p>Which parameter setting work best? How would you choose it?</p></li>
+<li><p>Imagine a different relaxation specific for this problem. Try to relax the decision variables that have the strongest impact on the objective (the relaxed variables should still be somehow randomized). You can for instance compute for each facility $i$: $sum_j d[x[i]][x[j]]*w[i][j]$ and base your decision to relax or not a facilities on those values.</p></li>
+</ul>
+</section>
+<section id="element-constraint">
+<h2>Element constraint<a class="headerlink" href="#element-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1D.java?at=master">Element1D.java</a>.</p>
+<p>Given an array <cite>T</cite> and the variables <cite>x</cite> and <cite>z</cite> the element constraint enforces that <cite>z</cite> take the value at the
+<cite>x</cite>:th index of <cite>T</cite>. More exactly the relation <cite>T[x]=z</cite> must hold (where indexing starts from 0).</p>
+<p>Assuming <cite>T=[1,3,5,7,3]</cite>, the constraint holds for</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"></span>
+<span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="w"></span>
+</pre></div>
+</div>
+<p>but is violated for</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
+<span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DTest.java?at=master">Element1DTest.java</a>.</p>
+<p>Two possibilities:</p>
+<ol class="arabic simple">
+<li><p>Extend <cite>Element2D</cite> and reformulate <cite>Element1D</cite> as an <cite>Element2D</cite> constraint in a super call of the constructor.</p></li>
+<li><p>Implement a dedicated propagator for <cite>Element1D</cite> by taking inspiration from <cite>Element2D</cite>.</p></li>
+</ol>
+<p>Does your filtering achieve domain consistency on D(z)? Implement a domain-consistent version, and write tests to make sure it is domain-consistent.</p>
+</section>
+<section id="circuit-constraint">
+<h2>Circuit Constraint<a class="headerlink" href="#circuit-constraint" title="Permalink to this headline">¶</a></h2>
+<p>The circuit constraint enforces a hamiltonian circuit on a successor array.
+In the following example the successor array is <cite>[2,4,1,5,3,0]</cite>, where the indices of the array are the origins of the directed edges:</p>
+<a class="reference internal image-reference" href="../_static/circuit.svg"><img alt="Circuit" class="align-center" src="../_static/circuit.svg" width="125" /></a>
+<p>All the successors must be different.
+But enforcing the <cite>allDifferent</cite> constraint is not enough.
+We must also guarantee it forms a proper circuit (without sub-tours).
+This can be done efficiently and incrementally by keeping track of the subchains
+that appears during search.
+The data structure for the subchains should be stateful.
+The instance variables used to keep track of the subchains are:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">IntVar</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"></span>
+<span class="n">StateInt</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">dest</span><span class="p">;</span><span class="w"></span>
+<span class="n">StateInt</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">orig</span><span class="p">;</span><span class="w"></span>
+<span class="n">StateInt</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">lengthToDest</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><cite>dest[i]</cite> is the furthest node we can reach from node <cite>i</cite> following the instantiated edges.</p></li>
+<li><p><cite>orig[i]</cite> is the furthest node we can reach from node <cite>i</cite> following the instantiated edges in the opposite direction.</p></li>
+<li><p><cite>lengthToDest[i]</cite> is the number of instantiated edges on the path from node <cite>i</cite> to <cite>dest[i]</cite>.</p></li>
+</ul>
+<p>Consider the following example with instantiated edges colored in grey:</p>
+<a class="reference internal image-reference" href="../_static/circuit-subtour.svg"><img alt="Circuit" class="align-center" src="../_static/circuit-subtour.svg" width="125" /></a>
+<p>Before the addition of the green edge we have:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">dest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+<span class="n">orig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+<span class="n">lengthToDest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>After the addition of the green edge we have:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">dest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+<span class="n">orig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+<span class="n">lengthToDest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In your implementation you must update the stateful integers to reflect
+the changes after the addition of every new edge.
+You can use the <cite>CPIntVar.whenBind(…)</cite> method for that.</p>
+<p>The filtering algorithm is to prevent closing each
+sub-tour that would have a length less than <cite>n</cite> (the number of nodes).
+Since node 4 has a length to destination (node 2) of 4 (&lt;6), the destination node 2 cannot have 4 as successor
+and the red potential edge is deleted.
+This filtering was introduced in <a class="reference internal" href="learning_minicp/part_5.html#tsp1998" id="id4"><span>[TSP1998]</span></a> for solving the TSP with CP.</p>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Circuit.java?at=master">Circuit.java</a>.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CircuitTest.java?at=master">CircuitTest.java</a>.</p>
+<dl class="citation">
+<dt class="label" id="tsp1998"><span class="brackets"><a class="fn-backref" href="#id4">TSP1998</a></span></dt>
+<dd><p>Pesant, G., Gendreau, M., Potvin, J. Y., &amp; Rousseau, J. M. (1998). An exact constraint logic programming algorithm for the traveling salesman problem with time windows. Transportation Science, 32(1), 12-29.</p>
+</dd>
+</dl>
+</section>
+<section id="custom-search-for-tsp">
+<h2>Custom Search for TSP<a class="headerlink" href="#custom-search-for-tsp" title="Permalink to this headline">¶</a></h2>
+<p>Modify <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/TSP.java?at=master">TSP.java</a>
+to implement a custom search strategy.
+Use the following code as skeleton code:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">DFSearch</span><span class="w"> </span><span class="n">dfs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeDfs</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">IntVar</span><span class="w"> </span><span class="n">xs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selectMin</span><span class="p">(</span><span class="n">succ</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">xi</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">xi</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="c1">// filter</span><span class="w"></span>
+<span class="w">            </span><span class="n">xi</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">xi</span><span class="p">.</span><span class="na">size</span><span class="p">());</span><span class="w"> </span><span class="c1">// variable selector</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">xs</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EMPTY</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xs</span><span class="p">.</span><span class="na">min</span><span class="p">();</span><span class="w"> </span><span class="c1">// value selector (TODO)</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">branch</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="n">equal</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)),</span><span class="w"></span>
+<span class="w">            </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">cp</span><span class="p">.</span><span class="na">post</span><span class="p">(</span><span class="n">notEqual</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)));</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The unbound variable selected is one with a smallest domain (first-fail).</p></li>
+<li><p>The selected variable is then assigned the minimum value in its domain.</p></li>
+</ul>
+<p>This value selection strategy is not well suited for the TSP (and VRP in general).
+The one you design should be more similar to the decision you would
+make manually in a greedy fashion.
+For instance, you can select as a successor for <cite>xi</cite>
+a closest city in its domain.</p>
+<p>Hint: Since there is no iterator on the domain of a variable, you can
+iterate from the minimum value to the maximum one using a <cite>for</cite> loop
+and checking that the value of the current iteration is in the domain using the <cite>contains</cite> method.
+You can also use your iterator from <a class="reference internal" href="learning_minicp/part_2.html#part-2-domains-variables-constraints"><span class="std std-ref">Part 2: Domains, Variables, Constraints</span></a>.</p>
+<p>You can also implement a min-regret variable selection strategy.
+It selects a variable with the largest difference between a closest
+successor city and a second-closest one.
+The idea is that it is critical to decide the successor for this city first
+because otherwise one will regret it the most.</p>
+<p>Observe the first solution obtained to the provided instance and its objective value:
+is it better than upon naive first-fail?
+Also observe the time and number of backtracks necessary for proving optimality:
+by how much did you reduce the computation time and number of backtracks?</p>
+</section>
+<section id="lns-applied-to-tsp">
+<h2>LNS applied to TSP<a class="headerlink" href="#lns-applied-to-tsp" title="Permalink to this headline">¶</a></h2>
+<p>You will implement and apply LNS search by modifying
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/TSP.java?at=master">TSP.java</a>
+Use the provided 17x17 distance matrix for this exercise.</p>
+<p>What you should do:</p>
+<ul class="simple">
+<li><p>Record the assignment of the current best solution. Hint: use the <cite>onSolution</cite> call-back on the <cite>DFSearch</cite> object.</p></li>
+<li><p>Implement a restart strategy fixing randomly 10% of the variables to their value in the current best solution.</p></li>
+<li><p>Each restart has a failure limit of 100 backtracks.</p></li>
+</ul>
+<p>An example of LNS search is given in  <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/QAPLNS.java?at=master">QAPLNS.java</a>.
+You can simply copy/paste/modify this implementation for the TSP:</p>
+<ul>
+<li><p>Does it converge faster to good solutions than the standard DFS? Use the larger instance with 26 facilities.</p></li>
+<li><p>What is the impact of the percentage of variables relaxed (experiment with 5, 10 and 20%)?</p></li>
+<li><p>What is the impact of the failure limit (experiment with 50, 100 and 1000)?</p></li>
+<li><p>Which parameter setting works best? How would you choose it?</p></li>
+<li><p>Imagine a different relaxation specific for this problem. Try to relax the decision variables
+that have the strongest impact on the objective with a greater probability (the relaxed variables should still be somehow randomized). You can
+for instance compute for each facility <cite>i</cite> the quantity:</p>
+<div class="math">
+<p><span class="math">s_i = \sum\limits_{j}{d[x[i]][x[j]] \cdot w[i][j]}</span></p>
+</div><p>and base your decision to relax facilities based on those values.</p>
+</li>
+</ul>
+</section>
+<section id="table-constraint">
+<h2>Table Constraint<a class="headerlink" href="#table-constraint" title="Permalink to this headline">¶</a></h2>
+<p>The table constraint (also called the extension constraint)
+specifies the list of solutions (tuples) assignable to a vector of variables.</p>
+<p>More precisely, given an array <cite>X</cite> containing <cite>n</cite> variables, and an array <cite>T</cite> of size <cite>m × n</cite>, this constraint holds:</p>
+<div class="math">
+<p><span class="math">\exists i: \forall j: T_{i,j} = X_j</span></p>
+</div><p>That is, each row of the table is a valid assignment to <cite>X</cite>.</p>
+<p>The following table with five tuples and four variables will be used as an example for the sequel of this part.</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Tuple index</p></th>
+<th class="head"><p><cite>X[0]</cite></p></th>
+<th class="head"><p><cite>X[1]</cite></p></th>
+<th class="head"><p><cite>X[2]</cite></p></th>
+<th class="head"><p><cite>X[3]</cite></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>1</p></th>
+<td><p><cite>0</cite></p></td>
+<td><p><cite>1</cite></p></td>
+<td><p><cite>2</cite></p></td>
+<td><p><cite>3</cite></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>2</p></th>
+<td><p><cite>0</cite></p></td>
+<td><p><cite>0</cite></p></td>
+<td><p><cite>3</cite></p></td>
+<td><p><cite>2</cite></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>3</p></th>
+<td><p><cite>2</cite></p></td>
+<td><p><cite>1</cite></p></td>
+<td><p><cite>0</cite></p></td>
+<td><p><cite>3</cite></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>4</p></th>
+<td><p><cite>3</cite></p></td>
+<td><p><cite>2</cite></p></td>
+<td><p><cite>1</cite></p></td>
+<td><p><cite>2</cite></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>5</p></th>
+<td><p><cite>3</cite></p></td>
+<td><p><cite>0</cite></p></td>
+<td><p><cite>1</cite></p></td>
+<td><p><cite>1</cite></p></td>
+</tr>
+</tbody>
+</table>
+<p>In this particular example, the assignment <cite>X = {2, 1, 0, 3}</cite> is valid, but not <cite>X = {4, 3, 3, 3}</cite> as there is no
+such row in the table.</p>
+<p>Many algorithms exist for filtering table constraints.</p>
+<p>One of the fastest filtering algorithms nowadays is Compact Table (CT) <a class="reference internal" href="learning_minicp/part_7.html#ct2016" id="id7"><span>[CT2016]</span></a>.
+In this exercise you’ll implement a simple version of CT.</p>
+<p>CT works in two steps:</p>
+<ol class="arabic simple">
+<li><p>Compute the list of supported tuples. A tuple <cite>T[i]</cite> is supported if, <em>for each</em> index <cite>j</cite> of the tuple, the
+domain of the variable <cite>X[j]</cite> contains the value <cite>T[i][j]</cite>.</p></li>
+<li><p>Filter the domains. For each variable <cite>X[j]</cite> and value <cite>v</cite> in the domain of <cite>X[j]</cite>, <cite>v</cite> can be removed if it is not
+used by any supported tuple.</p></li>
+</ol>
+<p>Your task is to finish the implementation in
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/TableCT.java?at=master">TableCT.java</a>.</p>
+<p><cite>TableCT</cite> maintains for each variable-value pair an array of bitsets:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">private</span><span class="w"> </span><span class="n">BitSet</span><span class="o">[][]</span><span class="w"> </span><span class="n">supports</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>where <cite>supports[j][v]</cite> is the (bit)set containing the supported tuple indices for the assignment <cite>X[j]=v</cite>.</p>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Given the previous example where <cite>X[0]</cite> has the domain <cite>{0, 1, 3}</cite>, some of the the values of <cite>supports</cite> are:
+<cite>supports[0][0] = {1, 2}</cite>,
+<cite>supports[0][1] = {}</cite>, and
+<cite>supports[0][3] = {4,5}</cite>.</p>
+<p>From this we can infer two things. First, the value <cite>1</cite> does not support any tuple indices, so it can be removed
+from the domain of <cite>X[0]</cite>. Additionally, given the union over all tuple indices supported by values in the domain of
+<cite>X[0]</cite>, the tuple index <cite>3</cite> is not supported by any value in the domain of <cite>X[0]</cite>: the tuple index 3 can be removed
+from all bitsets in <cite>supports</cite>.</p>
+<p>Continuing with the same example and where <cite>X[2]</cite> has the domain <cite>{0, 1}</cite>, we see that tuples with indices <cite>1</cite>
+and <cite>2</cite> are not supported by any value in the domain of <cite>X[2]</cite>; the tuples with indices <cite>1</cite> and <cite>2</cite> can therefore
+be removed from all bitsets in <cite>supports</cite>. From this, we can infer that the value
+<cite>0</cite> can be removed from the domain of variable <cite>X[0]</cite> as the tuple indices the value supported are no longer supported
+by a variable (namely <cite>X[2]</cite>).</p>
+</section>
+<section id="using-bit-sets">
+<h3>Using bit sets<a class="headerlink" href="#using-bit-sets" title="Permalink to this headline">¶</a></h3>
+<p>You may have assumed that the type of <cite>supports</cite> would have been <cite>List&lt;Integer&gt;[][] supportedByVarVal</cite>.
+This is not the approach used by CT.</p>
+<p>CT uses the concept of bit sets. A bit set is an array-like data structure that stores bits. Each bit is accessible by
+its index. A bitset is in fact composed of an array of <cite>Long</cite>, which we in this context refer to as a <em>word</em>.
+Each of these words stores 64 bits from the bitset.</p>
+<p>Using this structure is convenient for our goal:</p>
+<ul class="simple">
+<li><p>The tuple with tuple index <cite>i</cite> becomes the <cite>i</cite>:th bit of the bitset and is encoded as a <cite>1</cite> if the tuple is supported,
+otherwise it is encoded as a <cite>0</cite>. In the traditional list/array
+representation, each supported tuple requires 32 bits to be represented.</p></li>
+<li><p>Computing the intersection and union of bit sets (and these are the main operations that will be made on <cite>supportedByVarVal</cite>)
+is very easy, thanks to the usage of bitwise operators included in all modern CPUs.</p></li>
+</ul>
+<p>Java provides a default implementation of bit sets in the class BitSet, which we will use in this exercise.
+We encourage you to read its documentation before continuing.</p>
+</section>
+<section id="a-basic-implementation">
+<h3>A basic implementation<a class="headerlink" href="#a-basic-implementation" title="Permalink to this headline">¶</a></h3>
+<p>You will implement a version of CT that makes no use of the stateful structure (therefore it is probably much less efficient that the real CT algorithm).</p>
+<p>You have to implement the <cite>propagate()</cite> method of the class <cite>TableCT</cite>. All class variables have already been initialized
+for you.</p>
+<p>You “simply” have to compute, for each call to <cite>propagate()</cite>:</p>
+<ul class="simple">
+<li><p>The tuples supported by each variable, which are the union of the tuples supported by the values in the domain of the
+variable.</p></li>
+<li><p>The intersection of the tuples supported by each variable. This intersection is the set of globally supported tuples.</p></li>
+<li><p>You can now intersect the set of globally supported tuples with each variable-value pair in <cite>supports</cite>.
+If the value supports no tuples (i.e., the intersection is empty), then the value can be removed.</p></li>
+</ul>
+<p>Make sure your implementation passes all the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/TableTest.java?at=master">TableTest.java</a>.</p>
+<dl class="citation">
+<dt class="label" id="ct2016"><span class="brackets"><a class="fn-backref" href="#id7">CT2016</a></span></dt>
+<dd><p>Demeulenaere, J., Hartert, R., Lecoutre, C., Perez, G., Perron, L., Régin, J. C., &amp; Schaus, P. (2016). Compact-table: Efficiently filtering table constraints with reversible sparse bit-sets. In International Conference on Principles and Practice of Constraint Programming (pp. 207-223). Springer.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="sequencer-combinator">
+<h2>Sequencer Combinator<a class="headerlink" href="#sequencer-combinator" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes we wish to branch in a given order on two families of variables, say <cite>x[]</cite> and then <cite>y[]</cite>, as shown in the next picture.
+A variable in <cite>y</cite> should not be branched on before all the variables in <cite>x</cite> have been decided.
+Furthermore, we may want to apply a specific heuristic on <cite>x</cite> which is different from the heuristic we want to apply on <cite>y</cite>:</p>
+<a class="reference internal image-reference" href="../_static/combinator.svg"><img alt="combinator" class="align-center" src="../_static/combinator.svg" width="100" /></a>
+<p>This can be achieved as follows:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">IntVar</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"></span>
+<span class="n">IntVar</span><span class="w"> </span><span class="o">[]</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w"></span>
+<span class="n">makeDfs</span><span class="p">(</span><span class="n">and</span><span class="p">(</span><span class="n">firstFail</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">firstFail</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The <cite>and</cite> factory method creates a  <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/search/Sequencer.java?at=master">Sequencer.java</a>.
+You must complete its implementation.</p>
+</section>
+<section id="eternity-problem">
+<h2>Eternity Problem<a class="headerlink" href="#eternity-problem" title="Permalink to this headline">¶</a></h2>
+<p>Fill in all the gaps in order to solve the Eternity II problem.</p>
+<p>Your task is to finish the implementation in
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/Eternity.java?at=master">Eternity.java</a>:</p>
+<ul class="simple">
+<li><p>Create the table.</p></li>
+<li><p>Model the problem using table constraints.</p></li>
+<li><p>Search for a feasible solution using branching combinators.</p></li>
+</ul>
+</section>
+<section id="element-constraint-with-an-array-of-variables">
+<h2>Element constraint with an array of variables<a class="headerlink" href="#element-constraint-with-an-array-of-variables" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1DVar.java?at=master">Element1DVar.java</a></p>
+<p>We have already seen the element constraint to index an array of integers <cite>T</cite> by an index variable <cite>x</cite> and link the result with a variable <cite>z</cite>: <cite>T[x]=z</cite>.
+This time the constraint more general since <cite>T</cite> is an array of variables.</p>
+<p>We ask you to imagine and implement the filtering algorithm for <cite>Element1DVar</cite> constraint.
+This filtering algorithm is not trivial, at least if you want to do it efficiently.
+Two directions of implementation are</p>
+<ol class="arabic simple">
+<li><p>The domain consistent version</p></li>
+<li><p>The hybrid domain-bound consistent one, assuming the domain of <cite>z</cite> is a full range but not the domain of <cite>x</cite> in which you can create holes (you can start with this one, easier than the full domain consistent one).</p></li>
+</ol>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DVarTest.java?at=master">Element1DVarTest.java</a>
+Those tests are not checking that the filtering is domain-consistent. Write additional tests to check the domain consistency.</p>
+</section>
+<section id="the-stable-matching-problem">
+<h2>The stable matching problem<a class="headerlink" href="#the-stable-matching-problem" title="Permalink to this headline">¶</a></h2>
+<p>Complete the partial model <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/StableMatching.java?at=master">StableMatching.java</a>.
+This model makes use of the <cite>Element1DVar</cite> constraint you have just implemented and is also a good example of manipulation of logical and reified constraints.
+Ensure that your implementation discovers all 6 solutions to the provided instance.</p>
+</section>
+<section id="the-absolute-value-constraint">
+<h2>The absolute value constraint<a class="headerlink" href="#the-absolute-value-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Absolute.java?at=master">Absolute.java</a></p>
+<p>Again you will realize that several directions of implementation are possible:</p>
+<ol class="arabic simple">
+<li><p>The full domain-consistent version (use the <cite>fillArray</cite> method to iterate over domains)</p></li>
+<li><p>A hybrid domain-bound consistent one</p></li>
+</ol>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/AbsoluteTest.java?at=master">AbsoluteTest.java</a>.</p>
+</section>
+<section id="the-maximum-constraint">
+<h2>The maximum constraint<a class="headerlink" href="#the-maximum-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Maximum.java?at=master">Maximum.java</a>.</p>
+<p>Implement a bound-consistent filtering algorithm.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/MaximumTest.java?at=master">MaximumTest.java</a>.</p>
+</section>
+<section id="compact-table-algorithm-for-table-constraints-with-short-tuples">
+<h2>Compact table algorithm for table constraints with short tuples<a class="headerlink" href="#compact-table-algorithm-for-table-constraints-with-short-tuples" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/ShortTableCT.java?at=master">ShortTableCT.java</a>.</p>
+<p>Of course you should get strong inspiration from the
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/TableCT.java?at=master">TableCT.java</a>
+implementation you did in a previous exercise.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/ShortTableTest.java?at=master">ShortTableTest.java</a>.</p>
+</section>
+<section id="compact-table-algorithm-for-negative-table-constraints">
+<h2>Compact table algorithm for negative table constraints<a class="headerlink" href="#compact-table-algorithm-for-negative-table-constraints" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/NegTableCT.java?at=master">NegTableCT.java</a></p>
+<p>Of course you should get a strong inspiration from the
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/TableCT.java?at=master">TableCT.java</a>
+implementation you did in a previous exercise.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/NegTableTest.java?at=master">NegTableTest.java</a></p>
+</section>
+<section id="cumulative-constraint-decomposition">
+<h2>Cumulative Constraint: Decomposition<a class="headerlink" href="#cumulative-constraint-decomposition" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>Cumulative</cite> constraint models a scheduling resource with fixed capacity.
+It has the following signature:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="nf">Cumulative</span><span class="p">(</span><span class="n">IntVar</span><span class="o">[]</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">duration</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">demand</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">capa</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>where <cite>capa</cite> is the capacity of the resource and <cite>start</cite>, <cite>duration</cite>, and <cite>demand</cite> are arrays of equal size representing
+the following properties of the activities:</p>
+<ul class="simple">
+<li><p><cite>start[i]</cite> is the variable specifying the start time of activity <cite>i</cite>,</p></li>
+<li><p><cite>duration[i]</cite> is the duration of activity <cite>i</cite>, and</p></li>
+<li><p><cite>demand[i]</cite> is the resource consumption or demand of activity <cite>i</cite>.</p></li>
+</ul>
+<p>The constraint ensures that the cumulative consumption of activities (also called the consumption profile)
+never exceeds the capacity:</p>
+<div class="math">
+<p><span class="math">\forall t: \sum_{i \mid t \in \left [start[i]..start[i]+duration[i]-1 \right ]} demand[i] \le capa</span></p>
+</div><p>The following example depicts three activities and their corresponding
+consumption profile. As can be observed, the profile never exceeds
+the capacity 4:</p>
+<a class="reference internal image-reference" href="../_static/scheduling.svg"><img alt="scheduling cumulative" class="align-center" src="../_static/scheduling.svg" width="200" /></a>
+<p>It corresponds to the instantiation of the following <cite>Cumulative</cite> constraint:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Cumulative</span><span class="p">(</span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">demand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">capa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/CumulativeDecomposition.java?at=master">CumulativeDecomposition.java</a>.
+This is a decomposition or reformulation of the <cite>Cumulative</cite> constraint
+in terms of simple arithmetic and logical constraints as
+used in the equation above to describe its semantics.</p>
+<p>At any point in time <cite>t</cite> the <cite>BoolVar overlaps[i]</cite>
+designates whether activity <cite>i</cite> overlaps, potentially being performed at, <cite>t</cite> or not.
+The overall consumption at <cite>t</cite> can then be obtained by:</p>
+<div class="math">
+<p><span class="math">\sum_{i} overlaps[i] \cdot demand[i] \le capa</span></p>
+</div><p>First make sure you understand the following code, and then
+add the few lines in its <cite>TODO</cite> task in order to make
+sure <cite>overlaps</cite> has the intended meaning:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">post</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">InconsistencyException</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Arrays</span><span class="p">.</span><span class="na">stream</span><span class="p">(</span><span class="n">start</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">getMin</span><span class="p">()).</span><span class="na">min</span><span class="p">(</span><span class="n">Integer</span><span class="p">::</span><span class="n">compare</span><span class="p">).</span><span class="na">get</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Arrays</span><span class="p">.</span><span class="na">stream</span><span class="p">(</span><span class="n">end</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">e</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="na">getMax</span><span class="p">()).</span><span class="na">max</span><span class="p">(</span><span class="n">Integer</span><span class="p">::</span><span class="n">compare</span><span class="p">).</span><span class="na">get</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">min</span><span class="p">;</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">max</span><span class="p">;</span><span class="w"> </span><span class="n">t</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">BoolVar</span><span class="o">[]</span><span class="w"> </span><span class="n">overlaps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BoolVar</span><span class="o">[</span><span class="n">start</span><span class="p">.</span><span class="na">length</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">start</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">overlaps</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeBoolVar</span><span class="p">(</span><span class="n">cp</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">            </span><span class="c1">// TODO</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// post the constraints to enforce</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// that overlaps[i] is true iff start[i] &lt;= t &amp;&amp; t &lt; start[i] + duration[i]</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.</span><span class="w"></span>
+<span class="w">            </span><span class="c1">//       logical constraints (such as logical and can be modeled with sum)</span><span class="w"></span>
+
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">IntVar</span><span class="o">[]</span><span class="w"> </span><span class="n">overlapHeights</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">makeIntVarArray</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="p">.</span><span class="na">length</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">mul</span><span class="p">(</span><span class="n">overlaps</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">demand</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">));</span><span class="w"></span>
+<span class="w">        </span><span class="n">IntVar</span><span class="w"> </span><span class="n">cumHeight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">overlapHeights</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">cumHeight</span><span class="p">.</span><span class="na">removeAbove</span><span class="p">(</span><span class="n">capa</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeDecompTest.java?at=master">CumulativeDecompTest.java</a>.</p>
+</section>
+<section id="cumulative-constraint-time-table-filtering">
+<h2>Cumulative Constraint: Time-Table filtering<a class="headerlink" href="#cumulative-constraint-time-table-filtering" title="Permalink to this headline">¶</a></h2>
+<p>The Time-Table Filtering introduced in  <a class="reference internal" href="learning_minicp/part_9.html#tt2015" id="id10"><span>[TT2015]</span></a>
+is an efficient yet simple filtering for <cite>Cumulative</cite>.</p>
+<p>It is a two-stage algorithm:</p>
+<ol class="arabic simple">
+<li><p>Build an optimistic profile of the resource consumption and check that it does not exceed the capacity.</p></li>
+<li><p>Filter the earliest start of the activities such that they are not in conflict with the profile.</p></li>
+</ol>
+<p>Consider in the next example the depicted activity that can be executed anywhere between
+the two solid brackets.
+It cannot execute at its earliest start since this would
+violate the capacity of the resource.
+We thus need to postpone the activity until a point in time
+where it can execute over its entire duration
+without being in conflict with the profile and the capacity.
+The earliest point in time is 7:</p>
+<a class="reference internal image-reference" href="../_static/timetable2.svg"><img alt="scheduling timetable1" class="align-center" src="../_static/timetable2.svg" width="300" /></a>
+<p><strong>Profiles</strong></p>
+<p>We provide a class <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master">Profile.java</a>
+that is able to efficiently build a resource profile given an array of rectangles as input.
+A rectangle has three attributes: <cite>start</cite>, <cite>end</cite>, and <cite>height</cite>, as shown next:</p>
+<a class="reference internal image-reference" href="../_static/rectangle.svg"><img alt="rectangle" class="align-center" src="../_static/rectangle.svg" width="125" /></a>
+<p>A profile is nothing more but a sequence of rectangles.
+An example profile is given next. It is built from three input rectangles provided to the constructor of <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master">Profile.java</a>.</p>
+<p>The profile consists of 7 contiguous rectangles.
+The first rectangle, <cite>R0</cite>, starts at <cite>Integer.MIN_VALUE</cite> with a height of zero,
+and the last rectangle, <cite>R6</cite>, ends at <cite>Integer.MAX_VALUE</cite>, also with a height of zero.
+These two dummy rectangles are convenient because they guarantee
+that there exists a rectangle in the profile for any point in time:</p>
+<a class="reference internal image-reference" href="../_static/profile.svg"><img alt="profile" class="align-center" src="../_static/profile.svg" width="325" /></a>
+<p>Make sure you understand how to build and manipulate
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master">Profile.java</a>.</p>
+<p>Have a quick look at <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/ProfileTest.java?at=master">ProfileTest.java</a>
+for some examples of profile construction.</p>
+<p><strong>Filtering</strong></p>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Cumulative.java?at=master">Cumulative.java</a>.
+You have three TODO tasks:</p>
+<ol class="arabic simple">
+<li><p>Build the optimistic profile from the mandatory parts.</p></li>
+<li><p>Check that the profile is not exceeding the capacity.</p></li>
+<li><p>Filter the earliest start of activities.</p></li>
+</ol>
+<p><em>TODO 1</em> is to build the optimistic profile
+from the mandatory parts of the activities.
+As can be seen in the next example, the mandatory part of an activity
+is a part that is always executed whatever the start time of the activity
+will be in its current domain.
+It is the rectangle starting at <cite>start[i].getMax()</cite> that ends in <cite>start[i].getMin()+duration[i]</cite>
+with a height equal to the demand of the activity.
+Be careful because not every activity has a mandatory part:</p>
+<a class="reference internal image-reference" href="../_static/timetable1.svg"><img alt="scheduling timetable1" class="align-center" src="../_static/timetable1.svg" width="300" /></a>
+<p><em>TODO 2</em> is to check that the profile is not exceeding the capacity.
+You can check that each rectangle of the profile is not exceeding the capacity;
+otherwise you throw an <cite>InconsistencyException</cite>.</p>
+<p><em>TODO 3</em> is to filter the earliest start of unbound activities by postponing each
+activity (if needed) to the earliest slot when it can be executed without exceeding the capacity.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">start</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">start</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">.</span><span class="na">isBound</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// j is the index of the profile rectangle overlapping t</span><span class="w"></span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">profile</span><span class="p">.</span><span class="na">rectangleIndex</span><span class="p">(</span><span class="n">start</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">.</span><span class="na">getMin</span><span class="p">());</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// TODO 3: postpone i to a later point in time</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// hint:</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// Check that at every point in the interval</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// [start[i].getMin() ... start[i].getMin()+duration[i]-1]</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// there is enough remaining capacity.</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// You may also have to check the following profile rectangle(s).</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// Note that the activity you are currently postponing</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// may have contributed to the profile.</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeTest.java?at=master">CumulativeTest.java</a>.</p>
+<dl class="citation">
+<dt class="label" id="tt2015"><span class="brackets"><a class="fn-backref" href="#id10">TT2015</a></span></dt>
+<dd><p>Gay, S., Hartert, R., &amp; Schaus, P. (2015, August). Simple and scalable time-table filtering for the cumulative constraint. In International Conference on Principles and Practice of Constraint Programming (pp. 149-157). Springer.</p>
+</dd>
+</dl>
+</section>
+<section id="the-resource-constrained-project-scheduling-problem-rcpsp">
+<h2>The Resource-Constrained Project Scheduling Problem (RCPSP)<a class="headerlink" href="#the-resource-constrained-project-scheduling-problem-rcpsp" title="Permalink to this headline">¶</a></h2>
+<p>A set of activities must be executed on a set of resources.</p>
+<p>Fill in all the gaps in order to solve the RCPSP problem.</p>
+<p>Your task is to terminate the implementation in
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/RCPSP.java?at=master">RCPSP.java</a>.</p>
+<ul class="simple">
+<li><p>Create the cumulative constraint</p></li>
+<li><p>Post the precedence constraint</p></li>
+<li><p>Add instructions to minimize the makespan</p></li>
+<li><p>Minimize the makespan</p></li>
+</ul>
+<p>Several instances of increasing size are available with 30, 60, 90, and 120 activities.
+In order to test your model, the instance <code class="docutils literal notranslate"><span class="pre">j30_1_1.rcp</span></code> should have a minimum makespan of 43.
+Don’t expect to prove optimality for large-size instances, but you should reach it easily for 30 activities.</p>
+</section>
+<section id="the-jobshop-problem-and-disjunctive-resource">
+<h2>The JobShop Problem and disjunctive resource<a class="headerlink" href="#the-jobshop-problem-and-disjunctive-resource" title="Permalink to this headline">¶</a></h2>
+<p>Your task is to make the disjunctive constraint more efficient than using the cumulative constraint with unary capacity.</p>
+<ul class="simple">
+<li><p>Implement the constraint <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/IsLessOrEqualVar.java?at=master">IsLessOrEqualVar.java</a>
+for the reification <cite>b iff x &lt;= y</cite>.
+This one will be useful implementing the decomposition for the disjunctive constraint..</p></li>
+<li><p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsLessOrEqualVarTest.java?at=master">IsLessOrEqualVarTest.java.</a></p></li>
+<li><p>Implement the decompostion with reified constraint for the <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master">Disjunctive.java.</a> `</p></li>
+<li><p>Test if (as expected) this decomposition prunes more than the formulation with the TimeTable filtering for the cumulative constraint.
+Observe on the <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/JobShop.java?at=master">JobShop.java</a> problem if the number of backtracks is reduced with the decomposition instead of the formulation with the cumulative.
+Test for instance on the small instance <cite>data/jobshop/sascha/jobshop-4-4-2</cite> with 4 jobs, 4 machines, 16 activities.</p></li>
+<li><p>Read and make sure you understand the implementation  <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/ThetaTree.java?at=master">ThetaTree.java.</a>
+Some unit-tests are implemented in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/ThetaTreeTest.java?at=master">ThetaTreeTest.java.</a>
+To make sure you understand it, add a unit-test with 4 activities and compare the results with a manual computation.</p></li>
+<li><p>The overlad-checker, detectable precedences, not-first, edge-finding only filter one side of the activities.
+To get the symmetrical filtering implement the mirroring activities trick similarly to <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Cumulative.java?at=master">Cumulative.java</a>.</p></li>
+<li><p>Implement the overload-checker in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master">Disjunctive.java</a></p></li>
+<li><p>The overload-checker should already make a big difference to prune the search tree. Make sure that larger-job-shop instances are now accessible for instance the <cite>data/jobshop/sascha/jobshop-6-6-0</cite> should now become easy to solve.</p></li>
+<li><p>Implement the detectable-precedence in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master">Disjunctive.java</a></p></li>
+<li><p>Implement the not-first-not last in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master">Disjunctive.java</a></p></li>
+<li><p>Make sure you pass the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/DisjunctiveTest.java?at=master">DisjunctiveTest.java</a></p></li>
+<li><p>(optional for a bonus) Implement the edge-finding in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master">Disjunctive.java</a> (you will also need to implement the ThetaLambdaTree data-structure).</p></li>
+</ul>
+</section>
+<section id="the-logical-or-constraint-and-watched-literals">
+<h2>The logical or constraint and watched literals<a class="headerlink" href="#the-logical-or-constraint-and-watched-literals" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Implement the constraint <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Or.java?at=master">Or.java</a>
+for modeling the logical clause constraint: <cite>(x[0] or x[1] or x[2] … x[n-1])</cite>.</p></li>
+<li><p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/OrTest.java?at=master">OrTest.java.</a></p></li>
+<li><p>The implementation should use the watched literals technique.</p></li>
+</ul>
+<p>A reminder about the watched literals technique:</p>
+<ul class="simple">
+<li><p>The constraint should only listen to the changes of two unbound variables with <cite>propagateOnBind(this)</cite></p></li>
+</ul>
+<blockquote>
+<div><p>and dynamically listen to other ones whenever of these two become bound. Keep in mind that
+any call to <cite>x[i].propagateOnBind(this)</cite> has a reversible effect on backtrack.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Why two ? Because as long as there is one unbound one, the constraint is still satisfiable and nothing need to be propagated
+and whenever it is detected that only one is unbound and all the other ones are set to false,
+the last one must be set to true (this is called unit propagation in sat-solvers).</p></li>
+<li><p>The two unbound variables
+should be at indexes <cite>wL</cite> (watched left) and <cite>wR</cite> (watched right).
+As depicted below <cite>wL</cite> (<cite>wR</cite>) is the left (right) most unbound variable.</p></li>
+<li><p>Those indices are store in <cite>StateInt</cite> such that they can only increase during search (incrementality).</p></li>
+<li><p>When <cite>propagate</cite> is called, it means that one of the two watched variable is bound (<cite>x[wL] or x[wR]</cite>) and
+consequently the two pointers must be updated.</p></li>
+<li><p>If during the update a variable bound to <cite>true</cite> is detected, the constraint can be deactivated since it will always be satisfied.</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/watched-literals.svg"><img alt="watched literals" class="align-center" src="_images/watched-literals.svg" width="300" /></a>
+</section>
+<section id="the-logical-reified-or-constraint">
+<h2>The logical reified or constraint<a class="headerlink" href="#the-logical-reified-or-constraint" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Implement the constraint <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/IsOr.java?at=master">IsOr.java</a>
+for modeling the logical clause constraint: <cite>b iff (x[0] or x[1] or x[2] … x[n-1])</cite>.</p></li>
+<li><p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsOrTest.java?at=master">IsOrTest.java.</a></p></li>
+<li><p>In case <cite>b</cite> is true, you can post your previous <cite>Or</cite> constraint</p></li>
+</ul>
+<p>(create it once and forall and post it when needed to avoid creating objects during search that would trigger Garbage Collection).</p>
+</section>
+<section id="steel-mill-slab-problem-modeling-redundant-constraints-and-symmetry-breaking">
+<h2>Steel Mill Slab Problem: Modeling, redundant constraints and symmetry breaking<a class="headerlink" href="#steel-mill-slab-problem-modeling-redundant-constraints-and-symmetry-breaking" title="Permalink to this headline">¶</a></h2>
+<p>A number of TODO must be completed in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/Steel.java?at=master">Steel.java</a>
+that will gradually improve the performance for solving this problem optimally.</p>
+<ol class="arabic simple">
+<li><p>Model the objective function computing the total loss to be minimized. You should use element constraints to compute the loss
+in each slab. The precomputed array <cite>loss</cite> gives for each load (index) the loss
+that would be induced. It is precomputed as the difference between the smallest capacity that can accommodate
+the load and the load value. A sum constraint constraint can then be used to compute the total loss.</p></li>
+<li><p>Model a boolean variable reflecting the presence or not of each color in each slab.
+The color is present if at least one order with such color is present.
+The <cite>IsOr</cite> constraint previously implemented can be used for that.</p></li>
+<li><p>Restrict the number of colors present in slab j to be &lt;= 2.
+Your model can now be run, although it will not be able to solve optimally yet the easiest instance <cite>data/steel/bench_20_0</cite>.</p></li>
+<li><p>Add a redundant constraint for the bin-packing stating that sum of the loads is equal to the sum of elements.
+Do you observe an improvement in the solving complexity ?</p></li>
+<li><p>Add static symmetry breaking constraint. Two possibilities: the load of slabs must be decreasing or the losses must be decreasing.
+Do you observe an improvement in the solving complexity ?</p></li>
+<li><p>Implement a dynamic symmetry breaking during search. Select an order <cite>x</cite> representing the slab where this order is placed.
+Assume that the maximum index of a slab containing an order is m.
+Then create m+1 branches with x=0,x=1,…,x=m,x=m+1 since all the decisions x=m+2,x=m+3 … would subproblems symmetrical with x=m+1.
+You should now be able to solve optimally the instance ‘data/steel/bench_20_0’ reaching a zero loss solution.</p></li>
+</ol>
+</section>
+<section id="domain-consistent-filtering-for-the-alldifferent-constraint">
+<h2>Domain-Consistent filtering for the AllDifferent Constraint<a class="headerlink" href="#domain-consistent-filtering-for-the-alldifferent-constraint" title="Permalink to this headline">¶</a></h2>
+<p>The objective is to implement the filtering algorithm described in  <a class="reference internal" href="#regin94" id="id18"><span>[REGIN94]</span></a>
+to remove every impossible value for the <cite>AllDifferent</cite> constraint (this is called generalized arc consistency and is also known as domain consistency).
+More precisely, you must:</p>
+<ul class="simple">
+<li><p>Implement the constraint <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/AllDifferentDC.java?at=master">AllDifferentDC.java</a>.</p></li>
+<li><p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/AllDifferentDCTest.java?at=master">AllDifferentDCTest.java.</a></p></li>
+</ul>
+<p>Régin’s algorithm is a four-step procedure that can be described with the following figure:</p>
+<a class="reference internal image-reference" href="../_static/alldifferent.png"><img alt="profile" class="align-center" src="../_static/alldifferent.png" /></a>
+<p>The four steps are:</p>
+<ol class="arabic simple">
+<li><p>Computing an initial maximum matching in the variable-value graph for the consistency test (matched edges and value
+nodes are coloured blue in the figure).</p></li>
+<li><p>Building a directed graph: each matched edge becomes a (directed) arc originating from the variable node and terminating in the
+value node, and each unmatched edge becomes a (directed) arc originating from the value node and terminating in the
+variable node. Additionally, a dummy node is added
+that has an incoming arc from each unmatched value node, and an outgoing arc to each matched value node.</p></li>
+<li><p>Computing the strongly connected components (SCCs). Note that for this step, the number of each node in the figure
+corresponds to their SCC rather than their index or value for variable and value nodes respectively.</p></li>
+<li><p>Any arc that was not a matched edge and that connects two nodes from different components is
+removed. Note that for this step the number of each node in the figure once again corresponds to their index or value
+for variable and value nodes respectively.</p></li>
+</ol>
+<p>The two main algorithmic building blocks are provided:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/MaximumMatching.java?at=master">MaximumMatching.java</a>
+is a class that computes a maximum matching given an array of variables. Instantiate this class once in the constructor
+of <cite>AllDifferentDC</cite> and then call <cite>compute</cite> in the <cite>propagate</cite> method.</p></li>
+<li><p><a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/util/GraphUtil.java?at=master">GraphUtil.java</a>
+contains a static method with signature <cite>public static int[] stronglyConnectedComponents(Graph graph)</cite> to compute the strongly connected
+components. The returned array gives for each node its connected component id.</p></li>
+</ul>
+<p>One of the main difficulties of this exercise is to implement the <cite>Graph</cite> interface
+to represent the residual graph of the maximum matching:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Graph</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="cm">/* the number of nodes in this graph */</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">n</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="cm">/* incoming nodes ids incident to node idx */</span><span class="w"></span>
+<span class="w">    </span><span class="n">Iterable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">in</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="cm">/* outgoing nodes ids incident to node idx */</span><span class="w"></span>
+<span class="w">    </span><span class="n">Iterable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">out</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>It uses an adjacency list that is updated in the method <cite>updateGraph()</cite>.
+We advise you to use a dense representation with node ids as illustrated on the black nodes of the example (step2: directed graph).</p>
+<p>Once your code passes the tests, you can experiment your new constraint on all the models you have seen so far
+to measure the pruning gain on the number of nodes (NQueens, TSP, QAP, etc).</p>
+<dl class="citation">
+<dt class="label" id="regin94"><span class="brackets"><a class="fn-backref" href="#id18">REGIN94</a></span></dt>
+<dd><p>Régin, J.-C. (1994). A filtering algorithm for constraints of difference in CSPs, AAAI-94.</p>
+</dd>
+</dl>
+</section>
+<section id="limited-discrepancy-search-optional">
+<h2>Limited Discrepancy Search (optional)<a class="headerlink" href="#limited-discrepancy-search-optional" title="Permalink to this headline">¶</a></h2>
+<p>Implement <cite>LimitedDiscrepancyBranching</cite>, a branching that can wrap any branching
+to limit the discrepancy of the branching.</p>
+<p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/LimitedDiscrepancyBranchingTest.java?at=master">LimitedDiscrepancyBranchingTest.java.</a></p>
+</section>
+<section id="conflict-based-search-strategy">
+<h2>Conflict-based Search Strategy<a class="headerlink" href="#conflict-based-search-strategy" title="Permalink to this headline">¶</a></h2>
+<p>Implement the Conflict Ordering Search <a class="reference internal" href="learning_minicp/part_8.html#cos2015" id="id19"><span>[COS2015]</span></a> and Last Conflict <a class="reference internal" href="learning_minicp/part_8.html#lc2009" id="id20"><span>[LC2009]</span></a> heuristics.</p>
+<p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/LastConflictSearchTest.java?at=master">LastConflictSearchTest.java</a>
+and <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/ConflictOrderingSearchTest.java?at=master">ConflictOrderingSearchTest.java.</a>.</p>
+<dl class="citation">
+<dt class="label" id="lc2009"><span class="brackets"><a class="fn-backref" href="#id20">LC2009</a></span></dt>
+<dd><p>Lecoutre, C., Saïs, L., Tabary, S., &amp; Vidal, V. (2009). Reasoning from last conflict(s) in constraint programming. Artificial Intelligence, 173(18), 1592-1614.</p>
+</dd>
+<dt class="label" id="cos2015"><span class="brackets"><a class="fn-backref" href="#id19">COS2015</a></span></dt>
+<dd><p>Gay, S., Hartert, R., Lecoutre, C., &amp; Schaus, P. (2015). Conflict ordering search for scheduling problems. International Conference on Principles and Practice of Constraint Programming, pp. 140-148. Springer.</p>
+</dd>
+</dl>
+</section>
+<section id="restarts-optional">
+<h2>Restarts (optional)<a class="headerlink" href="#restarts-optional" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</section>
+<section id="alldifferent-forward-checking-optional">
+<h2>AllDifferent Forward Checking (optional)<a class="headerlink" href="#alldifferent-forward-checking-optional" title="Permalink to this headline">¶</a></h2>
+<p>Implement a dedicated propagator <cite>AllDifferentFW.java</cite> for the all-different constraint that does the same filtering
+as <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/AllDifferentBinary.java?at=master">AllDifferentACBinary.java</a>,
+but avoid iteration over bound variables when removing a value.
+Implement the sparse-set trick, as in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Sum.java?at=master">Sum.java</a>.
+Experiment with the 15-Queens problem instance. How much speed-up do you observe for finding all the solutions?</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/mini-cp.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Exercises</a><ul>
+<li><a class="reference internal" href="#learning-outcomes">Learning Outcomes</a></li>
+<li><a class="reference internal" href="#theoretical-exercises">Theoretical Exercises</a></li>
+<li><a class="reference internal" href="#less-or-equal-reified-constraint">Less or equal reified constraint</a></li>
+<li><a class="reference internal" href="#dfs-explicit-stack">DFS Explicit Stack</a></li>
+<li><a class="reference internal" href="#domain-with-an-arbitrary-set-of-values">Domain with an arbitrary set of values</a></li>
+<li><a class="reference internal" href="#implement-a-domain-iterator">Implement a domain iterator</a></li>
+<li><a class="reference internal" href="#implement-a-custom-search">Implement a Custom Search</a></li>
+<li><a class="reference internal" href="#experiment-and-modify-lns">Experiment and modify LNS</a></li>
+<li><a class="reference internal" href="#element-constraint">Element constraint</a></li>
+<li><a class="reference internal" href="#circuit-constraint">Circuit Constraint</a></li>
+<li><a class="reference internal" href="#custom-search-for-tsp">Custom Search for TSP</a></li>
+<li><a class="reference internal" href="#lns-applied-to-tsp">LNS applied to TSP</a></li>
+<li><a class="reference internal" href="#table-constraint">Table Constraint</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#using-bit-sets">Using bit sets</a></li>
+<li><a class="reference internal" href="#a-basic-implementation">A basic implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sequencer-combinator">Sequencer Combinator</a></li>
+<li><a class="reference internal" href="#eternity-problem">Eternity Problem</a></li>
+<li><a class="reference internal" href="#element-constraint-with-an-array-of-variables">Element constraint with an array of variables</a></li>
+<li><a class="reference internal" href="#the-stable-matching-problem">The stable matching problem</a></li>
+<li><a class="reference internal" href="#the-absolute-value-constraint">The absolute value constraint</a></li>
+<li><a class="reference internal" href="#the-maximum-constraint">The maximum constraint</a></li>
+<li><a class="reference internal" href="#compact-table-algorithm-for-table-constraints-with-short-tuples">Compact table algorithm for table constraints with short tuples</a></li>
+<li><a class="reference internal" href="#compact-table-algorithm-for-negative-table-constraints">Compact table algorithm for negative table constraints</a></li>
+<li><a class="reference internal" href="#cumulative-constraint-decomposition">Cumulative Constraint: Decomposition</a></li>
+<li><a class="reference internal" href="#cumulative-constraint-time-table-filtering">Cumulative Constraint: Time-Table filtering</a></li>
+<li><a class="reference internal" href="#the-resource-constrained-project-scheduling-problem-rcpsp">The Resource-Constrained Project Scheduling Problem (RCPSP)</a></li>
+<li><a class="reference internal" href="#the-jobshop-problem-and-disjunctive-resource">The JobShop Problem and disjunctive resource</a></li>
+<li><a class="reference internal" href="#the-logical-or-constraint-and-watched-literals">The logical or constraint and watched literals</a></li>
+<li><a class="reference internal" href="#the-logical-reified-or-constraint">The logical reified or constraint</a></li>
+<li><a class="reference internal" href="#steel-mill-slab-problem-modeling-redundant-constraints-and-symmetry-breaking">Steel Mill Slab Problem: Modeling, redundant constraints and symmetry breaking</a></li>
+<li><a class="reference internal" href="#domain-consistent-filtering-for-the-alldifferent-constraint">Domain-Consistent filtering for the AllDifferent Constraint</a></li>
+<li><a class="reference internal" href="#limited-discrepancy-search-optional">Limited Discrepancy Search (optional)</a></li>
+<li><a class="reference internal" href="#conflict-based-search-strategy">Conflict-based Search Strategy</a></li>
+<li><a class="reference internal" href="#restarts-optional">Restarts (optional)</a></li>
+<li><a class="reference internal" href="#alldifferent-forward-checking-optional">AllDifferent Forward Checking (optional)</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/exercises.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Exercises</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Laurent Michel, Pierre Schaus, Pascal Van Hentenryck.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+<div class="footer">
+    <script type="text/javascript">
+  (function() {
+    var ga = document.createElement('script');
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    document.documentElement.firstChild.appendChild(ga);
+  })();
+</script>
+</div>
+
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+        var b = c[a];
+        if(b.getAttribute("href") && b.hostname !== location.hostname) {
+            b.target = "_blank";
+            b.rel = "noopener";
+        }
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window();
+external_new_window();
+</script>
+
+
+  </body>
+</html>

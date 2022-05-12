@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ mini-cp is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License  v3
+  ~ as published by the Free Software Foundation.
+  ~
+  ~ mini-cp is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY.
+  ~ See the GNU Lesser General Public License  for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+  ~
+  ~ Copyright (filtering)  2017. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+  -->
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="221.736pt" height="192.136pt" viewBox="0 0 221.736 192.136" version="1.1">
+<defs>
+<clipPath id="clip1">
+  <path d="M 0 0 L 221.734375 0 L 221.734375 192.136719 L 0 192.136719 Z M 0 0 "/>
+</clipPath>
+<clipPath id="clip2">
+  <path d="M 0 159 L 37 159 L 37 192.136719 L 0 192.136719 Z M 0 159 "/>
+</clipPath>
+</defs>
+<g id="surface1">
+<g clip-path="url(#clip1)" clip-rule="nonzero">
+<path style="fill:none;stroke-width:0.79701;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 85.042094 184.252562 L -25.430563 -7.087281 L 195.510844 -7.087281 Z M 85.042094 184.252562 " transform="matrix(1,0,0,-1,25.829,184.651)"/>
+</g>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(50%,100%,50%);fill-opacity:1;" d="M 13.074219 170.476562 L 0.796875 191.738281 L 25.347656 191.738281 Z M 13.074219 170.476562 "/>
+<g clip-path="url(#clip2)" clip-rule="nonzero">
+<path style="fill:none;stroke-width:0.79701;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -12.754781 14.174437 L -25.032125 -7.087281 L -0.481344 -7.087281 Z M -12.754781 14.174437 " transform="matrix(1,0,0,-1,25.829,184.651)"/>
+</g>
+</g>
+</svg>

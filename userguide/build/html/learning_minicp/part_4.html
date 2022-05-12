@@ -1,0 +1,257 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Part 4: Sum and Element Constraints &#8212; MiniCP User-Guide  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 5: Circuit Constraint, TSP, Optimization, LNS, and VRP" href="part_5.html" />
+    <link rel="prev" title="Part 3: State Management (Trail + Copy) and Search" href="part_3.html" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-125847974-1']);
+  _gaq.push(['_trackPageview']);
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="part_5.html" title="Part 5: Circuit Constraint, TSP, Optimization, LNS, and VRP"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="part_3.html" title="Part 3: State Management (Trail + Copy) and Search"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" accesskey="U">Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 4: Sum and Element Constraints</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="part-4-sum-and-element-constraints">
+<h1>Part 4: Sum and Element Constraints<a class="headerlink" href="#part-4-sum-and-element-constraints" title="Permalink to this headline">¶</a></h1>
+<p><em>We ask you not to publish your solutions on a public repository.
+The instructors interested to get the source code of
+our solutions can contact us.</em></p>
+<section id="slides">
+<h2>Slides<a class="headerlink" href="#slides" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://youtube.com/playlist?list=PLq6RpCDkJMyrUvtxIwsgTQn2PZr55Bp2i">Lectures on Youtube</a></p></li>
+<li><p><a class="reference external" href="https://www.icloud.com/keynote/02bmdG7fW7LWPuuiOlm9vlf_g#04a-sum-constraint">Sum Constraint</a></p></li>
+<li><p><a class="reference external" href="https://www.icloud.com/keynote/013s60X8I6SEv_tG9OWbYj2qA#04b-element-constraints">Element Constraint</a></p></li>
+</ul>
+</section>
+<section id="theoretical-questions">
+<h2>Theoretical Questions<a class="headerlink" href="#theoretical-questions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://inginious.org/course/minicp/element">Element Constraints</a></p></li>
+</ul>
+</section>
+<section id="element1d-constraint">
+<h2>Element1D Constraint<a class="headerlink" href="#element1d-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Given an array <cite>T</cite> of integers and the variables <cite>y</cite> and <cite>z</cite>, the <cite>Element1D</cite> constraint enforces that <cite>z</cite> takes the value at index
+<cite>y</cite> of <cite>T</cite>: the relation <cite>T[y]=z</cite> must hold (where indexing starts from 0).</p>
+<p>Assuming <cite>T=[1,3,5,7,3]</cite>, the constraint holds for</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"></span>
+<span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="w"></span>
+</pre></div>
+</div>
+<p>but is violated for</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"></span>
+<span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Implement a propagator
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1D.java?at=master">Element1D.java</a>
+by following the ideas (also in the slides) for <cite>Element2D</cite>,
+which however do not lead to domain consistency for both variables.
+Check that your propagator passes the tests
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DTest.java?at=master">Element1DTest.java</a>.</p>
+<p>Also implement a propagator
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1DDomainConsistent.java?at=master">Element1DDomainConsistent.java</a>
+that achieves domain consistency for both variables.
+Check that your propagator passes the tests
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DDCTest.java?at=master">Element1DDCTest.java</a>.</p>
+</section>
+<section id="element1dvar-constraint-with-an-array-of-variables">
+<h2>Element1DVar Constraint with an Array of Variables<a class="headerlink" href="#element1dvar-constraint-with-an-array-of-variables" title="Permalink to this headline">¶</a></h2>
+<p>Implement a propagator
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1DVar.java?at=master">Element1DVar.java</a>.
+This constraint is more general than <cite>Element1D</cite> above,
+since <cite>T</cite> is here an array of variables.</p>
+<p>The filtering algorithm is nontrivial,
+at least if you want to do it efficiently.
+Two directions of implementation are:</p>
+<ul class="simple">
+<li><p>The hybrid domain-bound consistent propagator
+achieves bounds consistency for <cite>z</cite> and all the <cite>T[i]</cite>
+but domain consistency for <cite>y</cite>.</p></li>
+<li><p>The domain-consistent propagator
+achieves domain consistency for <cite>y</cite>, <cite>z</cite>, and all the <cite>T[i]</cite>.</p></li>
+</ul>
+<p>Check that your propagator passes the tests
+<a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DVarTest.java?at=master">Element1DVarTest.java</a>.
+Those tests do not check that your propagator achieves domain
+consistency for all the variables, so you have to write additional tests
+in order to help convince yourself that it does so, if you take that direction.</p>
+</section>
+<section id="the-stable-matching-problem">
+<h2>The Stable Matching Problem<a class="headerlink" href="#the-stable-matching-problem" title="Permalink to this headline">¶</a></h2>
+<p>Complete the partial model <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/StableMatching.java?at=master">StableMatching.java</a>.
+It makes use of the <cite>Element1DVar</cite> constraint you have just
+implemented and is also a good example of the manipulation of logical and reified constraints.
+Ensure that your implementation discovers all 6 solutions to the provided instance.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/mini-cp.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Part 4: Sum and Element Constraints</a><ul>
+<li><a class="reference internal" href="#slides">Slides</a></li>
+<li><a class="reference internal" href="#theoretical-questions">Theoretical Questions</a></li>
+<li><a class="reference internal" href="#element1d-constraint">Element1D Constraint</a></li>
+<li><a class="reference internal" href="#element1dvar-constraint-with-an-array-of-variables">Element1DVar Constraint with an Array of Variables</a></li>
+<li><a class="reference internal" href="#the-stable-matching-problem">The Stable Matching Problem</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="part_3.html"
+                          title="previous chapter">Part 3: State Management (Trail + Copy) and Search</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="part_5.html"
+                          title="next chapter">Part 5: Circuit Constraint, TSP, Optimization, LNS, and VRP</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/learning_minicp/part_4.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="part_5.html" title="Part 5: Circuit Constraint, TSP, Optimization, LNS, and VRP"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="part_3.html" title="Part 3: State Management (Trail + Copy) and Search"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" >Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 4: Sum and Element Constraints</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Laurent Michel, Pierre Schaus, Pascal Van Hentenryck.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+<div class="footer">
+    <script type="text/javascript">
+  (function() {
+    var ga = document.createElement('script');
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    document.documentElement.firstChild.appendChild(ga);
+  })();
+</script>
+</div>
+
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+        var b = c[a];
+        if(b.getAttribute("href") && b.hostname !== location.hostname) {
+            b.target = "_blank";
+            b.rel = "noopener";
+        }
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window();
+external_new_window();
+</script>
+
+
+  </body>
+</html>

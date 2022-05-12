@@ -1,0 +1,332 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Learn MiniCP &#8212; MiniCP User-Guide  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint" href="learning_minicp/part_1.html" />
+    <link rel="prev" title="Preface" href="intro.html" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-125847974-1']);
+  _gaq.push(['_trackPageview']);
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="learning_minicp/part_1.html" title="Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Preface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Learn MiniCP</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="learn-minicp">
+<span id="minicp"></span><h1>Learn MiniCP<a class="headerlink" href="#learn-minicp" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial is based on the course “LINFO2365 Constraint Programming” given at UCLouvain by Pierre Schaus.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_1.html">Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_1.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_1.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_1.html#forking-minicp-to-do-the-programming-exercices">Forking MiniCP to Do the Programming Exercices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_1.html#less-or-equal-reified-constraint">Less-or-equal Reified Constraint</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_2.html">Part 2: Domains, Variables, Constraints</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_2.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_2.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_2.html#domain-with-an-arbitrary-set-of-values">Domain with an Arbitrary Set of Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_2.html#implement-a-domain-iterator">Implement a Domain Iterator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_2.html#the-absolute-value-constraint">The Absolute Value Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_2.html#the-maximum-constraint">The Maximum Constraint</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_3.html">Part 3: State Management (Trail + Copy) and Search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_3.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_3.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_3.html#dfs-explicit-stack">DFS Explicit Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_3.html#implement-a-custom-search">Implement a Custom Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_3.html#sequencer-combinator">Sequencer Combinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_3.html#check-on-inginious">Check on INGInious</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_4.html">Part 4: Sum and Element Constraints</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_4.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_4.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_4.html#element1d-constraint">Element1D Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_4.html#element1dvar-constraint-with-an-array-of-variables">Element1DVar Constraint with an Array of Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_4.html#the-stable-matching-problem">The Stable Matching Problem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_5.html">Part 5: Circuit Constraint, TSP, Optimization, LNS, and VRP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_5.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_5.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_5.html#circuit-constraint">Circuit Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_5.html#custom-search-for-tsp">Custom Search for TSP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_5.html#lns-applied-to-tsp">LNS Applied to TSP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_5.html#from-tsp-to-vrp">From TSP to VRP</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_6.html">Part 6: AllDifferent Constraint</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_6.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_6.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_6.html#forward-checking-filtering">Forward-Checking Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_6.html#domain-consistent-filtering">Domain-Consistent Filtering</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_7.html">Part 7: Table Constraints</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_7.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_7.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_7.html#table-constraint">Table Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_7.html#eternity-problem">Eternity Problem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_8.html">Part 8: Search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_8.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_8.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_8.html#conflict-based-search-strategies">Conflict-based Search Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_8.html#bound-impact-value-selector">Bound-Impact Value Selector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_8.html#limited-discrepancy-search-optional">Limited Discrepancy Search (optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_9.html">Part 9: Cumulative Scheduling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_9.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_9.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_9.html#cumulative-constraint-decomposition">Cumulative Constraint: Decomposition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_9.html#cumulative-constraint-time-table-filtering">Cumulative Constraint: Time-Table Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_9.html#the-resource-constrained-project-scheduling-problem-rcpsp">The Resource-Constrained Project Scheduling Problem (RCPSP)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_10.html">Part 10: Disjunctive Scheduling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_10.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_10.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_10.html#decomposing-the-disjunctive-constraint">Decomposing the Disjunctive Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_10.html#the-global-disjunctive-constraint-overload-checker-detectable-precedence-and-not-first-not-last">The Global Disjunctive Constraint: Overload Checker, Detectable Precedence, and Not-First-Not-Last</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="learning_minicp/part_11.html">Part 11: Modeling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_11.html#slides">Slides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_11.html#theoretical-questions">Theoretical Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_11.html#the-logical-clause-constraint-and-watched-literals">The Logical Clause Constraint and Watched Literals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_11.html#the-reified-logical-clause-constraint">The Reified Logical-Clause Constraint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learning_minicp/part_11.html#steel-mill-slab-problem-modeling-redundant-constraints-and-symmetry-breaking">Steel Mill Slab Problem: Modeling, Redundant Constraints, and Symmetry Breaking</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="outcomes">
+<h2>Outcomes<a class="headerlink" href="#outcomes" title="Permalink to this headline">¶</a></h2>
+<p>Learning outcomes by studying MiniCP:</p>
+<p>From a state and inference perspective, specific learning outcomes include:</p>
+<ul class="simple">
+<li><p>Trailing and state reversion</p></li>
+<li><p>Domain and variable implementation – Propagation queue</p></li>
+<li><p>Arithmetic Constraints</p></li>
+<li><p>Logical Constraints</p></li>
+<li><p>Reified Constraints</p></li>
+<li><p>Global Constraints (including for scheduling)</p></li>
+<li><p>Views</p></li>
+</ul>
+<p>From a search perspective, the outcomes include:</p>
+<ul class="simple">
+<li><p>Backtracking algorithms and depth first search</p></li>
+<li><p>Branch and Bound for Constraint Optimization</p></li>
+<li><p>Incremental Computation</p></li>
+<li><p>Variable and Value Heuristics implementation</p></li>
+<li><p>Searching with phases</p></li>
+<li><p>Large Neighborhood Search</p></li>
+</ul>
+<p>While, from a modeling perspective, the outcomes include:</p>
+<ul class="simple">
+<li><p>Redundant constraints</p></li>
+<li><p>Bad smells and good smells: model preferably with Element constraints instead of 0/1 variables</p></li>
+<li><p>Breaking symmetries</p></li>
+<li><p>Scheduling: producer consumer problems, etc.</p></li>
+<li><p>Design problem specific heuristics and search</p></li>
+</ul>
+</section>
+<section id="minicp-article">
+<h2>MiniCP Article<a class="headerlink" href="#minicp-article" title="Permalink to this headline">¶</a></h2>
+<p>The complete architecture of MiniCP is described in this <a class="reference external" href="_static/mini-cp.pdf">paper</a> (<a class="reference external" href="https://doi.org/10.1007/s12532-020-00190-7">publisher PDF</a>) (<a class="reference external" href="http://user.it.uu.se/~pierref/courses/COCP/slides/delta.txt">errata and delta with current source code of MiniCP</a>):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@article{cite-key,
+        Author = {Michel, L. and Schaus, P. and Van Hentenryck, P.},
+        Doi = {10.1007/s12532-020-00190-7},
+        Id = {Michel2021},
+        Isbn = {1867-2957},
+        Journal = {Mathematical Programming Computation},
+        Number = {1},
+        Pages = {133-184},
+        Title = {MiniCP: a lightweight solver for constraint programming},
+        Ty = {JOUR},
+        Url = {https://doi.org/10.1007/s12532-020-00190-7},
+        Volume = {13},
+        Year = {2021}}
+</pre></div>
+</div>
+</section>
+<section id="minicp-xcsp3-mini-solver">
+<h2>MiniCP XCSP3 Mini Solver<a class="headerlink" href="#minicp-xcsp3-mini-solver" title="Permalink to this headline">¶</a></h2>
+<p>We provide under the form of a student project the possibility to participate to the XCSP3 MiniSolver Competition with MiniCP.
+All the interfacing with XCSP3 tools and the parsing of XCSP3 format is done for you.
+You can focus on the only interesting part: make your solver as efficient as possible.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://xcsp3.org/competition">XCSP3 Website</a></p></li>
+</ul>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/mini-cp.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Learn MiniCP</a><ul>
+<li><a class="reference internal" href="#outcomes">Outcomes</a></li>
+<li><a class="reference internal" href="#minicp-article">MiniCP Article</a></li>
+<li><a class="reference internal" href="#minicp-xcsp3-mini-solver">MiniCP XCSP3 Mini Solver</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="intro.html"
+                          title="previous chapter">Preface</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="learning_minicp/part_1.html"
+                          title="next chapter">Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/minicp.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="learning_minicp/part_1.html" title="Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Preface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Learn MiniCP</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Laurent Michel, Pierre Schaus, Pascal Van Hentenryck.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+<div class="footer">
+    <script type="text/javascript">
+  (function() {
+    var ga = document.createElement('script');
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    document.documentElement.firstChild.appendChild(ga);
+  })();
+</script>
+</div>
+
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+        var b = c[a];
+        if(b.getAttribute("href") && b.hostname !== location.hostname) {
+            b.target = "_blank";
+            b.rel = "noopener";
+        }
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window();
+external_new_window();
+</script>
+
+
+  </body>
+</html>

@@ -1,0 +1,236 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Part 8: Search &#8212; MiniCP User-Guide  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 9: Cumulative Scheduling" href="part_9.html" />
+    <link rel="prev" title="Part 7: Table Constraints" href="part_7.html" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-125847974-1']);
+  _gaq.push(['_trackPageview']);
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="part_9.html" title="Part 9: Cumulative Scheduling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="part_7.html" title="Part 7: Table Constraints"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" accesskey="U">Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 8: Search</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="part-8-search">
+<h1>Part 8: Search<a class="headerlink" href="#part-8-search" title="Permalink to this headline">¶</a></h1>
+<p><em>We ask you not to publish your solutions on a public repository.
+The instructors interested to get the source code of
+our solutions can contact us.</em></p>
+<section id="slides">
+<h2>Slides<a class="headerlink" href="#slides" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://youtube.com/playlist?list=PLq6RpCDkJMyrT4PlngDv0hQz_4JDgjto4">Lectures on Youtube</a></p></li>
+<li><p><a class="reference external" href="https://www.icloud.com/keynote/034UvpcU5ODHMNWkgxYgGU1Kg#08-black-box-search">Search Heuristics</a></p></li>
+</ul>
+</section>
+<section id="theoretical-questions">
+<h2>Theoretical Questions<a class="headerlink" href="#theoretical-questions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://inginious.org/course/minicp/search">Search</a></p></li>
+</ul>
+</section>
+<section id="conflict-based-search-strategies">
+<h2>Conflict-based Search Strategies<a class="headerlink" href="#conflict-based-search-strategies" title="Permalink to this headline">¶</a></h2>
+<p>Implement the Last Conflict <a class="reference internal" href="#lc2009" id="id1"><span>[LC2009]</span></a> and Conflict Ordering Search <a class="reference internal" href="#cos2015" id="id2"><span>[COS2015]</span></a> heuristics.</p>
+<p>Test your implementations in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/LastConflictSearchTest.java?at=master">LastConflictSearchTest.java</a>
+and <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/ConflictOrderingSearchTest.java?at=master">ConflictOrderingSearchTest.java.</a>.</p>
+<dl class="citation">
+<dt class="label" id="lc2009"><span class="brackets"><a class="fn-backref" href="#id1">LC2009</a></span></dt>
+<dd><p>Lecoutre, C., Saïs, L., Tabary, S., &amp; Vidal, V. (2009). Reasoning from last conflict(s) in constraint programming. Artificial Intelligence, 173(18), 1592-1614. (<a class="reference external" href="https://doi.org/10.1016/j.artint.2009.09.002">PDF</a>)</p>
+</dd>
+<dt class="label" id="cos2015"><span class="brackets"><a class="fn-backref" href="#id2">COS2015</a></span></dt>
+<dd><p>Gay, S., Hartert, R., Lecoutre, C., &amp; Schaus, P. (2015). Conflict ordering search for scheduling problems. International Conference on Principles and Practice of Constraint Programming, pp. 140-148. Springer. (<a class="reference external" href="https://doi.org/10.1007/978-3-319-23219-5_10">PDF</a>)</p>
+</dd>
+</dl>
+</section>
+<section id="bound-impact-value-selector">
+<h2>Bound-Impact Value Selector<a class="headerlink" href="#bound-impact-value-selector" title="Permalink to this headline">¶</a></h2>
+<p>Implement the bound-impact value selector <a class="reference internal" href="#bivs2017" id="id4"><span>[BIVS2017]</span></a> in order to discover good solutions quickly.</p>
+<p>Implement within <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/examples/TSPBoundImpact.java?at=master">TSPBoundImpact.java</a>.
+Verify experimentally that the first solution found is smaller than with the default minimum-value heuristic.
+You can also use it in combination with your conflict ordering search.</p>
+<p>Hint: You can test the effect on the objective value by first saving the state,
+fixing the variable to a value, and retrieving the new domain of the objective variable, before finally restoring the
+previous state.</p>
+<dl class="citation">
+<dt class="label" id="bivs2017"><span class="brackets"><a class="fn-backref" href="#id4">BIVS2017</a></span></dt>
+<dd><p>Fages, J.-G., &amp; Prud’Homme, C. (2017). Making the first solution good! IEEE 29th International Conference on Tools with Artificial Intelligence. IEEE. (<a class="reference external" href="https://doi.org/10.1109/ICTAI.2017.00164">PDF</a>)</p>
+</dd>
+</dl>
+</section>
+<section id="limited-discrepancy-search-optional">
+<h2>Limited Discrepancy Search (optional)<a class="headerlink" href="#limited-discrepancy-search-optional" title="Permalink to this headline">¶</a></h2>
+<p>Implement <cite>LimitedDiscrepancyBranching</cite>, a branching that can wrap any branching
+to limit the discrepancy of the branching.</p>
+<p>Test your implementation in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/search/LimitedDiscrepancyBranchingTest.java?at=master">LimitedDiscrepancyBranchingTest.java.</a>.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/mini-cp.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Part 8: Search</a><ul>
+<li><a class="reference internal" href="#slides">Slides</a></li>
+<li><a class="reference internal" href="#theoretical-questions">Theoretical Questions</a></li>
+<li><a class="reference internal" href="#conflict-based-search-strategies">Conflict-based Search Strategies</a></li>
+<li><a class="reference internal" href="#bound-impact-value-selector">Bound-Impact Value Selector</a></li>
+<li><a class="reference internal" href="#limited-discrepancy-search-optional">Limited Discrepancy Search (optional)</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="part_7.html"
+                          title="previous chapter">Part 7: Table Constraints</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="part_9.html"
+                          title="next chapter">Part 9: Cumulative Scheduling</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/learning_minicp/part_8.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="part_9.html" title="Part 9: Cumulative Scheduling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="part_7.html" title="Part 7: Table Constraints"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" >Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 8: Search</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Laurent Michel, Pierre Schaus, Pascal Van Hentenryck.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+<div class="footer">
+    <script type="text/javascript">
+  (function() {
+    var ga = document.createElement('script');
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    document.documentElement.firstChild.appendChild(ga);
+  })();
+</script>
+</div>
+
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+        var b = c[a];
+        if(b.getAttribute("href") && b.hostname !== location.hostname) {
+            b.target = "_blank";
+            b.rel = "noopener";
+        }
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window();
+external_new_window();
+</script>
+
+
+  </body>
+</html>

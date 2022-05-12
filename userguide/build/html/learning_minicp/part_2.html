@@ -1,0 +1,259 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Part 2: Domains, Variables, Constraints &#8212; MiniCP User-Guide  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bizstyle.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 3: State Management (Trail + Copy) and Search" href="part_3.html" />
+    <link rel="prev" title="Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint" href="part_1.html" />
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-125847974-1']);
+  _gaq.push(['_trackPageview']);
+</script>
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="part_3.html" title="Part 3: State Management (Trail + Copy) and Search"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="part_1.html" title="Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" accesskey="U">Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 2: Domains, Variables, Constraints</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="part-2-domains-variables-constraints">
+<h1>Part 2: Domains, Variables, Constraints<a class="headerlink" href="#part-2-domains-variables-constraints" title="Permalink to this headline">¶</a></h1>
+<p><em>We ask you not to publish your solutions on a public repository.
+The instructors interested to get the source code of
+our solutions can contact us.</em></p>
+<section id="slides">
+<h2>Slides<a class="headerlink" href="#slides" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://youtube.com/playlist?list=PLq6RpCDkJMypEq5qeLBz8xFTdtAkNr56I">Lectures on Youtube</a></p></li>
+<li><p><a class="reference external" href="https://www.icloud.com/keynote/0d8bL8fMVoxodgnQvYx_LHwxA#02-domains-variables-constraints">Domains and Variables</a></p></li>
+</ul>
+</section>
+<section id="theoretical-questions">
+<h2>Theoretical Questions<a class="headerlink" href="#theoretical-questions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://inginious.org/course/minicp/domains">Domains and Sparse Sets</a></p></li>
+</ul>
+</section>
+<section id="domain-with-an-arbitrary-set-of-values">
+<h2>Domain with an Arbitrary Set of Values<a class="headerlink" href="#domain-with-an-arbitrary-set-of-values" title="Permalink to this headline">¶</a></h2>
+<p>Implement the missing constructor in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVarImpl.java?at=master">IntVarImpl.java</a>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="nf">IntVarImpl</span><span class="p">(</span><span class="n">Solver</span><span class="w"> </span><span class="n">cp</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NotImplementedException</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This exercise is straightforward: just create a dense domain and then remove the values not present in the set.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master">IntVarTest.java</a>.</p>
+</section>
+<section id="implement-a-domain-iterator">
+<h2>Implement a Domain Iterator<a class="headerlink" href="#implement-a-domain-iterator" title="Permalink to this headline">¶</a></h2>
+<p>Many filtering algorithms require iteration over the values of a domain.</p>
+<p>A naive (but correct) way of iterating over a domain is:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="na">min</span><span class="p">();</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="na">max</span><span class="p">();</span><span class="w"> </span><span class="n">x</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// do something</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This method is rather inefficient because it will also consider the values that are not present in the domain.
+Instead, the <cite>fillArray</cite> method from <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/state/StateSparseSet.java?at=master">StateSparseSet.java</a>
+allows filling an array with all the values present in the sparse set.
+In case of an offset value of 0, you could even use the very efficient <cite>System.arraycopy</cite>.</p>
+<p>The main advantage over the iterator mechanism is that no object is created (and thus garbage collected).
+Indeed <cite>dest</cite> is typically a container array stored as an instance variable and reused many times.
+It is important for efficiency to avoid creating objects on the heap at each execution of a propagator.
+Never forget that a <cite>propagate()</cite> method of <cite>Constraint</cite> may be called thousands of times per second.
+This implementation using <cite>fillArray</cite> avoids the <cite>ConcurrentModificationException</cite> discussion
+when implementing an Iterator: should we allow modifying a domain while iterating on it?
+The answer here is very clear: you get a snapshot of the domain at the time of the call to <cite>fillArray</cite> and you can thus
+safely iterate over this <cite>dest</cite> array and modify the domain at the same time.</p>
+<p>To do:</p>
+<ul class="simple">
+<li><p>Improve the efficiency of <cite>fillArray</cite> from <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/state/StateSparseSet.java?at=master">StateSparseSet.java</a> in order to use <cite>System.arraycopy</cite> when possible.</p></li>
+<li><p>Implement <cite>public int fillArray(int [] dest)</cite> in <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVarImpl.java?at=master">IntVarImpl.java</a>.</p></li>
+<li><p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master">IntVarTest.java</a> and <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/state/StateSparseSetTest.java?at=master">StateSparseSetTest.java</a>. Additionally, add more tests to <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master">IntVarTest.java</a>.</p></li>
+</ul>
+</section>
+<section id="the-absolute-value-constraint">
+<h2>The Absolute Value Constraint<a class="headerlink" href="#the-absolute-value-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Absolute.java?at=master">Absolute.java</a>.</p>
+<p>Several directions of implementation are possible:</p>
+<ol class="arabic simple">
+<li><p>The full domain-consistent version (use the <cite>fillArray</cite> method to iterate over domains).</p></li>
+<li><p>A hybrid domain-bound consistent one.</p></li>
+</ol>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/AbsoluteTest.java?at=master">AbsoluteTest.java</a>.</p>
+</section>
+<section id="the-maximum-constraint">
+<h2>The Maximum Constraint<a class="headerlink" href="#the-maximum-constraint" title="Permalink to this headline">¶</a></h2>
+<p>Implement <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Maximum.java?at=master">Maximum.java</a>.</p>
+<p>Implement a bound-consistent filtering algorithm.</p>
+<p>Check that your implementation passes the tests <a class="reference external" href="https://bitbucket.org/minicp/minicp/src/HEAD/src/test/java/minicp/engine/constraints/MaximumTest.java?at=master">MaximumTest.java</a>.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/mini-cp.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Part 2: Domains, Variables, Constraints</a><ul>
+<li><a class="reference internal" href="#slides">Slides</a></li>
+<li><a class="reference internal" href="#theoretical-questions">Theoretical Questions</a></li>
+<li><a class="reference internal" href="#domain-with-an-arbitrary-set-of-values">Domain with an Arbitrary Set of Values</a></li>
+<li><a class="reference internal" href="#implement-a-domain-iterator">Implement a Domain Iterator</a></li>
+<li><a class="reference internal" href="#the-absolute-value-constraint">The Absolute Value Constraint</a></li>
+<li><a class="reference internal" href="#the-maximum-constraint">The Maximum Constraint</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="part_1.html"
+                          title="previous chapter">Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="part_3.html"
+                          title="next chapter">Part 3: State Management (Trail + Copy) and Search</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/learning_minicp/part_2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="part_3.html" title="Part 3: State Management (Trail + Copy) and Search"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="part_1.html" title="Part 1: Overview of CP, Filtering, Search, Consistency, Fixpoint"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MiniCP User-Guide  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../minicp.html" >Learn MiniCP</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Part 2: Domains, Variables, Constraints</a></li> 
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Laurent Michel, Pierre Schaus, Pascal Van Hentenryck.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+<div class="footer">
+    <script type="text/javascript">
+  (function() {
+    var ga = document.createElement('script');
+    ga.src = ('https:' == document.location.protocol ?
+              'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.setAttribute('async', 'true');
+    document.documentElement.firstChild.appendChild(ga);
+  })();
+</script>
+</div>
+
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+        var b = c[a];
+        if(b.getAttribute("href") && b.hostname !== location.hostname) {
+            b.target = "_blank";
+            b.rel = "noopener";
+        }
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window();
+external_new_window();
+</script>
+
+
+  </body>
+</html>
