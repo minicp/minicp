@@ -113,7 +113,7 @@ public class Connector {
     // 02 -> SEND MSG NOW
     out.write(msg);
     //out.flush();
-    TimeUnit.SECONDS.sleep(1);
+    //TimeUnit.SECONDS.sleep(1);
   }
 
   private void testMsg(byte[] msg) throws IOException {
