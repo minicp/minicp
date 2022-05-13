@@ -20,39 +20,31 @@ import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
+import minicp.search.TreeVisualizer;
 import minicp.util.Procedure;
 
 import java.util.Arrays;
-
-import static minicp.cp.BranchingScheme.*;
-import static minicp.cp.Factory.minus;
-import static minicp.cp.Factory.notEqual;
-import static minicp.cp.Factory.plus;
 
 /**
  * The N-Queens problem.
  * <a href="http://csplib.org/Problems/prob054/">CSPLib</a>.
  */
-public class NQueens {
+public class NQueensVisuTree {
     public static void main(String[] args) {
-        int n = 4;
+        int n = 8;
         Solver cp = Factory.makeSolver(false);
         IntVar[] q = Factory.makeIntVarArray(cp, n, n);
 
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 cp.post(Factory.notEqual(q[i], q[j]));
-
                 cp.post(Factory.notEqual(q[i], q[j], j - i));
                 cp.post(Factory.notEqual(q[i], q[j], i - j));
-                // alternative modeling using views
-                // cp.post(notEqual(plus(q[i], j - i), q[j]));
-                // cp.post(notEqual(minus(q[i], j - i), q[j]));
+
 
             }
-
-
+        }
 
         DFSearch search = Factory.makeDfs(cp, () -> {
             int idx = -1; // index of the first variable that is not fixed
@@ -72,12 +64,12 @@ public class NQueens {
             }
         });
 
+        TreeVisualizer.cpProfiler(search,() -> Arrays.toString(q));
+
         search.onSolution(() ->
                 System.out.println("solution:" + Arrays.toString(q))
         );
         SearchStatistics stats = search.solve(statistics -> statistics.numberOfSolutions() == 1000);
-
-        //search.showTree("NQUEENS");
 
         System.out.format("#Solutions: %s\n", stats.numberOfSolutions());
         System.out.format("Statistics: %s\n", stats);

@@ -22,7 +22,6 @@ import minicp.util.Procedure;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -35,8 +34,11 @@ public class DFSearch {
     private Supplier<Procedure[]> branching;
     private StateManager sm;
 
-    private List<Procedure> solutionListeners = new LinkedList<Procedure>();
-    private List<Procedure> failureListeners = new LinkedList<Procedure>();
+
+    private List<DFSListener> dfsListeners = new LinkedList<DFSListener>();
+
+
+    private int currNodeIdId;
 
     /**
      * Creates a Depth First Search object with a given branching
@@ -61,7 +63,17 @@ public class DFSearch {
      * @param listener the closure to be called whenever a solution is found
      */
     public void onSolution(Procedure listener) {
-        solutionListeners.add(listener);
+        dfsListeners.add(new DFSListener() {
+            @Override
+            public void solution(int pId, int id, int position) {
+                listener.call();
+            }
+        });
+    }
+
+
+    public void addListener(DFSListener listener) {
+        dfsListeners.add(listener);
     }
 
     /**
@@ -74,21 +86,32 @@ public class DFSearch {
      *                 the search need to backtrack
      */
     public void onFailure(Procedure listener) {
-        failureListeners.add(listener);
+        dfsListeners.add(new DFSListener() {
+            @Override
+            public void fail(int pId, int id, int position) {
+                listener.call();
+            }
+        });
     }
 
-    private void notifySolution() {
-        solutionListeners.forEach(s -> s.call());
+
+    private void notifySolution(int parentId, int nodeId, int position) {
+        dfsListeners.forEach(l -> l.solution(parentId, nodeId, position));
     }
 
-    private void notifyFailure() {
-        failureListeners.forEach(s -> s.call());
+    private void notifyFailure(int parentId, int nodeId, int position) {
+        dfsListeners.forEach(l -> l.fail(parentId, nodeId, position));
+    }
+
+    private void notifyBranch(int parentId, int nodeId, int position, int nChilds) {
+        dfsListeners.forEach(l -> l.branch(parentId, nodeId, position, nChilds));
     }
 
     private SearchStatistics solve(SearchStatistics statistics, Predicate<SearchStatistics> limit) {
+        currNodeIdId = 0;
         sm.withNewState(() -> {
             try {
-                dfs(statistics, limit);
+                dfs(statistics, limit , -1, -1);
                 statistics.setCompleted();
             } catch (StopSearchException ignored) {
             } catch (StackOverflowError e) {
@@ -215,28 +238,85 @@ public class DFSearch {
     }
 
 
-    private void dfs(SearchStatistics statistics, Predicate<SearchStatistics> limit) {
+    private void dfs(SearchStatistics statistics, Predicate<SearchStatistics> limit, int parentId, int position) {
         if (limit.test(statistics))
             throw new StopSearchException();
         Procedure[] branches = branching.get();
+        final int nodeId = currNodeIdId++;
+
         if (branches.length == 0) {
             statistics.incrSolutions();
-            notifySolution();
+            notifySolution(parentId,nodeId, position);
         } else {
+            notifyBranch(parentId,nodeId, position, branches.length);
+            int pos = 0;
             for (Procedure b : branches) {
+                final int p = pos;
                 sm.withNewState(() -> {
                     try {
                         statistics.incrNodes();
                         b.call();
-                        dfs(statistics, limit);
+                        dfs(statistics, limit, nodeId, p);
                     } catch (InconsistencyException e) {
+                        currNodeIdId++;
                         statistics.incrFailures();
-                        notifyFailure();
+                        notifyFailure(parentId,nodeId, p);
                     }
                 });
+                pos += 1;
             }
         }
     }
+
+    /*
+    public void showTree(){
+        cpprofilerbridge.Connector c = new cpprofilerbridge.Connector();
+        // Connect to port 6565 (default for cp-profiler)        
+        try {
+            c.connect(6565);
+            try {
+                c.start("EXAMPLE",-1);
+                while(nodelist.size() > 0){
+                    Node node = nodelist.get(0);
+                    c.createNode(node.getid(), node.getpid(), node.getpos(), node.children.size(), node.getStatus()).setNodeLabel("node: " + node.getid()).setNodeInfo(node.toString()).send();           
+                    nodelist.remove(0);
+                }
+                c.disconnect();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }*/
+
+    /*
+    public void showTree(String ex_name){
+        cpprofilerbridge.Connector c = new cpprofilerbridge.Connector();
+        // Connect to port 6565 (default for cp-profiler)        
+        try {
+            c.connect(6565);
+            try {
+                c.start(ex_name,-1);
+                while(nodelist.size() > 0){
+                    Node node = nodelist.get(0);
+                    c.createNode(node.getid(), node.getpid(), node.getpos(), node.children.size(), node.getStatus()).setNodeLabel("node: " + node.getid()).setNodeInfo(node.toString()).send();           
+                    nodelist.remove(0);
+                }
+                c.disconnect();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }*/
 
     
 
