@@ -17,6 +17,7 @@ package tinycsp.examples;
 
 
 
+import minicp.util.exception.NotImplementedException;
 import tinycsp.TinyCSP;
 import tinycsp.Variable;
 
@@ -47,7 +48,7 @@ public class GraphColoringTinyCSP {
 
 
     public static void main(String[] args) {
-        String path = "data/GC/easy/gc_15_30_9";
+        String path = "data/graph_coloring/gc_15_30_9";
         GraphColoringInstance instance = readInstance(path);
         int [] solution= solve(instance);
         // writeSol(path+".sol",solution,instance.maxColor);
@@ -113,7 +114,7 @@ public class GraphColoringTinyCSP {
         // TODO: solve the graph coloring problem using TinyCSP and return a solution
         // Hint: you can stop the search on first solution throwing and catching a exception
         //       in the onSolution closure or you can modify the dfs search
-         return null;
+         throw new NotImplementedException("AllDifferentDC");;
     }
 
 

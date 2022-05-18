@@ -1,6 +1,8 @@
 package tinycsp;
 
 import junit.framework.TestCase;
+import minicp.util.NotImplementedExceptionAssume;
+import minicp.util.exception.NotImplementedException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,7 +19,6 @@ public class GraphColoringTinyCSPTest extends TestCase {
     String path;
 
     public GraphColoringTinyCSPTest(String path){
-        System.out.println("path");
         this.path = path;
     }
 
@@ -52,11 +53,15 @@ public class GraphColoringTinyCSPTest extends TestCase {
     @Test
     public void testSolve() {
         GraphColoringTinyCSP.GraphColoringInstance instance = readInstance(path);
-        int [] solution = GraphColoringTinyCSP.solve(instance);
-        for (int [] edge: instance.edges) {
-            int i = edge[0];
-            int j = edge[1];
-            assertTrue(solution[i] != solution[j]);
+        try {
+            int[] solution = GraphColoringTinyCSP.solve(instance);
+            for (int[] edge : instance.edges) {
+                int i = edge[0];
+                int j = edge[1];
+                assertTrue(solution[i] != solution[j]);
+            }
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -66,7 +71,7 @@ public class GraphColoringTinyCSPTest extends TestCase {
         //I want my code to read input.txt line by line and feed the input in an arraylist so that it returns an equivalent of the code below
         List<String> files = new LinkedList<>();
         for (int i = 0; i < 10; i++) {
-            files.add("data/GC/easy/gc_15_30_"+i);
+            files.add("data/graph_coloring/gc_15_30_"+i);
         }
         return files;
     }
