@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/minicp/minicp-solution/tree/master.svg?style=svg)](https://circleci.com/gh/minicp/minicp-solution/tree/master)
+![build](https://github.com/minicp/minicp/actions/workflows/publish.yml/badge.svg)
 
 
 # README #
