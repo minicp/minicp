@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: pschaus/minicp
     steps:
     - name: Step 1 - Checkout main branch from GitHub
       uses: actions/checkout@v3
