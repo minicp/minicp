@@ -1,4 +1,4 @@
-package tinycsp;
+package tinycsp.examples;
 
 import junit.framework.TestCase;
 import minicp.util.NotImplementedExceptionAssume;
