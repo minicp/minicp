@@ -1,5 +1,6 @@
 package tinycsp.examples;
 
+import com.github.guillaumederval.javagrading.GradeClass;
 import junit.framework.TestCase;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.NotImplementedException;
@@ -13,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
+@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
 @RunWith(Parameterized.class)
 public class GraphColoringTinyCSPTest extends TestCase {
 
