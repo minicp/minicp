@@ -51,7 +51,7 @@ public class GraphColoringTinyCSP {
         String path = "data/graph_coloring/gc_15_30_9";
         GraphColoringInstance instance = readInstance(path);
         int [] solution= solve(instance);
-        // writeSol(path+".sol",solution,instance.maxColor);
+        writeSol(path+".sol",solution,instance.maxColor);
     }
 
     /**
