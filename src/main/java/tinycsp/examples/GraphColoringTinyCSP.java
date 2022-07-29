@@ -107,12 +107,12 @@ public class GraphColoringTinyCSP {
     /**
      * Solve the graph coloring problem
      * @param instance a graph coloring instance
-     * @return the color of each node such that no two adjacent node receive a same color,
+     * @return the color of each node such that no two adjacent nodes receive a same color,
      *         or null if the problem is unfeasible
      */
     public static int[] solve(GraphColoringInstance instance) {
         // TODO: solve the graph coloring problem using TinyCSP and return a solution
-        // Hint: you can stop the search on first solution throwing and catching a exception
+        // Hint: you can stop the search on first solution throwing and catching an exception
         //       in the onSolution closure or you can modify the dfs search
          throw new NotImplementedException("AllDifferentDC");
     }
