@@ -115,26 +115,29 @@ public class IsLessOrEqualVarTest extends SolverTest {
     }
 
     @Test
-    public void test4() {
+    public void testReactChanges() {
         try {
-
             Solver cp = solverFactory.get();
-            IntVar x = makeIntVar(cp, -4, 7);
+            IntVar x = makeIntVar(cp, 0, 10);
+            IntVar y = makeIntVar(cp, 0, 10);
             BoolVar b = makeBoolVar(cp);
+            cp.post(new IsLessOrEqualVar(b, x, y));
 
             cp.getStateManager().saveState();
             cp.post(equal(b, 1));
-            cp.post(new IsLessOrEqual(b, x, -2));
-            assertEquals(-2, x.max());
-            cp.getStateManager().restoreState();
+            assertEquals(10, x.max());
+            assertEquals(0, x.min());
+            assertEquals(10, y.max());
+            assertEquals(0, y.min());
+            cp.post(equal(y, 5));
+            assertEquals(5, x.max());
+            assertEquals(0, x.min());
 
-            cp.getStateManager().saveState();
+            cp.getStateManager().restoreState();
             cp.post(equal(b, 0));
-            cp.post(new IsLessOrEqual(b, x, -2));
-            assertEquals(-1, x.min());
-            cp.getStateManager().restoreState();
-
-
+            cp.post(equal(y, 5));
+            assertEquals(10, x.max());
+            assertEquals(6, x.min());
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
