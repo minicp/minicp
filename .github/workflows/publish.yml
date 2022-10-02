@@ -22,7 +22,7 @@ jobs:
 
       - name: Step - Create javadoc
         run: |
-          javadoc -encoding utf8 --enable-preview --release 17 -d javadoc -sourcepath src/main/java -subpackages minicp minicp
+          javadoc -encoding utf8 -d javadoc -sourcepath src/main/java -subpackages minicp minicp
           mv -r javadoc /tmp/.
       - uses: actions/checkout@v3
         with:
