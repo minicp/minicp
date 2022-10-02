@@ -29,6 +29,8 @@ jobs:
           ref: gh-pages
       - name: Step - add new javadoc
         run: |
+          git config --local user.email "github-actions@users.noreply.github.com"
+          git config --local user.name "github-actions"
           git rm -r *
           cp -r /tmp/javadoc/* .
           touch .nojekyll
