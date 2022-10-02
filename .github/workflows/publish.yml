@@ -33,6 +33,7 @@ jobs:
           cp -r /tmp/javadoc/* .
           touch .nojekyll
           git add -A
+          git commit -m "update javadoc"
       - name: Step - Push changes to gh-page branch
         uses: ad-m/github-push-action@master
         with:
