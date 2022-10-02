@@ -1,0 +1,12 @@
+minicp
+minicp.cp
+minicp.engine
+minicp.engine.constraints
+minicp.engine.core
+minicp.examples
+minicp.search
+minicp.state
+minicp.util
+minicp.util.exception
+minicp.util.io
+minicp.util.io.cpprofilerbridge
