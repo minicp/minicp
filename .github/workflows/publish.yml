@@ -29,7 +29,10 @@ jobs:
           ref: gh-pages
       - name: Step - add new javadoc
         run: |
-          cp -r /tmp/javadoc .
+          git rm -r *
+          cp -r /tmp/javadoc/* .
+          touch .nojekyll
+          git add -A
       - name: Step - Push changes to gh-page branch
         uses: ad-m/github-push-action@master
         with:
