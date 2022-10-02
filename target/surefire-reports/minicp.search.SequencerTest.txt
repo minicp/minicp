@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: minicp.search.SequencerTest
--------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 4, Time elapsed: 0.001 s - in minicp.search.SequencerTest

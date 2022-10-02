@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: minicp.engine.constraints.MaximumTest
--------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 10, Time elapsed: 0.012 s - in minicp.engine.constraints.MaximumTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: minicp.engine.constraints.Element1DVarTest
--------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 12, Time elapsed: 0.012 s - in minicp.engine.constraints.Element1DVarTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: minicp.engine.constraints.AllDifferentFWCTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 6, Time elapsed: 0.009 s - in minicp.engine.constraints.AllDifferentFWCTest
