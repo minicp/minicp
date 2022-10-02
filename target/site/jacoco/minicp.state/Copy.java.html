@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Copy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.state</a> &gt; <span class="el_source">Copy.java</span></div><h1>Copy.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.state;
+
+/**
+ * Implementation of {@link State} with copy strategy
+ * @see Copier
+ * @see StateManager#makeStateRef(Object)
+ */
+public class Copy&lt;T&gt; implements Storage, State&lt;T&gt; {
+
+    class CopyStateEntry implements StateEntry {
+        private final T v;
+
+<span class="fc" id="L28">        CopyStateEntry(T v) {</span>
+<span class="fc" id="L29">            this.v = v;</span>
+<span class="fc" id="L30">        }</span>
+        @Override public void restore() {
+<span class="fc" id="L32">            Copy.this.v = v;</span>
+<span class="fc" id="L33">        }</span>
+    }
+
+    private T v;
+
+<span class="fc" id="L38">    protected Copy(T initial) {</span>
+<span class="fc" id="L39">        v = initial;</span>
+<span class="fc" id="L40">    }</span>
+
+    @Override
+    public T setValue(T v) {
+<span class="fc" id="L44">        this.v = v;</span>
+<span class="fc" id="L45">        return v;</span>
+    }
+
+    @Override
+    public T value() {
+<span class="fc" id="L50">        return v;</span>
+    }
+
+
+    @Override
+    public String toString() {
+<span class="nc" id="L56">        return String.valueOf(v);</span>
+    }
+
+    @Override
+    public StateEntry save() {
+<span class="fc" id="L61">        return new CopyStateEntry(v);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntVarViewMul.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.core</a> &gt; <span class="el_source">IntVarViewMul.java</span></div><h1>IntVarViewMul.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+
+package minicp.engine.core;
+
+
+import minicp.util.Procedure;
+import minicp.util.exception.InconsistencyException;
+import minicp.util.exception.IntOverFlowException;
+
+/**
+ * A view on a variable of type {@code a*x}
+ */
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">public class IntVarViewMul implements IntVar {</span>
+
+    private final int a;
+    private final IntVar x;
+
+<span class="fc" id="L32">    public IntVarViewMul(IntVar x, int a) {</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if ((1L + x.min()) * a &lt;= (long) Integer.MIN_VALUE)</span>
+<span class="nc" id="L34">            throw new IntOverFlowException(&quot;consider applying a smaller mul cte as the min domain on this view is &lt;= Integer.MIN _VALUE&quot;);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if ((1L + x.max()) * a &gt;= (long) Integer.MAX_VALUE)</span>
+<span class="fc" id="L36">            throw new IntOverFlowException(&quot;consider applying a smaller mul cte as the max domain on this view is &gt;= Integer.MAX _VALUE&quot;);</span>
+<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        assert (a &gt; 0);</span>
+<span class="fc" id="L38">        this.a = a;</span>
+<span class="fc" id="L39">        this.x = x;</span>
+<span class="fc" id="L40">    }</span>
+
+    @Override
+    public Solver getSolver() {
+<span class="nc" id="L44">        return x.getSolver();</span>
+    }
+
+    @Override
+    public void whenFixed(Procedure f) {
+<span class="nc" id="L49">        x.whenFixed(f);</span>
+<span class="nc" id="L50">    }</span>
+
+    @Override
+    public void whenBoundChange(Procedure f) {
+<span class="nc" id="L54">        x.whenBoundChange(f);</span>
+<span class="nc" id="L55">    }</span>
+
+    @Override
+    public void whenDomainChange(Procedure f) {
+<span class="nc" id="L59">        x.whenDomainChange(f);</span>
+<span class="nc" id="L60">    }</span>
+
+    @Override
+    public void propagateOnDomainChange(Constraint c) {
+<span class="nc" id="L64">        x.propagateOnDomainChange(c);</span>
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public void propagateOnFix(Constraint c) {
+<span class="nc" id="L69">        x.propagateOnFix(c);</span>
+<span class="nc" id="L70">    }</span>
+
+    @Override
+    public void propagateOnBoundChange(Constraint c) {
+<span class="nc" id="L74">        x.propagateOnBoundChange(c);</span>
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public int min() {
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (a &gt;= 0)</span>
+<span class="fc" id="L80">            return a * x.min();</span>
+<span class="nc" id="L81">        else return a * x.max();</span>
+    }
+
+    @Override
+    public int max() {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (a &gt;= 0)</span>
+<span class="fc" id="L87">            return a * x.max();</span>
+<span class="nc" id="L88">        else return a * x.min();</span>
+    }
+
+    @Override
+    public int size() {
+<span class="fc" id="L93">        return x.size();</span>
+    }
+
+    @Override
+    public int fillArray(int[] dest) {
+<span class="nc" id="L98">        int s = x.fillArray(dest);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        for (int i = 0; i &lt; s; i++) {</span>
+<span class="nc" id="L100">            dest[i] *= a;</span>
+        }
+<span class="nc" id="L102">        return s;</span>
+    }
+
+    @Override
+    public boolean isFixed() {
+<span class="fc" id="L107">        return x.isFixed();</span>
+    }
+
+    @Override
+    public boolean contains(int v) {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        return (v % a != 0) ? false : x.contains(v / a);</span>
+    }
+
+    @Override
+    public void remove(int v) {
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (v % a == 0) {</span>
+<span class="fc" id="L118">            x.remove(v / a);</span>
+        }
+<span class="fc" id="L120">    }</span>
+
+    @Override
+    public void fix(int v) {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (v % a == 0) {</span>
+<span class="fc" id="L125">            x.fix(v / a);</span>
+        } else {
+<span class="fc" id="L127">            throw new InconsistencyException();</span>
+        }
+<span class="fc" id="L129">    }</span>
+
+    @Override
+    public void removeBelow(int v) {
+<span class="fc" id="L133">        x.removeBelow(ceilDiv(v, a));</span>
+<span class="fc" id="L134">    }</span>
+
+    @Override
+    public void removeAbove(int v) {
+<span class="fc" id="L138">        x.removeAbove(floorDiv(v, a));</span>
+<span class="fc" id="L139">    }</span>
+
+    // Java's division always rounds to the integer closest to zero, but we need flooring/ceiling versions.
+    private int floorDiv(int a, int b) {
+<span class="fc" id="L143">        int q = a / b;</span>
+<span class="pc bpc" id="L144" title="3 of 4 branches missed.">        return (a &lt; 0 &amp;&amp; q * b != a) ? q - 1 : q;</span>
+    }
+
+    private int ceilDiv(int a, int b) {
+<span class="fc" id="L148">        int q = a / b;</span>
+<span class="pc bpc" id="L149" title="3 of 4 branches missed.">        return (a &gt; 0 &amp;&amp; q * b != a) ? q + 1 : q;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L154">        StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L155">        b.append(&quot;{&quot;);</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        for (int i = min(); i &lt;= max() - 1; i++) {</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            if (contains((i))) {</span>
+<span class="nc" id="L158">                b.append(i);</span>
+<span class="nc" id="L159">                b.append(',');</span>
+            }
+        }
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (size() &gt; 0) b.append(max());</span>
+<span class="nc" id="L163">        b.append(&quot;}&quot;);</span>
+<span class="nc" id="L164">        return b.toString();</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

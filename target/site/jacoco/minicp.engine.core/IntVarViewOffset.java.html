@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntVarViewOffset.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.core</a> &gt; <span class="el_source">IntVarViewOffset.java</span></div><h1>IntVarViewOffset.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+
+package minicp.engine.core;
+
+import minicp.util.Procedure;
+import minicp.util.exception.IntOverFlowException;
+
+/**
+ * A view on a variable of type {@code x+o}
+ */
+public class IntVarViewOffset implements IntVar {
+
+    private final IntVar x;
+    private final int o;
+
+<span class="fc" id="L30">    public IntVarViewOffset(IntVar x, int offset) { // y = x + o</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (0L + x.min() + offset &lt;= (long) Integer.MIN_VALUE)</span>
+<span class="nc" id="L32">            throw new IntOverFlowException(&quot;consider applying a smaller offset as the min domain on this view is &lt;= Integer.MIN _VALUE&quot;);</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (0L + x.max() + offset &gt;= (long) Integer.MAX_VALUE)</span>
+<span class="fc" id="L34">            throw new IntOverFlowException(&quot;consider applying a smaller offset as the max domain on this view is &gt;= Integer.MAX _VALUE&quot;);</span>
+<span class="fc" id="L35">        this.x = x;</span>
+<span class="fc" id="L36">        this.o = offset;</span>
+
+<span class="fc" id="L38">    }</span>
+
+    @Override
+    public Solver getSolver() {
+<span class="fc" id="L42">        return x.getSolver();</span>
+    }
+
+    @Override
+    public void whenFixed(Procedure f) {
+<span class="fc" id="L47">        x.whenFixed(f);</span>
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    public void whenBoundChange(Procedure f) {
+<span class="nc" id="L52">        x.whenBoundChange(f);</span>
+<span class="nc" id="L53">    }</span>
+
+    @Override
+    public void whenDomainChange(Procedure f) {
+<span class="fc" id="L57">        x.whenDomainChange(f);</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public void propagateOnDomainChange(Constraint c) {
+<span class="fc" id="L62">        x.propagateOnDomainChange(c);</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public void propagateOnFix(Constraint c) {
+<span class="nc" id="L67">        x.propagateOnFix(c);</span>
+<span class="nc" id="L68">    }</span>
+
+    @Override
+    public void propagateOnBoundChange(Constraint c) {
+<span class="fc" id="L72">        x.propagateOnBoundChange(c);</span>
+<span class="fc" id="L73">    }</span>
+
+    @Override
+    public int min() {
+<span class="fc" id="L77">        return x.min() + o;</span>
+    }
+
+    @Override
+    public int max() {
+<span class="fc" id="L82">        return x.max() + o;</span>
+    }
+
+    @Override
+    public int size() {
+<span class="fc" id="L87">        return x.size();</span>
+    }
+
+    @Override
+    public int fillArray(int[] dest) {
+<span class="nc" id="L92">        int s = x.fillArray(dest);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        for (int i = 0; i &lt; s; i++) {</span>
+<span class="nc" id="L94">            dest[i] += o;</span>
+        }
+<span class="nc" id="L96">        return s;</span>
+    }
+
+    @Override
+    public boolean isFixed() {
+<span class="fc" id="L101">        return x.isFixed();</span>
+    }
+
+    @Override
+    public boolean contains(int v) {
+<span class="fc" id="L106">        return x.contains(v - o);</span>
+    }
+
+    @Override
+    public void remove(int v) {
+<span class="fc" id="L111">        x.remove(v - o);</span>
+<span class="fc" id="L112">    }</span>
+
+    @Override
+    public void fix(int v) {
+<span class="fc" id="L116">        x.fix(v - o);</span>
+<span class="fc" id="L117">    }</span>
+
+    @Override
+    public void removeBelow(int v) {
+<span class="fc" id="L121">        x.removeBelow(v - o);</span>
+<span class="fc" id="L122">    }</span>
+
+    @Override
+    public void removeAbove(int v) {
+<span class="fc" id="L126">        x.removeAbove(v - o);</span>
+<span class="fc" id="L127">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L131">        StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L132">        b.append(&quot;{&quot;);</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        for (int i = min(); i &lt;= max() - 1; i++) {</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            if (contains((i))) {</span>
+<span class="nc" id="L135">                b.append(i);</span>
+<span class="nc" id="L136">                b.append(',');</span>
+            }
+        }
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (size() &gt; 0) b.append(max());</span>
+<span class="nc" id="L140">        b.append(&quot;}&quot;);</span>
+<span class="nc" id="L141">        return b.toString();</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

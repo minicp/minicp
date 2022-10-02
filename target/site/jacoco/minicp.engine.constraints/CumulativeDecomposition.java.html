@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CumulativeDecomposition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">CumulativeDecomposition.java</span></div><h1>CumulativeDecomposition.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+
+package minicp.engine.constraints;
+
+import minicp.cp.Factory;
+import minicp.engine.core.AbstractConstraint;
+import minicp.engine.core.BoolVar;
+import minicp.engine.core.IntVar;
+import minicp.util.exception.NotImplementedException;
+
+import java.util.Arrays;
+
+import static minicp.cp.Factory.*;
+
+/**
+ * Cumulative constraint with sum decomposition (very slow).
+ */
+public class CumulativeDecomposition extends AbstractConstraint {
+
+    private final IntVar[] start;
+    private final int[] duration;
+    private final IntVar[] end;
+    private final int[] demand;
+    private final int capa;
+
+    /**
+     * Creates a cumulative constraint with a decomposition into sum constraint.
+     * At any time-point t, the sum of the demands
+     * of the activities overlapping t do not overlap the capacity.
+     *
+     * @param start the start time of each activities
+     * @param duration the duration of each activities (non negative)
+     * @param demand the demand of each activities, non negative
+     * @param capa the capacity of the constraint
+     */
+    public CumulativeDecomposition(IntVar[] start, int[] duration, int[] demand, int capa) {
+<span class="fc" id="L51">        super(start[0].getSolver());</span>
+<span class="fc" id="L52">        this.start = start;</span>
+<span class="fc" id="L53">        this.duration = duration;</span>
+<span class="fc" id="L54">        this.end = Factory.makeIntVarArray(start.length, i -&gt; plus(start[i], duration[i]));</span>
+<span class="fc" id="L55">        this.demand = demand;</span>
+<span class="fc" id="L56">        this.capa = capa;</span>
+<span class="fc" id="L57">    }</span>
+
+    @Override
+    public void post() {
+
+<span class="fc" id="L62">        int min = Arrays.stream(start).map(s -&gt; s.min()).min(Integer::compare).get();</span>
+<span class="fc" id="L63">        int max = Arrays.stream(end).map(e -&gt; e.max()).max(Integer::compare).get();</span>
+
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        for (int t = min; t &lt; max; t++) {</span>
+
+<span class="fc" id="L67">            BoolVar[] overlaps = new BoolVar[start.length];</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            for (int i = 0; i &lt; start.length; i++) {</span>
+<span class="fc" id="L69">                overlaps[i] = makeBoolVar(getSolver());</span>
+                // TODO
+                // post the constraints to enforce
+                // that overlaps[i] is true iff start[i] &lt;= t &amp;&amp; t &lt; start[i] + duration[i]
+                // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
+                //       logical constraints (such as logical and can be modeled with sum)
+
+<span class="fc" id="L76">                 throw new NotImplementedException(&quot;CumulativeDecomp&quot;);</span>
+            }
+
+<span class="nc" id="L79">            IntVar[] overlapHeights = Factory.makeIntVarArray(start.length, i -&gt; mul(overlaps[i], demand[i]));</span>
+<span class="nc" id="L80">            IntVar cumHeight = sum(overlapHeights);</span>
+<span class="nc" id="L81">            cumHeight.removeAbove(capa);</span>
+
+        }
+
+<span class="nc" id="L85">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

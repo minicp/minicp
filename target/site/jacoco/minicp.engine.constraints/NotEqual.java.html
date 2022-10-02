@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotEqual.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">NotEqual.java</span></div><h1>NotEqual.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (v)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.engine.constraints;
+
+import minicp.engine.core.AbstractConstraint;
+import minicp.engine.core.IntVar;
+import minicp.util.exception.NotImplementedException;
+
+/**
+ * Not Equal constraint between two variables
+ */
+public class NotEqual extends AbstractConstraint {
+    private final IntVar x, y;
+    private final int v;
+
+    /**
+     * Creates a constraint such
+     * that {@code x != y + v}
+     * @param x the left member
+     * @param y the right memer
+     * @param v the offset value on y
+     * @see minicp.cp.Factory#notEqual(IntVar, IntVar, int)
+     */
+    public NotEqual(IntVar x, IntVar y, int v) { // x != y + v
+<span class="fc" id="L38">        super(x.getSolver());</span>
+<span class="fc" id="L39">        this.x = x;</span>
+<span class="fc" id="L40">        this.y = y;</span>
+<span class="fc" id="L41">        this.v = v;</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Creates a constraint such
+     * that {@code x != y}
+     * @param x the left member
+     * @param y the right memer
+     * @see minicp.cp.Factory#notEqual(IntVar, IntVar)
+     */
+    public NotEqual(IntVar x, IntVar y) { // x != y
+<span class="fc" id="L52">        this(x, y, 0);</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public void post() {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (y.isFixed())</span>
+<span class="fc" id="L58">            x.remove(y.min() + v);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        else if (x.isFixed())</span>
+<span class="nc" id="L60">            y.remove(x.min() - v);</span>
+        else {
+<span class="fc" id="L62">            x.propagateOnFix(this);</span>
+<span class="fc" id="L63">            y.propagateOnFix(this);</span>
+        }
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public void propagate() {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (y.isFixed())</span>
+<span class="fc" id="L70">            x.remove(y.min() + v);</span>
+<span class="fc" id="L71">        else y.remove(x.min() - v);</span>
+<span class="fc" id="L72">        setActive(false);</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

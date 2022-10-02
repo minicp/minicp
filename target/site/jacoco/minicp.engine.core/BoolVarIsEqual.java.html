@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BoolVarIsEqual.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.core</a> &gt; <span class="el_source">BoolVarIsEqual.java</span></div><h1>BoolVarIsEqual.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.engine.core;
+
+import minicp.util.exception.InconsistencyException;
+import minicp.util.exception.NotImplementedException;
+
+public class BoolVarIsEqual extends IntVarImpl implements BoolVar {
+
+    public BoolVarIsEqual(IntVar x, int v) {
+<span class="nc" id="L24">        super(x.getSolver(), 0, 1);</span>
+
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (!x.contains(v)) {</span>
+<span class="nc" id="L27">            fix(false);</span>
+<span class="nc bnc" id="L28" title="All 4 branches missed.">        } else if (x.isFixed() &amp;&amp; x.min() == v) {</span>
+<span class="nc" id="L29">            fix(true);</span>
+        } else {
+
+<span class="nc" id="L32">            this.whenFixed(() -&gt; {</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">                if (isTrue()) x.fix(v);</span>
+<span class="nc" id="L34">                else x.remove(v);</span>
+<span class="nc" id="L35">            });</span>
+
+<span class="nc" id="L37">            x.whenDomainChange(() -&gt; {</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">                if (!x.contains(v)) {</span>
+<span class="nc" id="L39">                    this.fix(false);</span>
+                }
+<span class="nc" id="L41">            });</span>
+
+<span class="nc" id="L43">            x.whenFixed(() -&gt; {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                if (x.min() == v) {</span>
+<span class="nc" id="L45">                    fix(true);</span>
+                } else {
+<span class="nc" id="L47">                    fix(false);</span>
+                }
+<span class="nc" id="L49">            });</span>
+
+        }
+
+<span class="nc" id="L53">    }</span>
+
+    @Override
+    public boolean isTrue() {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        return min() == 1;</span>
+    }
+
+    @Override
+    public boolean isFalse() {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        return max() == 0;</span>
+    }
+
+    @Override
+    public void fix(boolean b) throws InconsistencyException {
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        fix(b ? 1 : 0);</span>
+<span class="nc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

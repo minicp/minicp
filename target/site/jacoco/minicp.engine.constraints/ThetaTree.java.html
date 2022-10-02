@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThetaTree.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">ThetaTree.java</span></div><h1>ThetaTree.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.engine.constraints;
+
+/**
+ * Data Structure described in
+ * Global Constraints in Scheduling, 2008 Petr Vilim, PhD thesis
+ * See &lt;a href=&quot;http://vilim.eu/petr/disertace.pdf&quot;&gt;The thesis.&lt;/a&gt;
+ */
+public class ThetaTree {
+
+    private static class Node {
+
+        private int sump;
+        private int ect;
+
+<span class="fc" id="L30">        Node() {</span>
+<span class="fc" id="L31">            reset();</span>
+<span class="fc" id="L32">        }</span>
+
+        public void reset() {
+<span class="fc" id="L35">            setECT(Integer.MIN_VALUE);</span>
+<span class="fc" id="L36">            setSUMP(0);</span>
+<span class="fc" id="L37">        }</span>
+
+        public int getECT() {
+<span class="fc" id="L40">            return ect;</span>
+        }
+
+        public int getSUMP() {
+<span class="fc" id="L44">            return sump;</span>
+        }
+
+        public void setECT(int ect) {
+<span class="fc" id="L48">            this.ect = ect;</span>
+<span class="fc" id="L49">        }</span>
+
+        public void setSUMP(int sump) {
+<span class="fc" id="L52">            this.sump = sump;</span>
+<span class="fc" id="L53">        }</span>
+
+    }
+
+    private Node[] nodes;
+    private int isize; //number of internal nodes
+    private int size;
+
+    /**
+     * Creates a theta-tree able to store
+     * the specified number of activities, each identified
+     * as a number between 0 and size-1.
+     * The activities inserted in a theta tree are assumed
+     * to be of increasing earliest start time.
+     * That is activity identified as i must possibly start earlier than
+     * activity i+1.
+     *
+     * @param size the number of activities that can possibly be inserted in the tree
+     */
+<span class="fc" id="L72">    public ThetaTree(int size) {</span>
+        // http://en.wikipedia.org/wiki/Binary_heap#Adding_to_the_heap
+<span class="fc" id="L74">        this.size = size;</span>
+<span class="fc" id="L75">        isize = 1;</span>
+        //enumerate multiples of two 2, 4, 6, 8 ... until isize larger than size
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        while (isize &lt; size) {</span>
+<span class="fc" id="L78">            isize &lt;&lt;= 1; //shift the pattern to the left by 1 (i.e. multiplies by 2)</span>
+        }
+        //number of nodes in a complete  binary tree with isize leaf nodes is (isize*2)-1
+<span class="fc" id="L81">        nodes = new Node[(isize &lt;&lt; 1) - 1];</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for (int i = 0; i &lt; nodes.length; i++) {</span>
+<span class="fc" id="L83">            nodes[i] = new Node();</span>
+        }
+<span class="fc" id="L85">        isize--;</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Remove all the activities from this theta-tree
+     */
+    public void reset() {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (Node n : nodes) {</span>
+<span class="fc" id="L93">            n.reset();</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+    /**
+     * Insert activity in leaf nodes at given position
+     * such that it is taken into account for the {@link #getECT()}
+     * computation.
+     *
+     * @param pos the index of the leaf node (assumed to start at 0 from left to right)
+     * @param ect earliest completion time
+     * @param dur duration
+     */
+    public void insert(int pos, int ect, int dur) {
+        //the last size nodes are the leaf nodes so the first one is isize (the number of internal nodes)
+<span class="fc" id="L108">        int currPos = isize + pos;</span>
+<span class="fc" id="L109">        Node node = nodes[currPos];</span>
+<span class="fc" id="L110">        node.setECT(ect);</span>
+<span class="fc" id="L111">        node.setSUMP(dur);</span>
+<span class="fc" id="L112">        reCompute(getFather(currPos));</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Remove activity at given position that it has no impact
+     * on the earliest completion time computation
+     *
+     * @param pos the index of the leaf nodes, assumed to start at 0 from left to right
+     */
+    public void remove(int pos) {
+<span class="fc" id="L122">        int currPos = isize + pos;</span>
+<span class="fc" id="L123">        Node node = nodes[currPos];</span>
+<span class="fc" id="L124">        node.reset();</span>
+<span class="fc" id="L125">        reCompute(getFather(currPos));</span>
+<span class="fc" id="L126">    }</span>
+
+    private int getECT(int pos) {
+<span class="fc" id="L129">        return nodes[pos].getECT();</span>
+    }
+
+    /**
+     * The earliest completion time of the activities present in the theta-tree
+     * @return the earliest completion time of the activities present in the theta-tree
+     */
+    public int getECT() {
+<span class="fc" id="L137">        return getECT(0);</span>
+    }
+
+    private int getSUMP(int pos) {
+<span class="fc" id="L141">        return nodes[pos].getSUMP();</span>
+    }
+
+    private int getFather(int pos) {
+        //the father of node in pos is (pos-1)/2
+<span class="fc" id="L146">        return (pos - 1) &gt;&gt; 1;</span>
+    }
+
+    private int getLeft(int pos) {
+        //the left child of pos is pos*2+1
+<span class="fc" id="L151">        return (pos &lt;&lt; 1) + 1;</span>
+    }
+
+    private int getRight(int pos) {
+        //the right child of pos is (pos+1)*2
+<span class="fc" id="L156">        return (pos + 1) &lt;&lt; 1;</span>
+    }
+
+    private void reComputeAux(int pos) {
+<span class="fc" id="L160">        int pl = getSUMP(getLeft(pos));</span>
+<span class="fc" id="L161">        int pr = getSUMP(getRight(pos));</span>
+<span class="fc" id="L162">        nodes[pos].setSUMP(pl + pr);</span>
+
+<span class="fc" id="L164">        int el = getECT(getLeft(pos));</span>
+<span class="fc" id="L165">        int er = getECT(getRight(pos));</span>
+<span class="fc" id="L166">        int en = Math.max(er, el + pr);</span>
+<span class="fc" id="L167">        nodes[pos].setECT(en);</span>
+<span class="fc" id="L168">    }</span>
+
+
+    private void reCompute(int pos) {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        while (pos &gt; 0) {</span>
+<span class="fc" id="L173">            reComputeAux(pos);</span>
+<span class="fc" id="L174">            pos = getFather(pos);</span>
+        }
+        // Fast recompute the top node. We do not need all info.
+<span class="fc" id="L177">        nodes[0].setECT(Math.max(nodes[2].getECT(),</span>
+<span class="fc" id="L178">                nodes[1].getECT() + nodes[2].getSUMP()));</span>
+<span class="fc" id="L179">    }</span>
+
+
+}
+
+
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

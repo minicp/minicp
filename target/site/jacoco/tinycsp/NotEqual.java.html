@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotEqual.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">tinycsp</a> &gt; <span class="el_source">NotEqual.java</span></div><h1>NotEqual.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package tinycsp;
+
+
+/**
+ * Constraint  x != y + offset
+ */
+class NotEqual extends Constraint {
+
+    Variable x, y;
+    int offset;
+
+<span class="nc" id="L27">    public NotEqual(Variable x, Variable y, int offset) {</span>
+<span class="nc" id="L28">        this.x = x;</span>
+<span class="nc" id="L29">        this.y = y;</span>
+<span class="nc" id="L30">        this.offset = offset;</span>
+<span class="nc" id="L31">    }</span>
+
+    public NotEqual(Variable x, Variable y) {
+<span class="nc" id="L34">        this(x, y, 0);</span>
+<span class="nc" id="L35">    }</span>
+
+    @Override
+    boolean propagate() {
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (x.dom.isFixed()) {</span>
+<span class="nc" id="L40">            return y.dom.remove(x.dom.min() - offset);</span>
+        }
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (y.dom.isFixed()) {</span>
+<span class="nc" id="L43">            return x.dom.remove(y.dom.min() + offset);</span>
+        }
+<span class="nc" id="L45">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableCT.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">TableCT.java</span></div><h1>TableCT.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.engine.constraints;
+
+import minicp.engine.core.AbstractConstraint;
+import minicp.engine.core.IntVar;
+import minicp.util.exception.InconsistencyException;
+import minicp.util.exception.NotImplementedException;
+
+import java.util.Arrays;
+import java.util.BitSet;
+
+import static minicp.cp.Factory.minus;
+
+/**
+ * Implementation of Compact Table algorithm described in
+ * &lt;p&gt;&lt;i&gt;Compact-Table: Efficiently Filtering Table Constraints with Reversible Sparse Bit-Sets&lt;/i&gt;
+ * Jordan Demeulenaere, Renaud Hartert, Christophe Lecoutre, Guillaume Perez, Laurent Perron, Jean-Charles Régin, Pierre Schaus
+ * &lt;p&gt;See &lt;a href=&quot;https://www.info.ucl.ac.be/~pschaus/assets/publi/cp2016-compacttable.pdf&quot;&gt;The article.&lt;/a&gt;
+ */
+public class TableCT extends AbstractConstraint {
+    private IntVar[] x; //variables
+    private int[][] table; //the table
+    //supports[i][v] is the set of tuples supported by x[i]=v
+    private BitSet[][] supports;
+
+    private BitSet supportedTuples;
+    private BitSet tmpSupport;
+
+    private int[] dom; // domain iterator
+
+    /**
+     * Table constraint.
+     * &lt;p&gt;The table constraint ensures that
+     * {@code x} is a row from the given table.
+     * More exactly, there exist some row &lt;i&gt;i&lt;/i&gt;
+     * such that
+     * {@code x[0]==table[i][0], x[1]==table[i][1], etc}.
+     *
+     * &lt;p&gt;This constraint is sometimes called &lt;i&gt;in extension&lt;/i&gt; constraint
+     * as the user enumerates the set of solutions that can be taken
+     * by the variables.
+     *
+     * @param x  the non empty set of variables to constraint
+     * @param table the possible set of solutions for x.
+     *              The second dimension must be of the same size as the array x.
+     */
+    public TableCT(IntVar[] x, int[][] table) {
+<span class="fc" id="L62">        super(x[0].getSolver());</span>
+<span class="fc" id="L63">        this.x = new IntVar[x.length];</span>
+<span class="fc" id="L64">        this.table = table;</span>
+<span class="fc" id="L65">        dom = new int[Arrays.stream(x).map(var -&gt; var.size()).max(Integer::compare).get()];</span>
+
+        // Allocate supportedByVarVal
+<span class="fc" id="L68">        supports = new BitSet[x.length][];</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (int i = 0; i &lt; x.length; i++) {</span>
+<span class="fc" id="L70">            this.x[i] = minus(x[i], x[i].min()); // map the variables domain to start at 0</span>
+<span class="fc" id="L71">            supports[i] = new BitSet[x[i].max() - x[i].min() + 1];</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            for (int j = 0; j &lt; supports[i].length; j++)</span>
+<span class="fc" id="L73">                supports[i][j] = new BitSet();</span>
+        }
+
+        // Set values in supportedByVarVal, which contains all the tuples supported by each var-val pair
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (int t = 0; t &lt; table.length; t++) { //i is the index of the tuple (in table)</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            for (int i = 0; i &lt; x.length; i++) { //j is the index of the current variable (in x)</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                if (x[i].contains(table[t][i])) {</span>
+<span class="fc" id="L80">                    supports[i][table[t][i] - x[i].min()].set(t);</span>
+                }
+            }
+        }
+
+<span class="fc" id="L85">        supportedTuples = new BitSet(table.length);</span>
+<span class="fc" id="L86">        tmpSupport = new BitSet(table.length);</span>
+<span class="fc" id="L87">    }</span>
+
+    @Override
+    public void post() {
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        for (IntVar var : x)</span>
+<span class="fc" id="L92">            var.propagateOnDomainChange(this);</span>
+<span class="nc" id="L93">        propagate();</span>
+<span class="nc" id="L94">    }</span>
+
+
+
+    @Override
+    public void propagate() {
+
+
+        // Bit-set of tuple indices all set to 1
+<span class="fc" id="L103">        supportedTuples.set(0, table.length);</span>
+
+        // TODO 1: compute supportedTuples as
+        // supportedTuples = (supports[0][x[0].min()] | ... | supports[0][x[0].max()] ) &amp; ... &amp;
+        //                   (supports[x.length][x[0].min()] | ... | supports[x.length][x[0].max()] )
+        //
+
+         // This should be displayed instead of the actual code
+
+        // TODO 2
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        for (int i = 0; i &lt; x.length; i++) {</span>
+<span class="nc" id="L114">            int nVal = x[i].fillArray(dom);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            for (int v = 0; v &lt; nVal; v++) {</span>
+                    // TODO 2 the condition for removing the setValue dom[v] from x[i] is to check if
+                    // there is no intersection between supportedTuples and the support[i][dom[v]]
+<span class="nc" id="L118">                     throw new NotImplementedException();</span>
+
+            }
+        }
+
+
+        //throw new NotImplementedException(&quot;TableCT&quot;);
+<span class="nc" id="L125">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

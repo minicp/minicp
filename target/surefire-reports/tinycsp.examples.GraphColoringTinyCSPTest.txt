@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: tinycsp.examples.GraphColoringTinyCSPTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 10, Time elapsed: 0.041 s - in tinycsp.examples.GraphColoringTinyCSPTest

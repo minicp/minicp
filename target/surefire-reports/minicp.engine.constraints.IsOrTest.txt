@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: minicp.engine.constraints.IsOrTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 4, Time elapsed: 0.017 s - in minicp.engine.constraints.IsOrTest

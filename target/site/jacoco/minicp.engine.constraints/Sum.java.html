@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Sum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">Sum.java</span></div><h1>Sum.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.engine.constraints;
+
+import minicp.cp.Factory;
+import minicp.engine.core.AbstractConstraint;
+import minicp.engine.core.IntVar;
+import minicp.state.State;
+import minicp.state.StateInt;
+import minicp.util.exception.InconsistencyException;
+import minicp.util.exception.NotImplementedException;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+/**
+ * Sum Constraint
+ */
+public class Sum extends AbstractConstraint {
+
+    private int[] fixed;
+    private StateInt nFixed;
+    private State&lt;Long&gt; sumFixed;
+    private IntVar[] x;
+    private int[] min, max;
+    private int n;
+
+    /**
+     * Creates a sum constraint.
+     * &lt;p&gt; This constraint holds iff
+     * {@code x[0]+x[1]+...+x[x.length-1] == y}.
+     *
+     * @param x the non empty left hand side of the sum
+     * @param y the right hand side of the sum
+     */
+    public Sum(IntVar[] x, IntVar y) {
+<span class="fc" id="L50">        this(Arrays.copyOf(x, x.length + 1));</span>
+<span class="fc" id="L51">        this.x[x.length] = Factory.minus(y);</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Creates a sum constraint.
+     * &lt;p&gt; This constraint holds iff
+     * {@code x[0]+x[1]+...+x[x.length-1] == y}.
+     *
+     * @param x the non empty left hand side of the sum
+     * @param y the right hand side of the sum
+     */
+    public Sum(IntVar[] x, int y) {
+<span class="fc" id="L63">        this(Arrays.copyOf(x, x.length + 1));</span>
+<span class="fc" id="L64">        this.x[x.length] = Factory.makeIntVar(getSolver(), -y, -y);</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Creates a sum constraint.
+     * &lt;p&gt; This constraint holds iff
+     * {@code x[0]+x[1]+...+x[x.length-1] == 0}.
+     *
+     * @param x the non empty set of variables that should sum to zero
+     */
+    public Sum(IntVar[] x) {
+<span class="fc" id="L75">        super(x[0].getSolver());</span>
+<span class="fc" id="L76">        this.x = x;</span>
+<span class="fc" id="L77">        this.n = x.length;</span>
+<span class="fc" id="L78">        min = new int[x.length];</span>
+<span class="fc" id="L79">        max = new int[x.length];</span>
+<span class="fc" id="L80">        nFixed = getSolver().getStateManager().makeStateInt(0);</span>
+<span class="fc" id="L81">        sumFixed = getSolver().getStateManager().makeStateRef(Long.valueOf(0));</span>
+<span class="fc" id="L82">        fixed = IntStream.range(0, n).toArray();</span>
+<span class="fc" id="L83">    }</span>
+
+    @Override
+    public void post() {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for (IntVar var : x)</span>
+<span class="fc" id="L88">            var.propagateOnBoundChange(this);</span>
+<span class="fc" id="L89">        propagate();</span>
+<span class="fc" id="L90">    }</span>
+
+    @Override
+    public void propagate() {
+        // Filter the unfixed vars and update the partial sum
+<span class="fc" id="L95">        int nF = nFixed.value();</span>
+<span class="fc" id="L96">        long sumMin = sumFixed.value(), sumMax = sumFixed.value();</span>
+        // iterate over not-fixed variables and update partial sum
+        // if  one variable is detected as fixed
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (int i = nF; i &lt; x.length; i++) {</span>
+<span class="fc" id="L100">            int idx = fixed[i];</span>
+<span class="fc" id="L101">            min[idx] = x[idx].min();</span>
+<span class="fc" id="L102">            max[idx] = x[idx].max();</span>
+<span class="fc" id="L103">            sumMin += min[idx]; // Update partial sum</span>
+<span class="fc" id="L104">            sumMax += max[idx];</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if (x[idx].isFixed()) {</span>
+<span class="fc" id="L106">                sumFixed.setValue(sumFixed.value() + x[idx].min());</span>
+<span class="fc" id="L107">                fixed[i] = fixed[nF]; // Swap the variables</span>
+<span class="fc" id="L108">                fixed[nF] = idx;</span>
+<span class="fc" id="L109">                nF++;</span>
+            }
+        }
+<span class="fc" id="L112">        nFixed.setValue(nF);</span>
+<span class="pc bpc" id="L113" title="1 of 4 branches missed.">        if (sumMin &gt; 0 || sumMax &lt; 0) {</span>
+<span class="fc" id="L114">            throw new InconsistencyException();</span>
+        }
+        // iterate over not-fixed variables
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        for (int i = nF; i &lt; x.length; i++) {</span>
+<span class="fc" id="L118">            int idx = fixed[i];</span>
+<span class="fc" id="L119">            x[idx].removeAbove(-((int) (sumMin - min[idx])));</span>
+<span class="fc" id="L120">            x[idx].removeBelow(-((int) (sumMax - max[idx])));</span>
+        }
+<span class="fc" id="L122">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Circuit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">Circuit.java</span></div><h1>Circuit.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+
+package minicp.engine.constraints;
+
+import minicp.engine.core.AbstractConstraint;
+import minicp.engine.core.IntVar;
+import minicp.state.StateInt;
+import minicp.util.exception.NotImplementedException;
+import static minicp.cp.Factory.allDifferent;
+
+/**
+ * Hamiltonian Circuit Constraint with a successor model
+ */
+public class Circuit extends AbstractConstraint {
+
+    private final IntVar[] x;
+    private final StateInt[] dest;
+    private final StateInt[] orig;
+    private final StateInt[] lengthToDest;
+
+    /**
+     * Creates an Hamiltonian Circuit Constraint
+     * with a successor model.
+     *
+     * @param x the variables representing the successor array that is
+     *          {@code x[i]} is the city visited after city i
+     */
+    public Circuit(IntVar[] x) {
+<span class="fc" id="L43">        super(x[0].getSolver());</span>
+<span class="fc" id="L44">        this.x = x;</span>
+<span class="fc" id="L45">        dest = new StateInt[x.length];</span>
+<span class="fc" id="L46">        orig = new StateInt[x.length];</span>
+<span class="fc" id="L47">        lengthToDest = new StateInt[x.length];</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (int i = 0; i &lt; x.length; i++) {</span>
+<span class="fc" id="L49">            dest[i] = getSolver().getStateManager().makeStateInt(i);</span>
+<span class="fc" id="L50">            orig[i] = getSolver().getStateManager().makeStateInt(i);</span>
+<span class="fc" id="L51">            lengthToDest[i] = getSolver().getStateManager().makeStateInt(0);</span>
+        }
+<span class="fc" id="L53">    }</span>
+
+
+    @Override
+    public void post() {
+<span class="fc" id="L58">        getSolver().post(allDifferent(x));</span>
+        // TODO
+        // Hint: use x[i].whenFixed(...) to call the fix
+<span class="fc" id="L61">         throw new NotImplementedException(&quot;Circuit&quot;);</span>
+    }
+
+
+    private void fix(int i) {
+        // TODO
+<span class="nc" id="L67">         throw new NotImplementedException(&quot;Circuit&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

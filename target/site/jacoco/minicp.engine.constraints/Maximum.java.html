@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Maximum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.engine.constraints</a> &gt; <span class="el_source">Maximum.java</span></div><h1>Maximum.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+
+package minicp.engine.constraints;
+
+import minicp.engine.core.AbstractConstraint;
+import minicp.engine.core.IntVar;
+import minicp.util.exception.NotImplementedException;
+
+/**
+ * Maximum Constraint
+ */
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">public class Maximum extends AbstractConstraint {</span>
+
+    private final IntVar[] x;
+    private final IntVar y;
+
+    /**
+     * Creates the maximum constraint y = maximum(x[0],x[1],...,x[n])?
+     *
+     * @param x the variable on which the maximum is to be found
+     * @param y the variable that is equal to the maximum on x
+     */
+    public Maximum(IntVar[] x, IntVar y) {
+<span class="fc" id="L38">        super(x[0].getSolver());</span>
+<span class="pc bpc" id="L39" title="2 of 4 branches missed.">        assert (x.length &gt; 0);</span>
+<span class="fc" id="L40">        this.x = x;</span>
+<span class="fc" id="L41">        this.y = y;</span>
+<span class="fc" id="L42">    }</span>
+
+
+    @Override
+    public void post() {
+        // TODO
+<span class="fc" id="L48">         throw new NotImplementedException(&quot;Maximum&quot;);</span>
+    }
+
+
+    @Override
+    public void propagate() {
+<span class="nc" id="L54">         throw new NotImplementedException(&quot;Maximum&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

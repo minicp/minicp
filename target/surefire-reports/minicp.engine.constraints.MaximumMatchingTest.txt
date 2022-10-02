@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: minicp.engine.constraints.MaximumMatchingTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 4, Time elapsed: 0.015 s - in minicp.engine.constraints.MaximumMatchingTest

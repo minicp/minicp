@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: minicp.engine.constraints.SumTest
+-------------------------------------------------------------------------------
+Tests run: 26, Failures: 0, Errors: 0, Skipped: 6, Time elapsed: 0.037 s - in minicp.engine.constraints.SumTest

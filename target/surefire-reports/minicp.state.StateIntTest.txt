@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: minicp.state.StateIntTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s - in minicp.state.StateIntTest

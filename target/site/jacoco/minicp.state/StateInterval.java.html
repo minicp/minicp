@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StateInterval.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.state</a> &gt; <span class="el_source">StateInterval.java</span></div><h1>StateInterval.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.state;
+
+/**
+ * Implementation of an interval that can saved and restored through
+ * the {@link StateManager#saveState()} / {@link StateManager#restoreState()}
+ * methods.
+ */
+<span class="nc bnc" id="L23" title="All 2 branches missed.">public class StateInterval {</span>
+    private StateManager sm;
+
+    private StateInt min;
+    private StateInt max;
+
+    /**
+     * Creates an interval that can be saved and restored
+     * with the {@link StateManager#saveState()} / {@link StateManager#restoreState()}
+     * methods.
+     *
+     * @param sm the state-manager that save and restore the state of this interval
+     * @param min the minimum value of the interval
+     * @param max the maximum value of the interval {@code max &gt;= min}
+     */
+<span class="nc" id="L38">    public StateInterval(StateManager sm, int min, int max) {</span>
+<span class="nc" id="L39">        this.min = sm.makeStateInt(min);</span>
+<span class="nc" id="L40">        this.max = sm.makeStateInt(max);</span>
+<span class="nc" id="L41">    }</span>
+
+    /**
+     * Checks if the interval is empty.
+     *
+     * @return true if the set is empty
+     */
+    public boolean isEmpty() {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        return min.value() &gt; max.value();</span>
+    }
+
+    /**
+     * Returns the number of integer values in the interval.
+     *
+     * @return the size of the set
+     */
+    public int size() {
+<span class="nc" id="L58">        return Math.max(max.value() - min.value() + 1, 0);</span>
+    }
+
+    /**
+     * Returns the minimum value in the interval.
+     *
+     * @return the minimum value in the set
+     */
+    public int min() {
+<span class="nc" id="L67">        return min.value();</span>
+    }
+
+    /**
+     * Returns the maximum value in the interval.
+     *
+     * @return the maximum value in the set
+     */
+    public int max() {
+<span class="nc" id="L76">        return max.value();</span>
+    }
+
+    /**
+     * Checks if the a given value in the interval
+     *
+     * @param val the value to check check.
+     * @return true if the value is in the interval
+     */
+    public boolean contains(int val) {
+<span class="nc bnc" id="L86" title="All 4 branches missed.">        return min.value() &lt;= val &amp;&amp; val &lt;= max.value();</span>
+    }
+
+    /**
+     * Sets the first values of &lt;code&gt;dest&lt;/code&gt; to the ones
+     * present in the interval.
+     *
+     * @param dest, an array large enough {@code dest.length &gt;= size()}
+     * @return the size of the set
+     */
+    public int fillArray(int[] dest) {
+<span class="nc" id="L97">        int s = size();</span>
+<span class="nc" id="L98">        int from = min();</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        for (int i = 0; i &lt; s; i++)</span>
+<span class="nc" id="L100">            dest[i] = from + i;</span>
+<span class="nc" id="L101">        return s;</span>
+    }
+
+
+    /**
+     * Reduces the interval to a single value.
+     *
+     * @param v is an element in the set
+     */
+    public void removeAllBut(int v) {
+<span class="nc bnc" id="L111" title="All 4 branches missed.">        assert (contains(v));</span>
+<span class="nc" id="L112">        min.setValue(v);</span>
+<span class="nc" id="L113">        max.setValue(v);</span>
+
+<span class="nc" id="L115">    }</span>
+
+    /**
+     * Empties the interval.
+     */
+    public void removeAll() {
+<span class="nc" id="L121">        min.setValue(max.value() + 1);</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Updates the minimum value of the interval
+     * to the given one if it is larger than the
+     * current {@link #min()}.
+     *
+     * @param value the minimum to set
+     */
+    public void removeBelow(int value) {
+<span class="nc" id="L132">        min.setValue(value);</span>
+<span class="nc" id="L133">    }</span>
+
+    /**
+     * Updates the maximum value of the interval
+     * to the given one if it is less than the
+     * current {@link #max()}.
+     *
+     * @param value the maximum to set
+     */
+    public void removeAbove(int value) {
+<span class="nc" id="L143">        max.setValue(value);</span>
+<span class="nc" id="L144">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L148">        StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L149">        b.append(&quot;{&quot;).append(min());</span>
+<span class="nc" id="L150">        b.append(&quot;..&quot;).append(max()).append(&quot;}&quot;);</span>
+<span class="nc" id="L151">        return b.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

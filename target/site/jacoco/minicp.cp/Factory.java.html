@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Factory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.cp</a> &gt; <span class="el_source">Factory.java</span></div><h1>Factory.java</h1><pre class="source lang-java linenums">/*
+ * mini-cp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
+ *
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+ *
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ */
+
+package minicp.cp;
+
+import minicp.engine.constraints.*;
+import minicp.engine.core.*;
+import minicp.search.DFSearch;
+import minicp.search.Objective;
+import minicp.state.Copier;
+import minicp.state.Trailer;
+import minicp.util.exception.InconsistencyException;
+import minicp.util.Procedure;
+import minicp.util.exception.IntOverFlowException;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+
+/**
+ * Factory to create {@link Solver}, {@link IntVar}, {@link Constraint}
+ * and some modeling utility methods.
+ * Example for the n-queens problem:
+ * &lt;pre&gt;
+ * {@code
+ *  Solver cp = Factory.makeSolver(false);
+ *  IntVar[] q = Factory.makeIntVarArray(cp, n, n);
+ *  for (int i = 0; i &lt; n; i++)
+ *    for (int j = i + 1; j &lt; n; j++) {
+ *      cp.post(Factory.notEqual(q[i], q[j]));
+ *      cp.post(Factory.notEqual(q[i], q[j], j - i));
+ *      cp.post(Factory.notEqual(q[i], q[j], i - j));
+ *    }
+ *  search.onSolution(() -&gt;
+ *    System.out.println(&quot;solution:&quot; + Arrays.toString(q))
+ *  );
+ *  DFSearch search = Factory.makeDfs(cp,firstFail(q));
+ *  SearchStatistics stats = search.solve();
+ * }
+ * &lt;/pre&gt;
+ */
+public final class Factory {
+
+<span class="nc" id="L58">    private Factory() {</span>
+<span class="nc" id="L59">        throw new UnsupportedOperationException();</span>
+    }
+
+    /**
+     * Creates a constraint programming solver
+     * @return a constraint programming solver with trail-based memory management
+     */
+    public static Solver makeSolver() {
+<span class="fc" id="L67">        return new MiniCP(new Trailer());</span>
+    }
+    /**
+     * Creates a constraint programming solver
+     * @param byCopy a value that should be true to specify
+     *               copy-based state management
+     *               or falso for a trail-based memory management
+     * @return a constraint programming solver
+     */
+    public static Solver makeSolver(boolean byCopy) {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        return new MiniCP(byCopy ? new Copier() : new Trailer());</span>
+    }
+
+    /**
+     * Creates a variable with a domain of specified arity.
+     *
+     * @param cp the solver in which the variable is created
+     * @param sz a positive value that is the size of the domain
+     * @return a variable with domain equal to the set {0,...,sz-1}
+     */
+    public static IntVar makeIntVar(Solver cp, int sz) {
+<span class="fc" id="L88">        return new IntVarImpl(cp, sz);</span>
+    }
+
+    /**
+     * Creates a variable with a domain equal to the specified range.
+     *
+     * @param cp the solver in which the variable is created
+     * @param min the lower bound of the domain (included)
+     * @param max the upper bound of the domain (included) {@code max &gt; min}
+     * @return a variable with domain equal to the set {min,...,max}
+     */
+    public static IntVar makeIntVar(Solver cp, int min, int max) {
+<span class="fc" id="L100">        return new IntVarImpl(cp, min, max);</span>
+    }
+
+    /**
+     * Creates a variable with a domain equal to the specified set of values.
+     *
+     * @param cp the solver in which the variable is created
+     * @param values a set of values
+     * @return a variable with domain equal to the set of values
+     */
+    public static IntVar makeIntVar(Solver cp, Set&lt;Integer&gt; values) {
+<span class="nc" id="L111">        return new IntVarImpl(cp, values);</span>
+    }
+
+    /**
+     * Creates a boolean variable.
+     *
+     * @param cp the solver in which the variable is created
+     * @return an uninstantiated boolean variable
+     */
+    public static BoolVar makeBoolVar(Solver cp) {
+<span class="fc" id="L121">        return new BoolVarImpl(cp);</span>
+    }
+
+    /**
+     * Creates an array of variables with specified domain size.
+     *
+     * @param cp the solver in which the variables are created
+     * @param n the number of variables to create
+     * @param sz a positive value that is the size of the domain
+     * @return an array of n variables, each with domain equal to the set {0,...,sz-1}
+     */
+    public static IntVar[] makeIntVarArray(Solver cp, int n, int sz) {
+<span class="fc" id="L133">        return makeIntVarArray(n, i -&gt; makeIntVar(cp, sz));</span>
+    }
+
+    /**
+     * Creates an array of variables with specified domain bounds.
+     *
+     * @param cp the solver in which the variables are created
+     * @param n the number of variables to create
+     * @param min the lower bound of the domain (included)
+     * @param max the upper bound of the domain (included) {@code max &gt; min}
+     * @return an array of n variables each with a domain equal to the set {min,...,max}
+     */
+    public static IntVar[] makeIntVarArray(Solver cp, int n, int min, int max) {
+<span class="fc" id="L146">        return makeIntVarArray(n, i -&gt; makeIntVar(cp, min, max));</span>
+    }
+
+    /**
+     * Creates an array of variables with specified lambda function
+     *
+     * @param n the number of variables to create
+     * @param body the function that given the index i in the array creates/map the corresponding {@link IntVar}
+     * @return an array of n variables
+     *         with variable at index &lt;i&gt;i&lt;/i&gt; generated as {@code body.get(i)}
+     */
+    public static IntVar[] makeIntVarArray(int n, Function&lt;Integer, IntVar&gt; body) {
+<span class="fc" id="L158">        IntVar[] t = new IntVar[n];</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        for (int i = 0; i &lt; n; i++)</span>
+<span class="fc" id="L160">            t[i] = body.apply(i);</span>
+<span class="fc" id="L161">        return t;</span>
+    }
+
+    /**
+     * Creates a Depth First Search with custom branching heuristic
+     * &lt;pre&gt;
+     * // Example of binary search: At each node it selects
+     * // the first free variable qi from the array q,
+     * // and creates two branches qi=v, qi!=v where v is the min value domain
+     * {@code
+     * DFSearch search = Factory.makeDfs(cp, () -&gt; {
+     *     IntVar qi = Arrays.stream(q).reduce(null, (a, b) -&gt; b.size() &gt; 1 &amp;&amp; a == null ? b : a);
+     *     if (qi == null) {
+     *        return return EMPTY;
+     *     } else {
+     *        int v = qi.min();
+     *        Procedure left = () -&gt; cp.post(equal(qi, v)); // left branch
+     *        Procedure right = () -&gt; cp.post(notEqual(qi, v)); // right branch
+     *        return branch(left, right);
+     *     }
+     * });
+     * }
+     * &lt;/pre&gt;
+     *
+     * @param cp the solver that will be used for the search
+     * @param branching a generator that is called at each node of the depth first search
+     *                 tree to generate an array of {@link Procedure} objects
+     *                 that will be used to commit to child nodes.
+     *                 It should return {@link BranchingScheme#EMPTY} whenever the current state
+     *                  is a solution.
+     *
+     * @return the depth first search object ready to execute with
+     *         {@link DFSearch#solve()} or
+     *         {@link DFSearch#optimize(Objective)}
+     *         using the given branching scheme
+     * @see BranchingScheme#firstFail(IntVar...)
+     * @see BranchingScheme#branch(Procedure...)
+     */
+    public static DFSearch makeDfs(Solver cp, Supplier&lt;Procedure[]&gt; branching) {
+<span class="fc" id="L200">        return new DFSearch(cp.getStateManager(), branching);</span>
+    }
+
+    // -------------- constraints -----------------------
+
+    /**
+     * A variable that is a view of {@code x*a}.
+     *
+     * @param x a variable
+     * @param a a constant to multiply x with
+     * @return a variable that is a view of {@code x*a}
+     */
+    public static IntVar mul(IntVar x, int a) {
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if (a == 0) return makeIntVar(x.getSolver(), 0, 0);</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        else if (a == 1) return x;</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        else if (a &lt; 0) {</span>
+<span class="fc" id="L216">            return minus(new IntVarViewMul(x, -a));</span>
+        } else {
+<span class="nc" id="L218">            return new IntVarViewMul(x, a);</span>
+        }
+    }
+
+    /**
+     * A variable that is a view of {@code -x}.
+     *
+     * @param x a variable
+     * @return a variable that is a view of {@code -x}
+     */
+    public static IntVar minus(IntVar x) {
+<span class="fc" id="L229">        return new IntVarViewOpposite(x);</span>
+    }
+
+    /**
+     * A variable that is a view of {@code x+v}.
+     *
+     * @param x a variable
+     * @param v a value
+     * @return a variable that is a view of {@code x+v}
+     */
+    public static IntVar plus(IntVar x, int v) {
+<span class="fc" id="L240">        return new IntVarViewOffset(x, v);</span>
+    }
+
+    /**
+     * A variable that is a view of {@code x-v}.
+     *
+     * @param x a variable
+     * @param v a value
+     * @return a variable that is a view of {@code x-v}
+     */
+    public static IntVar minus(IntVar x, int v) {
+<span class="fc" id="L251">        return new IntVarViewOffset(x, -v);</span>
+    }
+
+
+    /**
+     *  A boolean variable that is a view of {@code !b}.
+     *
+     * @param b a boolean variable
+     * @return a boolean variable that is a view of {@code !b}
+     */
+    public static BoolVar not(BoolVar b) {
+<span class="nc" id="L262">        return new BoolVarImpl(plus(minus(b),1));</span>
+    }
+
+    /**
+     * Computes a variable that is the absolute value of the given variable.
+     * This relation is enforced by the {@link Absolute} constraint
+     * posted by calling this method.
+     *
+     * @param x a variable
+     * @return a variable that represents the absolute value of x
+     */
+    public static IntVar abs(IntVar x) {
+<span class="nc" id="L274">        IntVar r = makeIntVar(x.getSolver(), 0, x.max());</span>
+<span class="nc" id="L275">        x.getSolver().post(new Absolute(x, r));</span>
+<span class="nc" id="L276">        return r;</span>
+    }
+
+    /**
+     * Computes a variable that is the maximum of a set of variables.
+     * This relation is enforced by the {@link Maximum} constraint
+     * posted by calling this method.
+     *
+     * @param x the variables on which to compute the maximum
+     * @return a variable that represents the maximum on x
+     * @see Factory#minimum(IntVar...)
+     */
+    public static IntVar maximum(IntVar... x) {
+<span class="fc" id="L289">        Solver cp = x[0].getSolver();</span>
+<span class="fc" id="L290">        int min = Arrays.stream(x).mapToInt(IntVar::min).min().getAsInt();</span>
+<span class="fc" id="L291">        int max = Arrays.stream(x).mapToInt(IntVar::max).max().getAsInt();</span>
+<span class="fc" id="L292">        IntVar y = makeIntVar(cp, min, max);</span>
+<span class="nc" id="L293">        cp.post(new Maximum(x, y));</span>
+<span class="nc" id="L294">        return y;</span>
+    }
+
+    /**
+     * Computes a variable that is the minimum of a set of variables.
+     * This relation is enforced by the {@link Maximum} constraint
+     * posted by calling this method.
+     *
+     * @param x the variables on which to compute the minimum
+     * @return a variable that represents the minimum on x
+     * @see Factory#maximum(IntVar...) (IntVar...)
+     */
+    public static IntVar minimum(IntVar... x) {
+<span class="nc" id="L307">        IntVar[] minusX = Arrays.stream(x).map(Factory::minus).toArray(IntVar[]::new);</span>
+<span class="nc" id="L308">        return minus(maximum(minusX));</span>
+    }
+
+    /**
+     * Returns a constraint imposing that the variable is
+     * equal to some given value.
+     *
+     * @param x the variable to be assigned to v
+     * @param v the value that must be assigned to x
+     * @return a constraint so that {@code x = v}
+     */
+    public static Constraint equal(IntVar x, int v) {
+<span class="fc" id="L320">        return new AbstractConstraint(x.getSolver()) {</span>
+            @Override
+            public void post() {
+<span class="fc" id="L323">                x.fix(v);</span>
+<span class="fc" id="L324">            }</span>
+        };
+    }
+
+    /**
+     * Returns a constraint imposing that the variable less or
+     * equal to some given value.
+     *
+     * @param x the variable that is constrained bo be less or equal to v
+     * @param v the value that must be the upper bound on x
+     * @return a constraint so that {@code x &lt;= v}
+     */
+    public static Constraint lessOrEqual(IntVar x, int v) {
+<span class="nc" id="L337">        return new AbstractConstraint(x.getSolver()) {</span>
+            @Override
+            public void post() {
+<span class="nc" id="L340">                x.removeAbove(v);</span>
+<span class="nc" id="L341">            }</span>
+        };
+    }
+
+    /**
+     * Returns a constraint imposing that the variable is different
+     * from some given value.
+     *
+     * @param x the variable that is constrained bo be different from v
+     * @param v the value that must be different from x
+     * @return a constraint so that {@code x != y}
+     */
+    public static Constraint notEqual(IntVar x, int v) {
+<span class="fc" id="L354">        return new AbstractConstraint(x.getSolver()) {</span>
+            @Override
+            public void post() {
+<span class="fc" id="L357">                x.remove(v);</span>
+<span class="fc" id="L358">            }</span>
+        };
+    }
+
+    /**
+     * Returns a constraint imposing that the two different variables
+     * must take different values.
+     *
+     * @param x a variable
+     * @param y a variable
+     * @return a constraint so that {@code x != y}
+     */
+    public static Constraint notEqual(IntVar x, IntVar y) {
+<span class="fc" id="L371">        return new NotEqual(x, y);</span>
+    }
+
+
+    /**
+     * Returns a constraint imposing that the two different variables
+     * must take the value.
+     *
+     * @param x a variable
+     * @param y a variable
+     * @return a constraint so that {@code x = y}
+     */
+    public static Constraint equal(IntVar x, IntVar y) {
+<span class="fc" id="L384">        return new Equal(x, y);</span>
+    }
+
+    /**
+     * Returns a constraint imposing that the
+     * the first variable differs from the second
+     * one minus a constant value.
+     *
+     * @param x a variable
+     * @param y a variable
+     * @param c a constant
+     * @return a constraint so that {@code x != y+c}
+     */
+    public static Constraint notEqual(IntVar x, IntVar y, int c) {
+<span class="nc" id="L398">        return new NotEqual(x, y, c);</span>
+    }
+
+    /**
+     * Returns a boolean variable representing
+     * whether one variable is equal to the given constant.
+     * This relation is enforced by the {@link IsEqual} constraint
+     * posted by calling this method.
+     *
+     * @param x the variable
+     * @param c the constant
+     * @return a boolean variable that is true if and only if x takes the value c
+     * @see IsEqual
+     */
+    public static BoolVar isEqual(IntVar x, final int c) {
+<span class="fc" id="L413">        BoolVar b = makeBoolVar(x.getSolver());</span>
+<span class="fc" id="L414">        Solver cp = x.getSolver();</span>
+        try {
+<span class="fc" id="L416">            cp.post(new IsEqual(b, x, c));</span>
+<span class="nc" id="L417">        } catch (InconsistencyException e) {</span>
+<span class="nc" id="L418">            e.printStackTrace();</span>
+<span class="fc" id="L419">        }</span>
+<span class="fc" id="L420">        return b;</span>
+    }
+
+    /**
+     * Returns a boolean variable representing
+     * whether one variable is less or equal to the given constant.
+     * This relation is enforced by the {@link IsLessOrEqual} constraint
+     * posted by calling this method.
+     *
+     * @param x the variable
+     * @param c the constant
+     * @return a boolean variable that is true if and only if
+     *         x takes a value less or equal to c
+     */
+    public static BoolVar isLessOrEqual(IntVar x, final int c) {
+<span class="nc" id="L435">        BoolVar b = makeBoolVar(x.getSolver());</span>
+<span class="nc" id="L436">        Solver cp = x.getSolver();</span>
+<span class="nc" id="L437">        cp.post(new IsLessOrEqual(b, x, c));</span>
+<span class="nc" id="L438">        return b;</span>
+    }
+
+    /**
+     * Returns a boolean variable representing
+     * whether one variable is less than the given constant.
+     * This relation is enforced by the {@link IsLessOrEqual} constraint
+     * posted by calling this method.
+     *
+     * @param x the variable
+     * @param c the constant
+     * @return a boolean variable that is true if and only if
+     *         x takes a value less than c
+     */
+    public static BoolVar isLess(IntVar x, final int c) {
+<span class="nc" id="L453">        return isLessOrEqual(x, c - 1);</span>
+    }
+
+    /**
+     * Returns a boolean variable representing
+     * whether one variable is larger or equal to the given constant.
+     * This relation is enforced by the {@link IsLessOrEqual} constraint
+     * posted by calling this method.
+     *
+     * @param x the variable
+     * @param c the constant
+     * @return a boolean variable that is true if and only if
+     *         x takes a value larger or equal to c
+     */
+    public static BoolVar isLargerOrEqual(IntVar x, final int c) {
+<span class="nc" id="L468">        return isLessOrEqual(minus(x), -c);</span>
+    }
+
+    /**
+     * Returns a boolean variable representing
+     * whether one variable is larger than the given constant.
+     * This relation is enforced by the {@link IsLessOrEqual} constraint
+     * posted by calling this method.
+     *
+     * @param x the variable
+     * @param c the constant
+     * @return a boolean variable that is true if and only if
+     *         x takes a value larger than c
+     */
+    public static BoolVar isLarger(IntVar x, final int c) {
+<span class="nc" id="L483">        return isLargerOrEqual(x, c + 1);</span>
+    }
+
+    /**
+     * Returns a constraint imposing that the
+     * a first variable is less or equal to a second one.
+     *
+     * @param x a variable
+     * @param y a variable
+     * @return a constraint so that {@code x &lt;= y}
+     */
+    public static Constraint lessOrEqual(IntVar x, IntVar y) {
+<span class="nc" id="L495">        return new LessOrEqual(x, y);</span>
+    }
+
+    /**
+     * Returns a constraint imposing that the
+     * a first variable is larger or equal to a second one.
+     *
+     * @param x a variable
+     * @param y a variable
+     * @return a constraint so that {@code x &gt;= y}
+     */
+    public static Constraint largerOrEqual(IntVar x, IntVar y) {
+<span class="nc" id="L507">        return new LessOrEqual(y, x);</span>
+    }
+
+    /**
+     * Returns a variable representing
+     * the value in an array at the position
+     * specified by the given index variable
+     * This relation is enforced by the {@link Element1D} constraint
+     * posted by calling this method.
+     *
+     * @param array the array of values
+     * @param y the variable
+     * @return a variable equal to {@code array[y]}
+     */
+    public static IntVar element(int[] array, IntVar y) {
+<span class="nc" id="L522">        Solver cp = y.getSolver();</span>
+<span class="nc" id="L523">        IntVar z = makeIntVar(cp, IntStream.of(array).min().getAsInt(), IntStream.of(array).max().getAsInt());</span>
+<span class="nc" id="L524">        cp.post(new Element1D(array, y, z));</span>
+<span class="nc" id="L525">        return z;</span>
+    }
+
+    /**
+     * Returns a variable representing
+     * the value in a matrix at the position
+     * specified by the two given row and column index variables
+     * This relation is enforced by the {@link Element2D} constraint
+     * posted by calling this method.
+     *
+     * @param matrix the n x m 2D array of values
+     * @param x the row variable with domain included in 0..n-1
+     * @param y the column variable with domain included in 0..m-1
+     * @return a variable equal to {@code matrix[x][y]}
+     */
+    public static IntVar element(int[][] matrix, IntVar x, IntVar y) {
+<span class="nc" id="L541">        int min = Integer.MAX_VALUE;</span>
+<span class="nc" id="L542">        int max = Integer.MIN_VALUE;</span>
+<span class="nc bnc" id="L543" title="All 2 branches missed.">        for (int i = 0; i &lt; matrix.length; i++) {</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">            for (int j = 0; j &lt; matrix[i].length; j++) {</span>
+<span class="nc" id="L545">                min = Math.min(min, matrix[i][j]);</span>
+<span class="nc" id="L546">                max = Math.max(max, matrix[i][j]);</span>
+            }
+        }
+<span class="nc" id="L549">        IntVar z = makeIntVar(x.getSolver(), min, max);</span>
+<span class="nc" id="L550">        x.getSolver().post(new Element2D(matrix, x, y, z));</span>
+<span class="nc" id="L551">        return z;</span>
+    }
+
+    /**
+     * Returns a variable representing
+     * the sum of a given set of variables.
+     * This relation is enforced by the {@link Sum} constraint
+     * posted by calling this method.
+     *
+     * @param x the n variables to sum
+     * @return a variable equal to {@code x[0]+x[1]+...+x[n-1]}
+     */
+    public static IntVar sum(IntVar... x) {
+<span class="nc" id="L564">        long sumMin = 0;</span>
+<span class="nc" id="L565">        long sumMax = 0;</span>
+<span class="nc bnc" id="L566" title="All 2 branches missed.">        for (int i = 0; i &lt; x.length; i++) {</span>
+<span class="nc" id="L567">            sumMin += x[i].min();</span>
+<span class="nc" id="L568">            sumMax += x[i].max();</span>
+        }
+<span class="nc bnc" id="L570" title="All 4 branches missed.">        if (sumMin &lt; (long) Integer.MIN_VALUE || sumMax &gt; (long) Integer.MAX_VALUE) {</span>
+<span class="nc" id="L571">            throw new IntOverFlowException(&quot;domains are too large for sum constraint and would exceed Integer bounds&quot;);</span>
+        }
+<span class="nc" id="L573">        Solver cp = x[0].getSolver();</span>
+<span class="nc" id="L574">        IntVar s = makeIntVar(cp, (int) sumMin, (int) sumMax);</span>
+<span class="nc" id="L575">        cp.post(new Sum(x, s));</span>
+<span class="nc" id="L576">        return s;</span>
+    }
+
+    /**
+     * Returns a sum constraint.
+     *
+     * @param x an array of variables
+     * @param y a variable
+     * @return a constraint so that {@code y = x[0]+x[1]+...+x[n-1]}
+     */
+    public static Constraint sum(IntVar[] x, IntVar y) {
+<span class="nc" id="L587">        return new Sum(x, y);</span>
+    }
+
+    /**
+     * Returns a sum constraint.
+     *
+     * @param x an array of variables
+     * @param y a constant
+     * @return a constraint so that {@code y = x[0]+x[1]+...+x[n-1]}
+     */
+    public static Constraint sum(IntVar[] x, int y) {
+<span class="nc" id="L598">        return new Sum(x, y);</span>
+    }
+
+    /**
+     * Returns a sum constraint.
+     * &lt;p&gt;
+     * Uses a _parameter pack_ to automatically bundle a list of IntVar as an array
+     *
+     * @param y the target value for the sum (a constant)
+     * @param x a parameter pack of IntVar representing an array of variables
+     * @return a constraint so that {@code y = x[0] + ... + x[n-1]}
+     */
+    public static Constraint sum(int y, IntVar... x) {
+<span class="nc" id="L611">        return new Sum(x, y);</span>
+    }
+
+    /**
+     * Returns a binary decomposition of the allDifferent constraint.
+     *
+     * @param x an array of variables
+     * @return a constraint so that {@code x[i] != x[j] for all i &lt; j}
+     */
+    public static Constraint allDifferent(IntVar[] x) {
+<span class="fc" id="L621">        return new AllDifferentBinary(x);</span>
+    }
+
+    /**
+     * Returns an allDifferent constraint that enforces
+     * domain consistency.
+     *
+     * @param x an array of variables
+     * @return a constraint so that {@code x[i] != x[j] for all i &lt; j}
+     */
+    public static Constraint allDifferentDC(IntVar[] x) {
+<span class="nc" id="L632">        return new AllDifferentDC(x);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

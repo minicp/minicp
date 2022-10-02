@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Example.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">minicp:minicp</a> &gt; <a href="index.source.html" class="el_package">minicp.util.io.cpprofilerbridge</a> &gt; <span class="el_source">Example.java</span></div><h1>Example.java</h1><pre class="source lang-java linenums">package minicp.util.io.cpprofilerbridge;
+
+import java.io.IOException;
+
+<span class="nc" id="L5">public class Example {</span>
+    public static void main (String args[]) throws IOException, InterruptedException {
+        try {
+
+<span class="nc" id="L9">            Connector c = new Connector();</span>
+
+            // Connect to port 6565 (default for cp-profiler)
+<span class="nc" id="L12">            c.connect(6565);</span>
+
+            // Initiate restarts
+<span class="nc" id="L15">            c.start(&quot;premier_test&quot;, -1);</span>
+
+            // Let build treed
+<span class="nc" id="L18">            c.createNode(0, -1, -1, 4, Connector.NodeStatus.BRANCH).setNodeLabel(&quot;0-root&quot;).send();</span>
+<span class="nc" id="L19">            c.createNode(1, 0, 0, 0, Connector.NodeStatus.FAILED).setNodeLabel(&quot;1-failed&quot;).send();</span>
+<span class="nc" id="L20">            c.createNode(2, 0, 1, 3, Connector.NodeStatus.BRANCH).setNodeLabel(&quot;2&quot;).setNodeInfo(&quot;some info&quot;).send();</span>
+
+<span class="nc" id="L22">            c.createNode(3, 2, 0, 0, Connector.NodeStatus.SOLVED).setNodeLabel(&quot;3-solution&quot;).send();</span>
+<span class="nc" id="L23">            c.createNode(4, 2, 1, 0, Connector.NodeStatus.FAILED).setNodeLabel(&quot;4-failed&quot;).send();</span>
+<span class="nc" id="L24">            c.createNode(5, 2, 2, 0, Connector.NodeStatus.FAILED).setNodeLabel(&quot;5-failed&quot;).send();</span>
+
+<span class="nc" id="L26">            c.createNode(6, 0, 2, 0, Connector.NodeStatus.FAILED).setNodeLabel(&quot;6-failed&quot;).send();</span>
+<span class="nc" id="L27">            c.createNode(7, 0, 3, 0, Connector.NodeStatus.FAILED).setNodeLabel(&quot;7-failed&quot;).send();</span>
+
+
+            // Logout message
+<span class="nc" id="L31">            c.disconnect();</span>
+        }
+<span class="nc" id="L33">        catch (Exception e){</span>
+<span class="nc" id="L34">            System.out.println(&quot;\n‼‼ Please launch CPProfiler first ‼‼&quot;);</span>
+<span class="nc" id="L35">        }</span>
+<span class="nc" id="L36">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

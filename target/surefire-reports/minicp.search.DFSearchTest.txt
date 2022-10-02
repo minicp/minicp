@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: minicp.search.DFSearchTest
+-------------------------------------------------------------------------------
+Tests run: 14, Failures: 0, Errors: 0, Skipped: 2, Time elapsed: 0.054 s - in minicp.search.DFSearchTest
