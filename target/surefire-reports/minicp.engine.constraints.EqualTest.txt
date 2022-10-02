@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: minicp.engine.constraints.EqualTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 4, Time elapsed: 0.004 s - in minicp.engine.constraints.EqualTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 4, Time elapsed: 0.006 s - in minicp.engine.constraints.EqualTest

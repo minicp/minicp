@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: minicp.engine.constraints.CumulativeTest
 -------------------------------------------------------------------------------
-Tests run: 18, Failures: 0, Errors: 0, Skipped: 18, Time elapsed: 0.022 s - in minicp.engine.constraints.CumulativeTest
+Tests run: 18, Failures: 0, Errors: 0, Skipped: 18, Time elapsed: 0.02 s - in minicp.engine.constraints.CumulativeTest

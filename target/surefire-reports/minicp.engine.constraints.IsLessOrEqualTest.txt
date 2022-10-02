@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: minicp.engine.constraints.IsLessOrEqualTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 12, Time elapsed: 0 s - in minicp.engine.constraints.IsLessOrEqualTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 12, Time elapsed: 0.014 s - in minicp.engine.constraints.IsLessOrEqualTest

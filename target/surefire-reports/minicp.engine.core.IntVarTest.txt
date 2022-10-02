@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: minicp.engine.core.IntVarTest
 -------------------------------------------------------------------------------
-Tests run: 18, Failures: 0, Errors: 0, Skipped: 6, Time elapsed: 0.022 s - in minicp.engine.core.IntVarTest
+Tests run: 18, Failures: 0, Errors: 0, Skipped: 6, Time elapsed: 0.023 s - in minicp.engine.core.IntVarTest
