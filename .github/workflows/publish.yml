@@ -1,25 +1,21 @@
-name: Update html
+name: test
 
 on:
   push:
     branches:
       - master
 jobs:
-  build:
+  testsolution:
     runs-on: ubuntu-latest
-    container: pschaus/minicp:version1.1
+    strategy:
+      matrix:
+        maven: ['3.8.5']
+        java: [ '8' ]
     steps:
-    - name: Step 1 - Checkout main branch from GitHub
-      uses: actions/checkout@v3
-    - name: Step2 - Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'adopt'
-        cache: maven
-    - name: Step 3 - Build package Maven
-      run: |
-        mvn -B package --file pom.xml
-    - name: Step4 - Test
-      run: |
-        mvn test
+      - name: Step - Setup Maven Action
+        uses: s4u/setup-maven-action@v1.2.1
+        with:
+          java-version: ${{ matrix.java }}
+          maven-version: ${{ matrix.maven }}
+      - name: Step - Build with Maven
+        run: mvn verify
