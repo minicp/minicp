@@ -22,13 +22,12 @@ import minicp.search.Objective;
 import minicp.search.SearchStatistics;
 import minicp.util.io.InputReader;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
-import static minicp.cp.BranchingScheme.firstFail;
-import static minicp.cp.BranchingScheme.limitedDiscrepancy;
+import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
+import minicp.util.exception.NotImplementedException;
 
 /**
  * The Quadratic Assignment problem.
@@ -41,13 +40,29 @@ import static minicp.cp.Factory.*;
  * by the corresponding flows.
  * <a href="https://en.wikipedia.org/wiki/Quadratic_assignment_problem">Wikipedia</a>.
  */
-public class QAP {
+public class QAP extends OptimizationProblem {
 
-    public static void main(String[] args) {
+    /**
+     * Utility class to store pairs of integers
+     */
+    static class Pair {
+        final int first;
+        final int second;
+        Pair(int first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
 
-        // ---- read the instance -----
+    public final int n;
+    public final int[][] weights;
+    public final int[][] distances;
+    public IntVar[] x;
+    public IntVar[] weightedDistances;
+    public IntVar totCost;
 
-        InputReader reader = new InputReader("data/qap.txt");
+    public QAP(String instanceFilePath) {
+        InputReader reader = new InputReader(instanceFilePath);
 
         int n = reader.getInt();
         // Weights
@@ -64,59 +79,69 @@ public class QAP {
                 d[i][j] = reader.getInt();
             }
         }
-
-        // ----- build the model ---
-        solve(n, w, d, true, stats -> false);
+        this.n = n;
+        this.weights = w;
+        this.distances = d;
     }
 
-    /**
-     * @param n       size of the problem
-     * @param w       weights
-     * @param d       distances
-     * @param verbose indicates if the solver should indicates on stdout its progression
-     * @param limit   allow to interrupt the solver faster if needed. See dfs.solve().
-     * @return list of solutions encountered
-     */
-    public static List<Integer> solve(int n, int[][] w, int[][] d, boolean verbose, Predicate<SearchStatistics> limit) {
+    @Override
+    public void buildModel() {
         Solver cp = makeSolver();
-        IntVar[] x = makeIntVarArray(cp, n, n);
+        x = makeIntVarArray(cp, n, n);
 
         cp.post(allDifferent(x));
 
-
         // build the objective function
-        IntVar[] weightedDist = new IntVar[n * n];
+        weightedDistances = new IntVar[n * n];
         for (int k = 0, i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                weightedDist[k] = mul(element(d, x[i], x[j]), w[i][j]);
+                weightedDistances[k] = mul(element(distances, x[i], x[j]), weights[i][j]);
                 k++;
             }
         }
-        IntVar totCost = sum(weightedDist);
-        Objective obj = cp.minimize(totCost);
+        totCost = sum(weightedDistances);
+        objective = cp.minimize(totCost);
+
+        Pair[] pairs = IntStream.range(0, n)
+                .mapToObj(i -> IntStream.range(0, n).mapToObj(j -> new Pair(i,j)))
+                .flatMap(s -> s)
+                .filter(p -> p.first != p.second)
+                .toArray(Pair[]::new);
+
+        dfs = makeDfs(cp, () -> {
+            // TODO modify the default variable selector
+            IntVar sel = selectMin(x,
+                    vari -> vari.size() > 1, // filter
+                    vari -> vari.size()      // variable selector
+            );
+            if (sel == null)
+                return EMPTY;
+            int v = sel.min(); // TODO modify the default value selector
+            return branch(
+                    () -> cp.post(equal(sel,v)),
+                    () -> cp.post(notEqual(sel,v))
+            );
+        });
 
         /*
         // TODO: discrepancy search (to be implemented as an exercise)
         for (int dL = 0; dL < x.length; dL++) {
-            DFSearch dfs = makeDfs(cp, limitedDiscrepancy(firstFail(x), dL));
-            dfs.optimize(obj);
+            dfs = makeDfs(cp, limitedDiscrepancy(firstFail(x), dL));
+
         }
         */
-
-        DFSearch dfs = makeDfs(cp, firstFail(x));
-
-        ArrayList<Integer> solutions = new ArrayList<>();
-        dfs.onSolution(() -> {
-            solutions.add(totCost.min());
-
-            if (verbose)
-                System.out.println("objective:" + totCost.min());
-        });
-
-        SearchStatistics stats = dfs.optimize(obj, limit);
-        if (verbose)
-            System.out.println(stats);
-
-        return solutions;
+        // TODO implement the search and remove the NotImplementedException
+         throw new NotImplementedException("QAP");
     }
+
+    public static void main(String[] args) {
+        // ---- read the instance -----
+        QAP qap = new QAP("data/qap.txt");
+        // ----- build the model ---
+        qap.buildModel();
+        // ----- solve the model ---
+        SearchStatistics statistics = qap.solve(true, stats -> false);
+        System.out.println(statistics);
+    }
+
 }

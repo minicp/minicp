@@ -17,11 +17,8 @@ package minicp.examples;
 
 import minicp.cp.Factory;
 import minicp.engine.constraints.TableCT;
-import minicp.engine.constraints.TableDecomp;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
-import minicp.search.DFSearch;
-import minicp.search.SearchStatistics;
 import minicp.util.io.InputReader;
 
 import java.util.Arrays;
@@ -29,6 +26,7 @@ import java.util.Arrays;
 import static minicp.cp.BranchingScheme.and;
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
+import minicp.util.exception.NotImplementedException;
 
 /**
  *
@@ -37,21 +35,26 @@ import static minicp.cp.Factory.*;
  *  constrained by the requirement to match adjacent edges.
  *  <a href="https://en.wikipedia.org/wiki/Eternity_II_puzzle">Wikipedia.</a>
  */
-public class Eternity {
+public class Eternity extends SatisfactionProblem {
+    public final int n;
+    public final int m;
+    public final int max;
+    public final int[][] pieces;
 
-    public static IntVar[] flatten(IntVar[][] x) {
-        return Arrays.stream(x).flatMap(Arrays::stream).toArray(IntVar[]::new);
+    public IntVar[][] id;
+    public IntVar[][] u;
+    public IntVar[][] d;
+    public IntVar[][] l;
+    public IntVar[][] r;
+
+    public Eternity(String instanceFilePath) {
+        this(false, instanceFilePath);
     }
 
-    public static void main(String[] args) {
-
-        // Reading the data
-
-        InputReader reader = new InputReader("data/eternity/eternity7x7.txt");
-        // also use instances at data/eternity/brendan
-
-        int n = reader.getInt();
-        int m = reader.getInt();
+    public Eternity(boolean verbose, String instanceFilePath) {
+        InputReader reader = new InputReader(instanceFilePath); // Reading the data
+        n = reader.getInt();
+        m = reader.getInt();
 
         int[][] pieces = new int[n * m][4];
         int maxTmp = 0;
@@ -62,10 +65,20 @@ public class Eternity {
                 if (pieces[i][j] > maxTmp)
                     maxTmp = pieces[i][j];
             }
-            System.out.println(Arrays.toString(pieces[i]));
+            if (verbose) { // print the pieces from the instance
+                System.out.println(Arrays.toString(pieces[i]));
+            }
         }
-        final int max = maxTmp;
+        this.max = maxTmp;
+        this.pieces = pieces;
+    }
 
+    public static IntVar[] flatten(IntVar[][] x) {
+        return Arrays.stream(x).flatMap(Arrays::stream).toArray(IntVar[]::new);
+    }
+
+    @Override
+    public void buildModel() {
         // ------------------------
 
         // TODO: create the table where each line correspond to one possible rotation of a piece
@@ -92,11 +105,11 @@ public class Eternity {
         //   |         |
 
 
-        IntVar[][] id = new IntVar[n][m]; // id
-        IntVar[][] u = new IntVar[n][m];  // up
-        IntVar[][] r = new IntVar[n][m];  // right
-        IntVar[][] d = new IntVar[n][m];  // down
-        IntVar[][] l = new IntVar[n][m];  // left
+        id = new IntVar[n][m]; // id
+        u = new IntVar[n][m];  // up
+        r = new IntVar[n][m];  // right
+        d = new IntVar[n][m];  // down
+        l = new IntVar[n][m];  // left
 
         for (int i = 0; i < n; i++) {
             u[i] = Factory.makeIntVarArray(m, j -> makeIntVar(cp, 0, max));
@@ -104,8 +117,11 @@ public class Eternity {
         }
         for (int k = 0; k < n; k++) {
             final int i = k;
-            if (i < n - 1) d[i] = u[i + 1];
-            else d[i] = Factory.makeIntVarArray(m, j -> makeIntVar(cp, 0, max));
+            if (i < n - 1) {
+                d[i] = u[i + 1];
+            } else {
+                d[i] = Factory.makeIntVarArray(m, j -> makeIntVar(cp, 0, max));
+            }
         }
         for (int j = 0; j < m; j++) {
             for (int i = 0; i < n; i++) {
@@ -114,8 +130,11 @@ public class Eternity {
         }
         for (int j = 0; j < m; j++) {
             for (int i = 0; i < n; i++) {
-                if (j < m - 1) r[i][j] = l[i][j + 1];
-                else r[i][j] = makeIntVar(cp, 0, max);
+                if (j < m - 1) {
+                    r[i][j] = l[i][j + 1];
+                } else {
+                    r[i][j] = makeIntVar(cp, 0, max);
+                }
             }
         }
 
@@ -134,43 +153,50 @@ public class Eternity {
 
         // The search using the and combinator
 
-        DFSearch dfs = makeDfs(cp,
+        dfs = makeDfs(cp,
                 /* TODO: continue, are you branching on all the variables ? */
                  and(firstFail(flatten((id))), firstFail(flatten(u)))
         );
+        // TODO add the constraints and remove the NotImplementedException
+         throw new NotImplementedException("Eternity");
+    }
 
-
+    /**
+     * Prints a solution when it is found
+     */
+    public void printSolutionFound() {
         dfs.onSolution(() -> {
             System.out.println("----------------");
             // Pretty Print
             for (int i = 0; i < n; i++) {
-                String line = "   ";
+                StringBuilder line = new StringBuilder("   ");
                 for (int j = 0; j < m; j++) {
-                    line += u[i][j].min() + "   ";
+                    line.append(u[i][j].min()).append("   ");
                 }
                 System.out.println(line);
-                line = " ";
+                line = new StringBuilder(" ");
                 for (int j = 0; j < m; j++) {
-                    line += l[i][j].min() + "   ";
+                    line.append(l[i][j].min()).append("   ");
                 }
-                line += r[i][m - 1].min();
+                line.append(r[i][m - 1].min());
                 System.out.println(line);
             }
-            String line = "   ";
+            StringBuilder line = new StringBuilder("   ");
             for (int j = 0; j < m; j++) {
-                line += d[n - 1][j].min() + "   ";
+                line.append(d[n - 1][j].min()).append("   ");
             }
             System.out.println(line);
-
         });
-
-        long t0 = System.currentTimeMillis();
-        SearchStatistics stats = dfs.solve(statistics -> statistics.numberOfSolutions() == 5);
-
-        System.out.format("#Solutions: %s\n", stats.numberOfSolutions());
-        System.out.format("Statistics: %s\n", stats);
-        System.out.format("time: %s\n", System.currentTimeMillis()-t0);
-
-
     }
+
+    public static void main(String[] args) {
+        // also use instances at data/eternity/brendan
+        // verbose = true ==> print the pieces from the instance
+        Eternity eternity = new Eternity(true, "data/eternity/brendan/pieces_03x03.txt");
+        eternity.buildModel();
+        eternity.printSolutionFound();
+        //eternity.solve( true, stats -> stats.numberOfSolutions() == 5);
+        eternity.solve( true);
+    }
+
 }

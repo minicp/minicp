@@ -35,4 +35,9 @@ public class Minimize implements Objective {
         this.bound = x.max() - 1;
         throw InconsistencyException.INCONSISTENCY;
     }
+
+    @Override
+    public String toString() {
+        return String.format("objective: %s", x.min());
+    }
 }

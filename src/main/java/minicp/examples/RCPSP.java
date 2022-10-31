@@ -24,26 +24,38 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.io.InputReader;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
+import minicp.util.exception.NotImplementedException;
 
 
 /**
  * Resource Constrained Project Scheduling Problem.
  * <a href="http://www.om-db.wi.tum.de/psplib/library.html">PSPLIB</a>.
  */
-public class RCPSP {
+public class RCPSP extends OptimizationProblem {
 
+    public final int nActivities;
+    public final int nResources;
+    public final int horizon;
+    public final int[] capa;
+    public final int[] duration;
+    public final int[][] consumption;
+    public final int[][] successors;
 
-    public static void main(String[] args) {
-
+    public IntVar[] start;
+    public IntVar[] end;
+    public RCPSP(String instanceFilePath) {
         // Reading the data
-
-        InputReader reader = new InputReader("data/rcpsp/j90_1_1.rcp");
+        InputReader reader = new InputReader(instanceFilePath);
         // use all instances at data/rcpsp
 
-        int nActivities = reader.getInt();
-        int nResources = reader.getInt();
+        nActivities = reader.getInt();
+        nResources = reader.getInt();
 
         int[] capa = new int[nResources];
         for (int i = 0; i < nResources; i++) {
@@ -69,15 +81,19 @@ public class RCPSP {
             }
         }
 
+        this.horizon = horizon;
+        this.capa = capa;
+        this.duration = duration;
+        this.consumption = consumption;
+        this.successors = successors;
+    }
 
-        // -------------------------------------------
-
+    @Override
+    public void buildModel() {
         // The Model
-
         Solver cp = makeSolver();
-
-        IntVar[] start = makeIntVarArray(cp, nActivities, horizon);
-        IntVar[] end = new IntVar[nActivities];
+        start = makeIntVarArray(cp, nActivities, horizon);
+        end = new IntVar[nActivities];
 
 
         for (int i = 0; i < nActivities; i++) {
@@ -97,5 +113,13 @@ public class RCPSP {
         // TODO 4: implement the search
 
         
+        // TODO add the constraints and remove the NotImplementedException
+         throw new NotImplementedException("RCPSP");
+    }
+
+    public static void main(String[] args) {
+        RCPSP rcpsp = new RCPSP("data/rcpsp/j30_1_3.rcp");
+        rcpsp.buildModel();
+        rcpsp.solve( true);
     }
 }

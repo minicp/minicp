@@ -24,11 +24,18 @@ import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.io.InputReader;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static minicp.cp.BranchingScheme.and;
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
+import minicp.util.exception.NotImplementedException;
 
 /**
  * Stable Matching problem:
@@ -41,66 +48,49 @@ import static minicp.cp.Factory.*;
  * If there are no such pairs, then the matching is said to be stable.
  * <a href="https://en.wikipedia.org/wiki/Stable_matching_problem">Wikipedia</a>.
  */
-public class StableMatching {
+public class StableMatching extends SatisfactionProblem {
+    public final int n;
+    public final int[][] rankCompanies;
+    public final int[][] rankStudents;
+    public IntVar[] student;
+    public IntVar[] company;
+    public IntVar[] studentPref;
+    public IntVar[] companyPref;
+    public StableMatching(String instanceFilePath) {
+        InputReader reader = new InputReader(instanceFilePath);
 
-    public static void main(String[] args) {
+        n = reader.getInt();
+        rankCompanies = reader.getMatrix(n, n);
+        rankStudents = reader.getMatrix(n, n);
+    }
 
-        InputReader reader = new InputReader("data/stable_matching.txt");
-        // also use the instances at data/stable_matching/
 
-        int n = reader.getInt();
-        int[][] rankCompanies = reader.getMatrix(n, n);
-        int[][] rankStudents = reader.getMatrix(n, n);
-
-        // you should get six solutions:
-        /*
-        company: 5,3,8,7,2,6,0,4,1
-        student: 6,8,4,1,7,0,5,3,2
-
-        company: 5,4,8,7,2,6,0,3,1
-        student: 6,8,4,7,1,0,5,3,2
-
-        company: 5,0,3,7,4,8,2,1,6
-        student: 1,7,6,2,4,0,8,3,5
-
-        company: 5,0,3,7,4,6,2,1,8
-        student: 1,7,6,2,4,0,5,3,8
-
-        company: 5,3,0,7,4,6,2,1,8
-        student: 2,7,6,1,4,0,5,3,8
-
-        company: 6,4,8,7,2,5,0,3,1
-        student: 6,8,4,7,1,5,0,3,2
-        */
-
+    @Override
+    public void buildModel() {
         Solver cp = makeSolver();
 
         // company[s] is the company chosen for student s
-        IntVar[] company = makeIntVarArray(cp, n, n);
+        company = makeIntVarArray(cp, n, n);
         // student[c] is the student chosen for company c
-        IntVar[] student = makeIntVarArray(cp, n, n);
+        student = makeIntVarArray(cp, n, n);
 
         // companyPref[s] is the preference of student s for the company chosen for s
-        IntVar[] companyPref = makeIntVarArray(cp, n, 1, n);
+        companyPref = makeIntVarArray(cp, n, 1, n);
         // studentPref[c] is the preference of company c for the student chosen for c
-        IntVar[] studentPref = makeIntVarArray(cp, n, 1, n);
+        studentPref = makeIntVarArray(cp, n, 1, n);
 
 
         for (int s = 0; s < n; s++) {
-            // the student of the company of student s is s
-            // TODO: model this with Element1DVar
+            // TODO: model this with Element1DVar: the student of the company of student s is s
             
-
             // TODO: model this with Element1D: rankCompanies[s][company[s]] = companyPref[s]
             
 
         }
 
         for (int c = 0; c < n; c++) {
-            // the company of the student of company c is c
-            // TODO: model this with Element1DVar
+            // TODO: model this with Element1DVar: the company of the student of company c is c
             
-
             // TODO: model this with Element1D: rankStudents[c][student[c]] = studentPref[c]
             
         }
@@ -122,19 +112,17 @@ public class StableMatching {
             }
         }
 
+        dfs = makeDfs(cp, and(firstFail(company), firstFail(student)));
+        // TODO add the constraints to the model and remove the NotImplementedException
+         throw new NotImplementedException("StableMatching");
+    }
 
-        DFSearch dfs = makeDfs(cp, and(firstFail(company), firstFail(student)));
-
-        dfs.onSolution(() -> {
-                    System.out.println(Arrays.toString(company));
-                    System.out.println(Arrays.toString(student));
-                }
-        );
-
-
-        SearchStatistics stats = dfs.solve();
-        System.out.println(stats);
-
+    public SearchStatistics solve(boolean verbose, Predicate<SearchStatistics> limit) {
+        SearchStatistics stats = dfs.solve(limit);
+        if (verbose) {
+            System.out.println(stats);
+        }
+        return stats;
     }
 
     /**
@@ -146,6 +134,42 @@ public class StableMatching {
      */
     private static BoolVar implies(BoolVar b1, BoolVar b2) {
         return isLargerOrEqual(sum(not(b1), b2), 1);
+    }
+
+    public static void main(String[] args) {
+
+        // also use the instances at data/stable_matching/
+        StableMatching stableMatching = new StableMatching("data/stable_matching.txt");
+
+        // you should get six solutions:
+        /*
+        company: 5,3,8,7,2,6,0,4,1
+        student: 6,8,4,1,7,0,5,3,2
+
+        company: 5,4,8,7,2,6,0,3,1
+        student: 6,8,4,7,1,0,5,3,2
+
+        company: 5,0,3,7,4,8,2,1,6
+        student: 1,7,6,2,4,0,8,3,5
+
+        company: 5,0,3,7,4,6,2,1,8
+        student: 1,7,6,2,4,0,5,3,8
+
+        company: 5,3,0,7,4,6,2,1,8
+        student: 2,7,6,1,4,0,5,3,8
+
+        company: 6,4,8,7,2,5,0,3,1
+        student: 6,8,4,7,1,5,0,3,2
+        */
+        stableMatching.buildModel();
+        // print the layout of the solutions
+        stableMatching.dfs.onSolution(() -> {
+            String companyString = Arrays.stream(stableMatching.company).map(v -> Integer.toString(v.min())).collect(Collectors.joining(","));
+            System.out.println("company: " + companyString);
+            String studentString = Arrays.stream(stableMatching.student).map(v -> Integer.toString(v.min())).collect(Collectors.joining(","));
+            System.out.println("student: " + studentString + "\n");
+        });
+        stableMatching.solve(true,  s -> false);
     }
 }
 
