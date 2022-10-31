@@ -91,34 +91,32 @@ public class Disjunctive extends AbstractConstraint {
 
         // TODO 6 (optional, for a bonus): implement the Lambda-Theta tree and implement the Edge-Finding        overLoadChecker();
 
-        boolean fixed = false;
-        while (!fixed) {
-            fixed = true;
+        boolean changed = true;
+        while (changed) {
             overLoadChecker();
-            fixed =  fixed && !detectablePrecedence();
-            fixed =  fixed && !notLast();
+            changed = detectablePrecedence();
+            // Java has short-circuit evaluation: notLast will only be called if changed is false.
+            changed = changed || notLast();
         }
 
     }
     
 
-    private void overLoadChecker() {
+    public void overLoadChecker() {
          throw new NotImplementedException("Disjunctive");
     }
 
     /**
      * @return true if one domain was changed by the detectable precedence algo
      */
-    private boolean detectablePrecedence() {
+    public boolean detectablePrecedence() {
          throw new NotImplementedException("Disjunctive");
     }
 
     /**
      * @return true if one domain was changed by the not-last algo
      */
-    private boolean notLast() {
+    public boolean notLast() {
          throw new NotImplementedException("Disjunctive");
     }
-
-
 }

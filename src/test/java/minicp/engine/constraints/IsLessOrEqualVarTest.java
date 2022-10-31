@@ -27,7 +27,9 @@ import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
-import static minicp.cp.BranchingScheme.firstFail;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
 import static org.junit.Assert.*;
 
@@ -37,8 +39,6 @@ public class IsLessOrEqualVarTest extends SolverTest {
     @Test
     public void test1() {
         try {
-
-
             Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, 0, 5);
             IntVar y = makeIntVar(cp, 0, 5);
@@ -145,5 +145,54 @@ public class IsLessOrEqualVarTest extends SolverTest {
         }
     }
 
+    @Test
+    public void test4() {
+        try {
+            Solver cp = solverFactory.get();
+            IntVar x = makeIntVar(cp, 0, 10);
+            IntVar y = makeIntVar(cp, 0, 10);
+            BoolVar b = makeBoolVar(cp);
+            cp.post(new IsLessOrEqualVar(b, x, y));
 
+            cp.post(equal(b, 0));
+
+            DFSearch search;
+            SearchStatistics stats;
+            AtomicInteger expectedVal = new AtomicInteger(10);
+
+            search = makeDfs(cp, () -> {
+                assertEquals(expectedVal.get(), y.size());
+                assertEquals(expectedVal.decrementAndGet(), y.max());
+                if (x.isFixed()) return EMPTY;
+                assertTrue(x.min() > y.min());
+                assertTrue(x.max() > y.max());
+                return branch(() -> cp.post(notEqual(x, x.max())));
+            });
+            stats = search.solve();
+            assertEquals(0, stats.numberOfFailures());
+            assertEquals(1, stats.numberOfSolutions());
+            assertEquals(9, stats.numberOfNodes());
+            assertEquals(0, expectedVal.get());
+
+            expectedVal.set(0);
+            search = makeDfs(cp, () -> {
+                assertEquals(10 - expectedVal.get(), x.size());
+                assertEquals(expectedVal.incrementAndGet(), x.min());
+                if (x.isFixed()) return EMPTY;
+                assertTrue(x.min() > y.min());
+                assertTrue(x.max() > y.max());
+                return branch(() -> cp.post(notEqual(y, y.min())));
+            });
+            stats = search.solve();
+            assertEquals(0, stats.numberOfFailures());
+            assertEquals(1, stats.numberOfSolutions());
+            assertEquals(9, stats.numberOfNodes());
+            assertEquals(10, expectedVal.get());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
 }
