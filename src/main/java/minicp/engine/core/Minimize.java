@@ -33,7 +33,7 @@ public class Minimize implements Objective {
     public void tighten() {
         if (!x.isFixed()) throw new RuntimeException("objective not fixed");
         this.bound = x.max() - 1;
-        throw InconsistencyException.INCONSISTENCY;
+        //throw InconsistencyException.INCONSISTENCY;
     }
 
     @Override
