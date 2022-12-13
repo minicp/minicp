@@ -113,9 +113,9 @@ public class QAPLNS {
                 System.out.println("restart number #" + i);
 
             dfs.optimizeSubjectTo(obj, statistics -> statistics.numberOfFailures() >= failureLimit, () -> {
-                        // Assign the fragment 5% of the variables randomly chosen
+                        // Assign the fragment 75% of the variables randomly chosen
                         for (int j = 0; j < n; j++) {
-                            if (rand.nextInt(100) < 5) {
+                            if (rand.nextInt(100) < 75) {
                                 // after the solveSubjectTo those constraints are removed
                                 cp.post(equal(x[j], xBest[j]));
                             }
