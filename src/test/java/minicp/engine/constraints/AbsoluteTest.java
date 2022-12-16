@@ -15,25 +15,26 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class AbsoluteTest extends SolverTest {
-    @Test
-    public void simpleTest0() {
 
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void simpleTest0(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, 5);
             IntVar y = makeIntVar(cp, -10, 10);
 
@@ -60,10 +61,10 @@ public class AbsoluteTest extends SolverTest {
         }
     }
 
-    @Test
-    public void simpleTest1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void simpleTest1(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, 5);
             IntVar y = makeIntVar(cp, -10, 10);
 
@@ -84,11 +85,10 @@ public class AbsoluteTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void simpleTest2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void simpleTest2(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, 0);
             IntVar y = makeIntVar(cp, 4, 4);
 
@@ -106,10 +106,10 @@ public class AbsoluteTest extends SolverTest {
         }
     }
 
-    @Test
-    public void simpleTest3() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void simpleTest3(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, 7, 7);
             IntVar y = makeIntVar(cp, -1000, 12);
 
@@ -127,10 +127,10 @@ public class AbsoluteTest extends SolverTest {
         }
     }
 
-    @Test
-    public void simpleTest4() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void simpleTest4(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, 10);
             IntVar y = makeIntVar(cp, -6, 7);
 

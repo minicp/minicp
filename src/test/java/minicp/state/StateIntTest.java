@@ -16,17 +16,17 @@
 package minicp.state;
 
 
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StateIntTest extends StateManagerTest {
 
-    @Test
-    public void testExample() {
-        StateManager sm = stateFactory.get();
-
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void testExample(StateManager sm) {
         // Two reversible int's inside the sm
         StateInt a = sm.makeStateInt(5);
         StateInt b = sm.makeStateInt(9);
@@ -64,41 +64,37 @@ public class StateIntTest extends StateManagerTest {
         assertEquals(Integer.valueOf(7), a.value());
         assertEquals(Integer.valueOf(13), b.value());
         assertEquals(-1, sm.getLevel());
-
     }
 
 
-    @Test
-    public void testStateInt() {
-        StateManager sm = stateFactory.get();
-
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void testStateInt(StateManager sm) {
         StateInt a = sm.makeStateInt(5);
         StateInt b = sm.makeStateInt(5);
-        assertTrue(a.value() == 5);
+        assertEquals(5, (int) a.value());
         a.setValue(7);
         b.setValue(13);
-        assertTrue(a.value() == 7);
+        assertEquals(7, (int) a.value());
 
         sm.saveState();
 
         a.setValue(10);
-        assertTrue(a.value() == 10);
+        assertEquals(10, (int) a.value());
         a.setValue(11);
-        assertTrue(a.value() == 11);
+        assertEquals(11, (int) a.value());
         b.setValue(16);
         b.setValue(15);
 
         sm.restoreState();
-        assertTrue(a.value() == 7);
-        assertTrue(b.value() == 13);
-
+        assertEquals(7, (int) a.value());
+        assertEquals(13, (int) b.value());
     }
 
 
-    @Test
-    public void testPopUntill() {
-        StateManager sm = stateFactory.get();
-
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void testPopUntill(StateManager sm) {
         StateInt a = sm.makeStateInt(5);
         StateInt b = sm.makeStateInt(5);
 
@@ -152,15 +148,11 @@ public class StateIntTest extends StateManagerTest {
         assertEquals(Integer.valueOf(5), a.value());
         assertEquals(Integer.valueOf(10), b.value());
         assertEquals(Integer.valueOf(5), c.value());
-
-
     }
 
-
-    @Test
-    public void testPopUntillEasy() {
-        StateManager sm = stateFactory.get();
-
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void testPopUntillEasy(StateManager sm) {
         StateInt a = sm.makeStateInt(5);
 
         a.setValue(7);
@@ -190,16 +182,11 @@ public class StateIntTest extends StateManagerTest {
         //assertEquals(1,sm.getLevel());
         assertEquals(Integer.valueOf(6), a.value());
 
-
         a.setValue(8);
 
         sm.restoreStateUntil(0);
 
         assertEquals(Integer.valueOf(6), a.value());
-
-
     }
-
-
 
 }

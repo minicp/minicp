@@ -23,42 +23,41 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.EMPTY;
 import static minicp.cp.BranchingScheme.branch;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MaximizeTest {
 
     @Test
     public void maximizeTest() {
         try {
-            try {
 
-                Solver cp = makeSolver();
-                IntVar y = makeIntVar(cp, 10, 20);
+            Solver cp = makeSolver();
+            IntVar y = makeIntVar(cp, 10, 20);
 
-                IntVar[] x = new IntVar[]{y};
-                DFSearch dfs = makeDfs(cp, () -> y.isFixed() ? EMPTY :
-                        branch(() -> cp.post(equal(y, y.min())),
-                                () -> cp.post(notEqual(y, y.min()))));
-                Objective obj = cp.maximize(y);
+            IntVar[] x = new IntVar[]{y};
+            DFSearch dfs = makeDfs(cp, () -> y.isFixed() ? EMPTY :
+                    branch(() -> cp.post(equal(y, y.min())),
+                            () -> cp.post(notEqual(y, y.min()))));
+            Objective obj = cp.maximize(y);
 
-                SearchStatistics stats = dfs.solve();
+            SearchStatistics stats = dfs.solve();
 
-                assertEquals(11, stats.numberOfSolutions());
+            assertEquals(11, stats.numberOfSolutions());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
-
     }
 
 

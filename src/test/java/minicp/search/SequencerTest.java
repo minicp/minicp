@@ -15,34 +15,28 @@
 
 package minicp.search;
 
-import com.github.guillaumederval.javagrading.Grade;
-import com.github.guillaumederval.javagrading.GradeClass;
-import minicp.state.StateInt;
-import minicp.state.StateManager;
 import minicp.state.StateManagerTest;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.Procedure;
-import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import java.util.concurrent.TimeUnit;
 
 import static minicp.cp.BranchingScheme.EMPTY;
-import static minicp.cp.BranchingScheme.branch;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@GradeClass(totalValue=1, defaultValue=1, allCorrect=true)
+@Grade
 public class SequencerTest extends StateManagerTest {
 
     /**
      * exert the Sequencer in a BFS-way
      */
     @Test
-    @Grade
+    @Grade(cpuTimeout = 100, unit = TimeUnit.MILLISECONDS)
     public void testExample1() {
         try {
             Sequencer seq = new Sequencer(SequencerTest::fakeSequencer0, SequencerTest::fakeSequencer1, SequencerTest::fakeSequencer2);
@@ -95,7 +89,7 @@ public class SequencerTest extends StateManagerTest {
      * exert the Sequencer in a DFS-way
      */
     @Test
-    @Grade
+    @Grade(cpuTimeout = 100, unit = TimeUnit.MILLISECONDS)
     public void testExample2() {
         try {
             Sequencer seq = new Sequencer(SequencerTest::fakeSequencer0, SequencerTest::fakeSequencer1, SequencerTest::fakeSequencer2);
@@ -147,23 +141,23 @@ public class SequencerTest extends StateManagerTest {
     private static int state = 0;
     private static Procedure[] fakeSequencer0() {
         if(state == 0)
-            return new Procedure[]{() -> {state = 1;}, () -> {state = 2;}};
+            return new Procedure[]{() -> state = 1, () -> state = 2};
         return EMPTY;
     }
 
     private static Procedure[] fakeSequencer1() {
         if(state == 1)
-            return new Procedure[]{() -> {state = 3;}, () -> {state = 4;}};
+            return new Procedure[]{() -> state = 3, () -> state = 4};
         else if(state == 2)
-            return new Procedure[]{() -> {state = 5;}, () -> {state = 6;}};
+            return new Procedure[]{() -> state = 5, () -> state = 6};
         return EMPTY;
     }
 
     private static Procedure[] fakeSequencer2() {
         if(state == 2)
-            return new Procedure[]{() -> {state = 10;}};
+            return new Procedure[]{() -> state = 10};
         if(state == 4)
-            return new Procedure[]{() -> {state = 7;}, () -> {state = 8;}, () -> {state = 9;}};
+            return new Procedure[]{() -> state = 7, () -> state = 8, () -> state = 9};
         return EMPTY;
     }
 }

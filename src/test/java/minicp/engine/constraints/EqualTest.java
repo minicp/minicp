@@ -21,10 +21,11 @@ import minicp.engine.core.Solver;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class EqualTest extends SolverTest {
@@ -43,11 +44,11 @@ public class EqualTest extends SolverTest {
         return true;
     }
 
-    @Test
-    public void equal1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void equal1(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp,0,10);
             IntVar y = makeIntVar(cp,0,10);
 
@@ -80,12 +81,11 @@ public class EqualTest extends SolverTest {
 
     }
 
-
-    @Test
-    public void equal2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void equal2(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp,Integer.MAX_VALUE-20,Integer.MAX_VALUE-1);
             IntVar y = makeIntVar(cp,Integer.MAX_VALUE-10,Integer.MAX_VALUE-1);
 

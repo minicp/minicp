@@ -15,23 +15,23 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import static minicp.cp.Factory.makeIntVar;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Timeout(1)
 public class MaximumMatchingTest extends SolverTest {
 
     private static IntVar makeIVar(Solver cp, Integer... values) {
@@ -51,10 +51,10 @@ public class MaximumMatchingTest extends SolverTest {
         assertEquals(expectedSize, size);
     }
 
-    @Test
-    public void test1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test1(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 1, 2),
                     makeIVar(cp, 1, 2),
@@ -82,11 +82,10 @@ public class MaximumMatchingTest extends SolverTest {
 
     }
 
-
-    @Test
-    public void test2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test2(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 1, 4, 5),
                     makeIVar(cp, 9, 10), // will be 10

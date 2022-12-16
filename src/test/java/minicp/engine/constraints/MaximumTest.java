@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
@@ -24,25 +23,24 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
-
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Arrays;
 
-import static minicp.cp.BranchingScheme.and;
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class MaximumTest extends SolverTest {
 
-    @Test
-    public void maximumTest1() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void maximumTest1(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar[] x = makeIntVarArray(cp, 3, 10);
             IntVar y = makeIntVar(cp, -5, 20);
             cp.post(new Maximum(x, y));
@@ -83,12 +81,11 @@ public class MaximumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void maximumTest2() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void maximumTest2(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x1 = makeIntVar(cp, 0, 0);
             IntVar x2 = makeIntVar(cp, 1, 1);
             IntVar x3 = makeIntVar(cp, 2, 2);
@@ -105,12 +102,11 @@ public class MaximumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void maximumTest3() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void maximumTest3(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x1 = makeIntVar(cp, 0, 10);
             IntVar x2 = makeIntVar(cp, 0, 10);
             IntVar x3 = makeIntVar(cp, -5, 50);
@@ -131,45 +127,45 @@ public class MaximumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void maximumTest4() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void maximumTest4(Solver cp) {
         try {
-            try {
-                Solver cp = solverFactory.get();
-                IntVar[] x = makeIntVarArray(cp, 4, 5);
-                IntVar y = makeIntVar(cp, -5, 20);
 
-                IntVar[] allIntVars = new IntVar[x.length+1];
-                System.arraycopy(x, 0, allIntVars, 0, x.length);
-                allIntVars[x.length] = y;
+            IntVar[] x = makeIntVarArray(cp, 4, 5);
+            IntVar y = makeIntVar(cp, -5, 20);
 
-                DFSearch dfs = makeDfs(cp, firstFail(allIntVars));
+            IntVar[] allIntVars = new IntVar[x.length+1];
+            System.arraycopy(x, 0, allIntVars, 0, x.length);
+            allIntVars[x.length] = y;
 
-                cp.post(new Maximum(x, y));
-                // 5*5*5*5 // 625
+            DFSearch dfs = makeDfs(cp, firstFail(allIntVars));
 
-                dfs.onSolution(() -> {
-                    int max = Arrays.stream(x).mapToInt(xi -> xi.max()).max().getAsInt();
-                    assertEquals(y.min(), max);
-                    assertEquals(y.max(), max);
-                });
+            cp.post(new Maximum(x, y));
+            // 5*5*5*5 // 625
 
-                SearchStatistics stats = dfs.solve();
+            dfs.onSolution(() -> {
+                int max = Arrays.stream(x).mapToInt(xi -> xi.max()).max().getAsInt();
+                assertEquals(y.min(), max);
+                assertEquals(y.max(), max);
+            });
 
-                assertEquals(625, stats.numberOfSolutions());
+            SearchStatistics stats = dfs.solve();
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+            assertEquals(625, stats.numberOfSolutions());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
     }
 
-    @Test
-    public void maximumTest5() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void maximumTest5(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
+
             IntVar[] x = makeIntVarArray(cp, 3, 10);
             IntVar y = makeIntVar(cp, -5, 20);
             cp.post(new Maximum(x, y));

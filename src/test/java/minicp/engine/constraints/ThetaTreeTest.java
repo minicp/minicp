@@ -15,9 +15,9 @@
 
 package minicp.engine.constraints;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ThetaTreeTest {
 
@@ -37,6 +37,5 @@ public class ThetaTreeTest {
         thetaTree.reset();
         assertEquals(Integer.MIN_VALUE, thetaTree.getECT());
     }
-
 
 }

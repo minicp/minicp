@@ -15,20 +15,20 @@
 
 package minicp.state;
 
-import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
+import org.javagrader.GraderExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Set;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.*;
-
+@ExtendWith(GraderExtension.class)
 public class StateSparseBitSetTest extends StateManagerTest {
 
-
-    @Test
-    public void testExample() {
-
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void testExample(StateManager sm) {
         StateSparseBitSet set = new StateSparseBitSet(sm, 256);
 
         StateSparseBitSet.BitSet b1 = set.new BitSet(); // [0..59] U [130..255]
@@ -45,7 +45,7 @@ public class StateSparseBitSetTest extends StateManagerTest {
 
         set.intersect(b1); // set is now [0..59] U [130..255]
 
-        assertTrue(!set.hasEmptyIntersection(b1));
+        assertFalse(set.hasEmptyIntersection(b1));
         assertTrue(set.hasEmptyIntersection(b2));
 
         sm.saveState();
@@ -58,11 +58,9 @@ public class StateSparseBitSetTest extends StateManagerTest {
 
         sm.restoreState();  // set is now [0..59] U [130..255]
 
-        assertTrue(!set.hasEmptyIntersection(b1));
+        assertFalse(set.hasEmptyIntersection(b1));
 
         assertTrue(set.hasEmptyIntersection(b2));
-
-
     }
 
 

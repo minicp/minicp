@@ -15,18 +15,22 @@
 
 package minicp.state;
 
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.javagrader.Grade;
+import org.javagrader.GraderExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ExtendWith(GraderExtension.class)
 public class StateBoolTest extends StateManagerTest {
 
-
-    @Test
-    public void testStateBool() {
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void testStateBool(StateManager sm) {
 
         State<Boolean> b1 = sm.makeStateRef(true);
         State<Boolean> b2 = sm.makeStateRef(false);
@@ -47,9 +51,9 @@ public class StateBoolTest extends StateManagerTest {
 
     }
 
-    @Test
-    public void bugMagicOnRestore() {
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    public void bugMagicOnRestore(StateManager sm) {
 
         State<Boolean> a = sm.makeStateRef(true);
         // level 0, a is true
@@ -68,7 +72,7 @@ public class StateBoolTest extends StateManagerTest {
         sm.restoreState(); // level 1 a is false
         sm.restoreState(); // level 0 a is true
 
-        assertEquals(true, a.value());
+        assertTrue(a.value());
 
     }
 

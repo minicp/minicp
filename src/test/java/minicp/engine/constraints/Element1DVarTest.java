@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
@@ -25,7 +24,9 @@ import minicp.state.StateManager;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,22 +34,21 @@ import java.util.HashSet;
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.makeDfs;
 import static minicp.cp.Factory.makeIntVar;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class Element1DVarTest extends SolverTest {
 
     private static IntVar makeIVar(Solver cp, Integer... values) {
         return makeIntVar(cp, new HashSet<>(Arrays.asList(values)));
     }
 
-    @Test
-    public void element1dVarTest1() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dVarTest1(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, 2, 40);
 
@@ -83,12 +83,11 @@ public class Element1DVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void element1dVarTest2() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dVarTest2(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, -4, 40);
 
@@ -117,7 +116,6 @@ public class Element1DVarTest extends SolverTest {
             assertEquals(5, z.min());
             assertEquals(6, z.max());
 
-
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
@@ -125,13 +123,11 @@ public class Element1DVarTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void element1dVarTest3() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dVarTest3(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, -20, 40);
 
@@ -155,12 +151,11 @@ public class Element1DVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void element1dVarTest4() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dVarTest4(Solver cp) {
 
         try {
-
-            Solver cp = solverFactory.get();
             IntVar x0 = makeIVar(cp, 0, 1, 5);
             IntVar x1 = makeIVar(cp, -5, -4, -3, -2, 0, 1, 5);
             IntVar x2 = makeIVar(cp, -2, 0);
@@ -182,12 +177,11 @@ public class Element1DVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void element1dVarTest5() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dVarTest5(Solver cp) {
 
         try {
-
-            Solver cp = solverFactory.get();
             StateManager sm = cp.getStateManager();
             IntVar x0 = makeIVar(cp, 1, 5);
             IntVar x1 = makeIVar(cp, 0, 5);
@@ -272,13 +266,11 @@ public class Element1DVarTest extends SolverTest {
 
     }
 
-    @Test
-    public void element1dVarTest6() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dVarTest6(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
-            StateManager sm = cp.getStateManager();
             IntVar x0 = makeIVar(cp, 1, 2);
             IntVar x1 = makeIVar(cp, 0, 5);
             IntVar x2 = makeIVar(cp, 10, 11);

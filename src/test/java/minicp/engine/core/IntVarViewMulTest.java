@@ -18,20 +18,21 @@ package minicp.engine.core;
 import minicp.engine.SolverTest;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.IntOverFlowException;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.makeIntVar;
 import static minicp.cp.Factory.mul;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class IntVarViewMulTest extends SolverTest {
 
     public boolean propagateCalled = false;
 
-    @Test
-    public void testIntVar() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testIntVar(Solver cp) {
 
         IntVar x = mul(mul(makeIntVar(cp, -3, 4), -3), -1); // domain is {-9,-6,-3,0,3,6,9,12}
 
@@ -66,11 +67,7 @@ public class IntVarViewMulTest extends SolverTest {
             fail("should not fail here");
         }
 
-        try {
-            x.fix(8);
-            fail("should have failed");
-        } catch (InconsistencyException expectedException) {
-        }
+        assertThrowsExactly(InconsistencyException.class, () -> x.fix(8));
 
         cp.getStateManager().restoreState();
 
@@ -79,11 +76,10 @@ public class IntVarViewMulTest extends SolverTest {
 
     }
 
-
-    @Test
-    public void onDomainChangeOnBind() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void onDomainChangeOnBind(Solver cp) {
         propagateCalled = false;
-        Solver cp = solverFactory.get();
 
         IntVar x = mul(makeIntVar(cp, 10), 1);
         IntVar y = mul(makeIntVar(cp, 10), 1);
@@ -118,11 +114,9 @@ public class IntVarViewMulTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void onBoundChange() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void onBoundChange(Solver cp) {
 
         IntVar x = mul(makeIntVar(cp, 10), 1);
         IntVar y = mul(makeIntVar(cp, 10), 1);
@@ -152,7 +146,6 @@ public class IntVarViewMulTest extends SolverTest {
             y.remove(10);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            propagateCalled = false;
             y.remove(2);
             cp.fixPoint();
             assertTrue(propagateCalled);
@@ -162,11 +155,10 @@ public class IntVarViewMulTest extends SolverTest {
         }
     }
 
-
-    @Test(expected = IntOverFlowException.class)
-    public void testOverFlow() {
-        Solver cp = solverFactory.get();
-        IntVar x = mul(makeIntVar(cp, 1000000, 1000000), 10000000);
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testOverFlow(Solver cp) {
+        assertThrowsExactly(IntOverFlowException.class, () -> {mul(makeIntVar(cp, 1000000, 1000000), 10000000);});
     }
 
 

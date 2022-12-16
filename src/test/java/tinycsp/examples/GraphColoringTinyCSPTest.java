@@ -1,27 +1,39 @@
 package tinycsp.examples;
 
-import com.github.guillaumederval.javagrading.GradeClass;
-import junit.framework.TestCase;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import tinycsp.examples.GraphColoringTinyCSP;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
-@RunWith(Parameterized.class)
-public class GraphColoringTinyCSPTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-    String path;
+@Grade(cpuTimeout = 1)
+public class GraphColoringTinyCSPTest {
 
-    public GraphColoringTinyCSPTest(String path){
-        this.path = path;
+    @ParameterizedTest
+    @MethodSource("getInstancePaths")
+    public void testSolve(String path) {
+        GraphColoringTinyCSP.GraphColoringInstance instance = readInstance(path);
+        try {
+            int[] solution = GraphColoringTinyCSP.solve(instance);
+            assertNotNull(solution);
+            for (int[] edge : instance.edges) {
+                int i = edge[0];
+                int j = edge[1];
+                assertNotEquals(solution[i], solution[j]);
+            }
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
     }
 
     /**
@@ -52,29 +64,12 @@ public class GraphColoringTinyCSPTest extends TestCase {
 
     }
 
-    @Test
-    public void testSolve() {
-        GraphColoringTinyCSP.GraphColoringInstance instance = readInstance(path);
-        try {
-            int[] solution = GraphColoringTinyCSP.solve(instance);
-            for (int[] edge : instance.edges) {
-                int i = edge[0];
-                int j = edge[1];
-                assertTrue(solution[i] != solution[j]);
-            }
-        } catch (NotImplementedException e) {
-            NotImplementedExceptionAssume.fail(e);
-        }
-    }
-
-
-    @Parameterized.Parameters
-    public static Collection<String> getNum() throws IOException {
+    public static Stream<Arguments> getInstancePaths() {
         //I want my code to read input.txt line by line and feed the input in an arraylist so that it returns an equivalent of the code below
         List<String> files = new LinkedList<>();
         for (int i = 0; i < 10; i++) {
             files.add("data/graph_coloring/gc_15_30_"+i);
         }
-        return files;
+        return files.stream().map(file -> arguments(named(new File(file).getName(), file)));
     }
 }

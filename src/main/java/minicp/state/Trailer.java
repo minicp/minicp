@@ -124,4 +124,8 @@ public class Trailer implements StateManager {
         return new TrailMap(this);
     }
 
+    @Override
+    public String toString() {
+        return "Trailer";
+    }
 }

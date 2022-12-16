@@ -16,28 +16,21 @@
 package minicp.engine;
 
 
-import com.github.guillaumederval.javagrading.GradingRunnerWithParametersFactory;
 import minicp.engine.core.MiniCP;
 import minicp.engine.core.Solver;
 import minicp.state.Copier;
 import minicp.state.Trailer;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.javagrader.Allow;
+import org.javagrader.Grade;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
-@Parameterized.UseParametersRunnerFactory(GradingRunnerWithParametersFactory.class)
+@Allow("all")
 public abstract class SolverTest {
 
-    @Parameterized.Parameters
-    public static Supplier<Solver>[] data() {
-        return new Supplier[]{
-                () -> new MiniCP(new Trailer()),
-                () -> new MiniCP(new Copier()),
-        };
+    public static Stream<Solver> getSolver() {
+        return Stream.of(new MiniCP(new Trailer()), new MiniCP(new Copier()));
     }
 
-    @Parameterized.Parameter
-    public Supplier<Solver> solverFactory;
 }

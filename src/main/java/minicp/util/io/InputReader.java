@@ -16,10 +16,7 @@
 
 package minicp.util.io;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.StringTokenizer;
 
 
@@ -27,16 +24,21 @@ public class InputReader {
 
     private BufferedReader in;
     private StringTokenizer tokenizer;
+    String file;
 
     public InputReader(String file) {
         try {
-
+            this.file = file;
             FileInputStream istream = new FileInputStream(file);
             in = new BufferedReader(new InputStreamReader(istream));
             tokenizer = new StringTokenizer("");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getFilename() {
+        return new File(file).getName();
     }
 
     public Integer getInt() throws RuntimeException {

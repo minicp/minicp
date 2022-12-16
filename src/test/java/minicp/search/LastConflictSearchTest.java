@@ -15,25 +15,21 @@
 
 package minicp.search;
 
-import com.github.guillaumederval.javagrading.GradeClass;
-import com.github.guillaumederval.javagrading.GradingRunner;
 import minicp.cp.BranchingScheme;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.javagrader.Grade;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(GradingRunner.class)
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class LastConflictSearchTest {
-
 
     @Test
     public void testExample1() {

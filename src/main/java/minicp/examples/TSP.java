@@ -26,6 +26,11 @@ import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
 import minicp.util.exception.NotImplementedException;
 
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+
 /**
  * Traveling salesman problem.
  * <a href="https://en.wikipedia.org/wiki/Travelling_salesman_problem">Wikipedia</a>.
@@ -36,9 +41,11 @@ public class TSP extends OptimizationProblem {
     public final int[][] distanceMatrix;
     public IntVar[] succ;
     public IntVar totalDist;
+    String instance;
 
     public TSP(String instancePath) {
         InputReader reader = new InputReader(instancePath);
+        instance = reader.getFilename();
         n = reader.getInt();
         distanceMatrix = reader.getMatrix(n, n);
     }
@@ -69,19 +76,83 @@ public class TSP extends OptimizationProblem {
                         () -> xs.getSolver().post(notEqual(xs, v)));
             }
         });
-
         // TODO implement the search and remove the NotImplementedException
          throw new NotImplementedException("TSP");
+    }
+
+    /**
+     * Performs a large neighborhood search
+     */
+    public void lns(boolean verbose, Predicate<Integer> stopLNS) {
+        // starts from a first solution
+        // current best solution
+        int[] xBest = IntStream.range(0, n).toArray();
+        AtomicInteger bestSol = new AtomicInteger(Integer.MAX_VALUE);
+        dfs.onSolution(() -> {
+            // Update the current best solution
+            for (int i = 0; i < n; i++) {
+                xBest[i] = succ[i].min();
+            }
+            bestSol.set(totalDist.min());
+        });
+        if (verbose)
+            dfs.onSolution(() -> System.out.println(objective));
+        dfs.optimize(objective, statistics -> statistics.numberOfSolutions() == 1);
+        // first solution found and registered, now the LNS can start
+
+        // TODO modify the percentage and/or failureLimit to find better solutions
+        //  You should try to interpret what they will do
+        //  For instance, about the percentage, setting 5% will do nothing: you almost start from scratch
+        //  But setting 95% will not help much as there is not a lot of things decide: almost everything is fixed!
+        //  Try to find the sweet spot for this problem
+         int failureLimit = 1000;
+         int percentage = 5;
+        Random rand = new java.util.Random(42);
+        Solver cp = totalDist.getSolver();
+
+        while (!stopLNS.test(bestSol.get())) {
+            dfs.optimizeSubjectTo(objective,
+                    statistics -> statistics.numberOfFailures() >= failureLimit ||  stopLNS.test(bestSol.get()),
+                    () -> {
+                        // Assign the fragment percentage% of the variables randomly chosen
+                        for (int j = 0; j < n; j++) {
+                            if (rand.nextInt(100) < percentage) {
+                                // after the solveSubjectTo those constraints are removed
+                                cp.post(equal(succ[j], xBest[j]));
+                            }
+                        }
+                    }
+            );
+        }
+    }
+
+    public void lns(long maxRunTime) {
+        long maxRunTimeMS = maxRunTime * 1000;
+        long startTime = System.currentTimeMillis();
+        lns(true, i -> System.currentTimeMillis() - startTime > maxRunTimeMS);
+    }
+
+    @Override
+    public String toString() {
+        return "TSP(" + instance + ')';
     }
 
     public static void main(String[] args) {
         // instance gr17 https://people.sc.fsu.edu/~jburkardt/datasets/tsp/gr17_d.txt
         // instance fri26 https://people.sc.fsu.edu/~jburkardt/datasets/tsp/fri26_d.txt
         // instance p01 (adapted from) https://people.sc.fsu.edu/~jburkardt/datasets/tsp/p01_d.txt
-        // the other instances are located at data/tsp/
-        TSP tsp = new TSP("data/tsp/tsp_15.txt");
+        // the other instances are located at data/tsp/ and adapted from https://lopez-ibanez.eu/tsptw-instances
+        String instance = "data/tsp/tsp_61.txt";
+        TSP tsp = new TSP(instance);
         tsp.buildModel();
-        SearchStatistics stats = tsp.solve(true, s -> s.numberOfSolutions() == 1);
+        // stops at the first solutions using the exact search
+        SearchStatistics stats = tsp.solve(true);
         System.out.println(stats);
+
+        // same TSP model but uses a lns
+        int runTimeSeconds = 2;
+        tsp = new TSP(instance);
+        tsp.buildModel();
+        tsp.lns(runTimeSeconds);
     }
 }

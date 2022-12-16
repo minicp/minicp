@@ -48,7 +48,7 @@ public class IsLessOrEqual extends AbstractConstraint { // b <=> x <= v
 
     @Override
     public void post() {
-        // TODO
+        // TODO Implement the propagator for the constraint (feel free to add a propagate method)
          throw new NotImplementedException("IsLessOrEqual");
     }
 }

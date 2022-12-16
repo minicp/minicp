@@ -16,9 +16,10 @@
 package minicp.engine.core;
 
 import minicp.engine.SolverTest;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class DomainTest extends SolverTest {
@@ -55,12 +56,9 @@ public class DomainTest extends SolverTest {
         }
     }
 
-    ;
-
-
-    @Test
-    public void testDomain1() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDomain1(Solver cp) {
         MyDomainListener dlistener = new MyDomainListener();
         IntDomain dom = new SparseSetDomain(cp.getStateManager(), 5, 10);
 
@@ -94,9 +92,9 @@ public class DomainTest extends SolverTest {
 
     }
 
-    @Test
-    public void testDomain2() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDomain2(Solver cp) {
         MyDomainListener dlistener = new MyDomainListener();
         IntDomain dom = new SparseSetDomain(cp.getStateManager(), 5, 10);
 
@@ -109,9 +107,9 @@ public class DomainTest extends SolverTest {
 
     }
 
-    @Test
-    public void testDomain3() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDomain3(Solver cp) {
         MyDomainListener dlistener = new MyDomainListener();
         IntDomain dom = new SparseSetDomain(cp.getStateManager(), 5, 10);
 

@@ -56,8 +56,10 @@ public class StableMatching extends SatisfactionProblem {
     public IntVar[] company;
     public IntVar[] studentPref;
     public IntVar[] companyPref;
+    String instance;
     public StableMatching(String instanceFilePath) {
         InputReader reader = new InputReader(instanceFilePath);
+        instance = reader.getFilename();
 
         n = reader.getInt();
         rankCompanies = reader.getMatrix(n, n);
@@ -123,6 +125,11 @@ public class StableMatching extends SatisfactionProblem {
             System.out.println(stats);
         }
         return stats;
+    }
+
+    @Override
+    public String toString() {
+        return "StableMatching(" + instance + ')';
     }
 
     /**

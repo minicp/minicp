@@ -40,6 +40,7 @@ public class Eternity extends SatisfactionProblem {
     public final int m;
     public final int max;
     public final int[][] pieces;
+    String instance;
 
     public IntVar[][] id;
     public IntVar[][] u;
@@ -53,6 +54,7 @@ public class Eternity extends SatisfactionProblem {
 
     public Eternity(boolean verbose, String instanceFilePath) {
         InputReader reader = new InputReader(instanceFilePath); // Reading the data
+        instance = reader.getFilename();
         n = reader.getInt();
         m = reader.getInt();
 
@@ -187,6 +189,11 @@ public class Eternity extends SatisfactionProblem {
             }
             System.out.println(line);
         });
+    }
+
+    @Override
+    public String toString() {
+        return "Eternity(" + instance + ')';
     }
 
     public static void main(String[] args) {

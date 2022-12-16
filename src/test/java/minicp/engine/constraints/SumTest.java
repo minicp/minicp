@@ -25,7 +25,8 @@ import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.IntOverFlowException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.lessOrEqual;
 import static minicp.cp.Factory.makeDfs;
 import static minicp.cp.Factory.makeIntVar;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class SumTest extends SolverTest {
@@ -44,10 +45,10 @@ public class SumTest extends SolverTest {
         return makeIntVar(cp, new HashSet<>(Arrays.asList(values)));
     }
 
-    @Test
-    public void sum1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum1(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar y = makeIntVar(cp, -100, 100);
             IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 1, 5), makeIntVar(cp, 0, 5)};
             cp.post(new Sum(x, y));
@@ -63,10 +64,10 @@ public class SumTest extends SolverTest {
 
     }
 
-    @Test
-    public void sum2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum2(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
             IntVar y = makeIntVar(cp, 0, 100);
             cp.post(new Sum(x, y));
@@ -82,12 +83,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void sum3() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum3(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
             IntVar y = makeIntVar(cp, 5, 5);
             cp.post(new Sum(x, y));
@@ -111,13 +110,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void sum4() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum4(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 0, 2), makeIntVar(cp, 0, 1)};
             cp.post(new Sum(x, 0));
 
@@ -133,11 +129,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void sum5() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum5(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 0)};
             cp.post(new Sum(x, 0));
 
@@ -153,11 +148,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void sum6() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum6(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 3)};
             cp.post(new Sum(x, 0));
             assertEquals(-3, x[0].min());
@@ -178,11 +172,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void sum7() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum7(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 3)};
             cp.post(new Sum(x, 0));
             assertEquals(-3, x[0].min());
@@ -206,12 +199,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void sum8() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum8(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             // {0,0,0},  1
             // {-2,1,1}  3
@@ -240,9 +231,9 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void sum9() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum9(Solver cp) {
 
         IntVar[] x = new IntVar[]{makeIntVar(cp, -9, -9)};
         boolean failed = false;
@@ -254,10 +245,9 @@ public class SumTest extends SolverTest {
         assertTrue(failed);
     }
 
-
-    @Test
-    public void sum10() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum10(Solver cp) {
 
         IntVar[] x = new IntVar[]{makeIntVar(cp, -9, -4)};
         boolean failed = false;
@@ -269,12 +259,10 @@ public class SumTest extends SolverTest {
         assertTrue(failed);
     }
 
-
-    @Test
-    public void sum11() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum11(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
 
             IntVar x = makeIVar(cp, -2147483645, -2147483639, -2147483637);
             IntVar y = makeIVar(cp, -2147483645, -2147483638);
@@ -292,12 +280,10 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test
-    public void sum12() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum12(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar x = makeIVar(cp, -45, -39, -37);
             IntVar y = makeIVar(cp, -45, -3);
@@ -315,21 +301,18 @@ public class SumTest extends SolverTest {
         }
     }
 
-    @Test(expected = IntOverFlowException.class)
-    public void sum13OverFlow() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void sum13OverFlow(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar x0 = makeIVar(cp, -463872433, -463872431, -463872430, -463872429);
             IntVar x1 = makeIVar(cp, -463872438, -463872437, -463872430);
             IntVar x2 = makeIVar(cp, -463872432, -463872429);
             IntVar x3 = makeIVar(cp, -463872435, -463872434, -463872432, -463872431, -463872430, -463872429);
             IntVar x4 = makeIVar(cp, -463872437, -463872436, -463872435, -463872432, -463872431, -463872430, -463872429);
-
-
-            cp.post(lessOrEqual(Factory.sum(x0, x1, x2, x3, x4), 0));
+            
+            assertThrowsExactly(IntOverFlowException.class, () -> cp.post(lessOrEqual(Factory.sum(x0, x1, x2, x3, x4), 0)));
 
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);

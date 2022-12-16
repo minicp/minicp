@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
@@ -24,22 +23,23 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class AllDifferentDCTest extends SolverTest {
 
-    @Test
-    public void allDifferentTest1() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest1(Solver cp) {
 
         IntVar[] x = makeIntVarArray(cp, 5, 5);
 
@@ -50,19 +50,16 @@ public class AllDifferentDCTest extends SolverTest {
                 assertEquals(4, x[i].size());
                 assertEquals(1, x[i].min());
             }
-
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
     }
 
-
-    @Test
-    public void allDifferentTest2() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest2(Solver cp) {
 
         IntVar[] x = makeIntVarArray(cp, 5, 5);
 
@@ -73,7 +70,7 @@ public class AllDifferentDCTest extends SolverTest {
             assertEquals(120, stats.numberOfSolutions());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -84,11 +81,10 @@ public class AllDifferentDCTest extends SolverTest {
         return makeIntVar(cp, new HashSet<>(Arrays.asList(values)));
     }
 
-
-    @Test
-    public void allDifferentTest3() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest3(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 1, 2),
                     makeIVar(cp, 1, 2),
@@ -108,10 +104,10 @@ public class AllDifferentDCTest extends SolverTest {
 
     }
 
-    @Test
-    public void allDifferentTest5() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest5(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 1, 2, 3, 4, 5),
                     makeIVar(cp, 2),
@@ -140,10 +136,10 @@ public class AllDifferentDCTest extends SolverTest {
         }
     }
 
-    @Test
-    public void allDifferentTest6() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest6(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 1, 2, 3, 4, 5),
                     makeIVar(cp, 2, 7),
@@ -154,7 +150,6 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 3, 4, 5),
                     makeIVar(cp, 6, 7, 8, 9),
                     makeIVar(cp, 6, 7, 8)};
-            int[] matching = new int[x.length];
 
             cp.post(new AllDifferentDC(x));
 
@@ -189,11 +184,10 @@ public class AllDifferentDCTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void allDifferentTest7() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest7(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 3, 4),
                     makeIVar(cp, 1),
@@ -208,12 +202,12 @@ public class AllDifferentDCTest extends SolverTest {
 
             cp.post(new AllDifferentDC(x));
 
-            assertTrue(!x[4].contains(3));
-            assertTrue(!x[4].contains(4));
-            assertTrue(!x[5].contains(5));
-            assertTrue(!x[7].contains(5));
-            assertTrue(!x[7].contains(6));
-            assertTrue(!x[8].contains(5));
+            assertFalse(x[4].contains(3));
+            assertFalse(x[4].contains(4));
+            assertFalse(x[5].contains(5));
+            assertFalse(x[7].contains(5));
+            assertFalse(x[7].contains(6));
+            assertFalse(x[8].contains(5));
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
@@ -221,11 +215,10 @@ public class AllDifferentDCTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void allDifferentTest8() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest8(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] x = new IntVar[]{
                     makeIVar(cp, 0,2,3,5),
                     makeIVar(cp, 4),
@@ -236,7 +229,7 @@ public class AllDifferentDCTest extends SolverTest {
 
             cp.post(new AllDifferentDC(x));
 
-            assertTrue(!x[2].contains(-1));
+            assertFalse(x[2].contains(-1));
 
         } catch (InconsistencyException e) {
             fail("should not fail");

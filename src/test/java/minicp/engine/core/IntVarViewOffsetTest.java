@@ -18,20 +18,21 @@ package minicp.engine.core;
 import minicp.engine.SolverTest;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.IntOverFlowException;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.makeIntVar;
 import static minicp.cp.Factory.plus;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class IntVarViewOffsetTest extends SolverTest {
 
     public boolean propagateCalled = false;
 
-    @Test
-    public void testIntVar() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testIntVar(Solver cp) {
 
         IntVar x = plus(makeIntVar(cp, -3, 4), 3); // domain is {0,1,2,3,4,5,6,7}
 
@@ -79,11 +80,10 @@ public class IntVarViewOffsetTest extends SolverTest {
 
     }
 
-
-    @Test
-    public void onDomainChangeOnFix() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void onDomainChangeOnFix(Solver cp) {
         propagateCalled = false;
-        Solver cp = solverFactory.get();
 
         IntVar x = plus(makeIntVar(cp, 10), 1); // 1..11
         IntVar y = plus(makeIntVar(cp, 10), 1); // 1..11
@@ -118,11 +118,9 @@ public class IntVarViewOffsetTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void onBoundChange() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void onBoundChange(Solver cp) {
 
         IntVar x = plus(makeIntVar(cp, 10), 1);
         IntVar y = plus(makeIntVar(cp, 10), 1);
@@ -152,7 +150,6 @@ public class IntVarViewOffsetTest extends SolverTest {
             y.remove(11);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            propagateCalled = false;
             y.remove(3);
             cp.fixPoint();
             assertTrue(propagateCalled);
@@ -162,10 +159,11 @@ public class IntVarViewOffsetTest extends SolverTest {
         }
     }
 
-    @Test(expected = IntOverFlowException.class)
-    public void testOverFlow() {
-        Solver cp = solverFactory.get();
-        IntVar x = plus(makeIntVar(cp, Integer.MAX_VALUE - 5, Integer.MAX_VALUE - 2), 3);
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testOverFlow(Solver cp) {
+        assertThrowsExactly(IntOverFlowException.class,
+                () -> plus(makeIntVar(cp, Integer.MAX_VALUE - 5, Integer.MAX_VALUE - 2), 3));
     }
 
 

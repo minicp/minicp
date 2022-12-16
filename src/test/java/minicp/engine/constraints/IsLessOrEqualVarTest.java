@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.BoolVar;
 import minicp.engine.core.IntVar;
@@ -25,21 +24,23 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class IsLessOrEqualVarTest extends SolverTest {
 
-    @Test
-    public void test1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test1(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, 0, 5);
             IntVar y = makeIntVar(cp, 0, 5);
 
@@ -64,11 +65,10 @@ public class IsLessOrEqualVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test2(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -8, 7);
             IntVar y = makeIntVar(cp, -4, 3);
 
@@ -93,11 +93,10 @@ public class IsLessOrEqualVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test3() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test3(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
             IntVar y = makeIntVar(cp, 0, 7);
             cp.post(equal(x, -2));
@@ -114,10 +113,10 @@ public class IsLessOrEqualVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testReactChanges() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testReactChanges(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, 0, 10);
             IntVar y = makeIntVar(cp, 0, 10);
             BoolVar b = makeBoolVar(cp);
@@ -145,10 +144,10 @@ public class IsLessOrEqualVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test4() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test4(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, 0, 10);
             IntVar y = makeIntVar(cp, 0, 10);
             BoolVar b = makeBoolVar(cp);

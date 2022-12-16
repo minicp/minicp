@@ -18,13 +18,14 @@ package minicp.engine.constraints;
 import minicp.engine.SolverTest;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-import com.github.guillaumederval.javagrading.GradeClass;
+import org.javagrader.Grade;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.Procedure;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -34,15 +35,16 @@ import static minicp.cp.BranchingScheme.EMPTY;
 import static minicp.cp.BranchingScheme.branch;
 import static minicp.cp.Factory.*;
 import static minicp.cp.Factory.notEqual;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class Element1DDCTest extends SolverTest {
 
-    @Test
-    public void element1dTest1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dTest1(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
 
             Random rand = new Random(678);
             IntVar y = makeIntVar(cp, 0, 100);
@@ -58,8 +60,8 @@ public class Element1DDCTest extends SolverTest {
 
             cp.post(new Element1DDomainConsistent(T, y, z));
 
-            assertEquals(y.size(), T.length);
-            assertEquals(z.size(), uniqueValues.size());
+            assertEquals(T.length, y.size());
+            assertEquals(uniqueValues.size(), z.size());
 
             assertTrue(y.max() < T.length);
 
@@ -76,12 +78,12 @@ public class Element1DDCTest extends SolverTest {
 
                 HashSet<Integer> possibleValues = new HashSet<>();
                 HashSet<Integer> possibleValues2 = new HashSet<>();
-                for (int i = 0; i < possibleZ.length; i++)
-                    possibleValues.add(possibleZ[i]);
+                for (int j : possibleZ)
+                    possibleValues.add(j);
 
-                for (int i = 0; i < possibleY.length; i++) {
-                    assertTrue(possibleValues.contains(T[possibleY[i]]));
-                    possibleValues2.add(T[possibleY[i]]);
+                for (int j : possibleY) {
+                    assertTrue(possibleValues.contains(T[j]));
+                    possibleValues2.add(T[j]);
                 }
                 assertEquals(possibleValues.size(), possibleValues2.size());
 

@@ -120,5 +120,9 @@ public class Copier implements StateManager {
         return s;
     }
 
+    @Override
+    public String toString() {
+        return "Copier";
+    }
 
 }

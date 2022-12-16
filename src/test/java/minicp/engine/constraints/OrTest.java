@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.BoolVar;
 import minicp.engine.core.Solver;
@@ -24,20 +23,21 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class OrTest extends SolverTest {
 
-    @Test
-    public void or1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void or1(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
             cp.post(new Or(x));
 
@@ -58,11 +58,10 @@ public class OrTest extends SolverTest {
 
     }
 
-    @Test
-    public void or2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void or2(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
             cp.post(new Or(x));
 
@@ -92,10 +91,10 @@ public class OrTest extends SolverTest {
 
     }
 
-    @Test
-    public void or3() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void or3(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
             
             for (BoolVar xi : x) {

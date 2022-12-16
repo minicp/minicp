@@ -24,20 +24,21 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class IsEqualTest extends SolverTest {
 
-    @Test
-    public void test1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test1(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
 
             BoolVar b = isEqual(x, -2);
@@ -58,11 +59,11 @@ public class IsEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test2(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
 
             BoolVar b = isEqual(x, -2);
@@ -84,11 +85,11 @@ public class IsEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test3() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test3(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
+
             IntVar x = makeIntVar(cp, -4, 7);
             cp.post(equal(x, -2));
 
@@ -110,11 +111,11 @@ public class IsEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test4() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test4(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
             BoolVar b = makeBoolVar(cp);
 
