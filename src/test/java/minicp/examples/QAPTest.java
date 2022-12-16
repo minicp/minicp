@@ -8,6 +8,7 @@ import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.Grade;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -88,6 +89,7 @@ public class QAPTest {
 
     @Grade(cpuTimeout = 7)
     @Test
+    @Tag("slow")
     public void testOptimality() {
         try {
             String instance = "data/qap.txt";

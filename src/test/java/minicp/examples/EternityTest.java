@@ -7,10 +7,7 @@ import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.ConditionalOrderingExtension;
 import org.javagrader.Grade;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Arrays;
@@ -86,6 +83,7 @@ public class EternityTest {
     @Grade(value = 3, cpuTimeout = 1)
     @Order(1)
     @Test
+    @Tag("slow")
     public void testTinyInstance() {
         try {
             String instance = "data/eternity/brendan/pieces_03x03.txt";
@@ -112,6 +110,7 @@ public class EternityTest {
     @Grade(value = 7, cpuTimeout = 15)
     @Order(2)
     @Test
+    @Tag("slow")
     public void testFirstFewSolution() {
         try {
             int nSol = 3;

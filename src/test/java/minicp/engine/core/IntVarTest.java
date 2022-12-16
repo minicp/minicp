@@ -164,7 +164,7 @@ public class IntVarTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    @Grade(value = 0.5, cpuTimeout = 2)
+    @Grade(value = 0.25, cpuTimeout = 2)
     public void arbitrarySetDomains(Solver cp) {
         try {
 
@@ -332,7 +332,7 @@ public class IntVarTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    @Grade(value = 0.5, cpuTimeout = 1)
+    @Grade(value = 0.25, cpuTimeout = 1)
     public void fillArray(Solver cp) {
         try {
 

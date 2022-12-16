@@ -88,6 +88,7 @@ public class StableMatchingTest {
     @Grade(cpuTimeout = 500, unit = TimeUnit.MILLISECONDS)
     @Test
     @Order(1)
+    @Tag("slow")
     public void testAllSolutionsFound() {
         try {
             String instance = "data/stable_matching.txt";

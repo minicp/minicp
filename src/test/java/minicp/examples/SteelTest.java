@@ -9,6 +9,7 @@ import org.javagrader.ConditionalOrderingExtension;
 import org.javagrader.Grade;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -131,6 +132,7 @@ public class SteelTest {
     @ParameterizedTest
     @MethodSource("getInstances")
     @Order(3)
+    @Tag("slow")
     public void testSymmetryBreaking(String instance) {
         try {
             Steel steel = new Steel(instance);

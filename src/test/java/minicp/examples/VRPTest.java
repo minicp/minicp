@@ -10,6 +10,7 @@ import org.javagrader.ConditionalOrderingExtension;
 import org.javagrader.Grade;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -138,6 +139,7 @@ public class VRPTest {
     @CsvSource({
             "data/tsp/tsp_15.txt, 291"
     })
+    @Tag("slow")
     public void testOptimality(String instance, int bestSol) {
         try {
             VRP vrp = new VRP(instance, nVehicle);

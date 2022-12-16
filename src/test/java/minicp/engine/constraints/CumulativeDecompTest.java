@@ -27,10 +27,7 @@ import minicp.util.NotImplementedExceptionAssume;
 import org.javagrader.ConditionalOrderingExtension;
 import org.javagrader.Grade;
 import org.javagrader.GraderExtension;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -123,6 +120,7 @@ public class CumulativeDecompTest extends SolverTest {
     @MethodSource("getSolver")
     @Grade(cpuTimeout = 12)
     @Order(2)
+    @Tag("slow")
     public void testCapaOk(Solver cp) {
 
         try {

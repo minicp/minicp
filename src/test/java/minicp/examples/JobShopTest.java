@@ -22,10 +22,7 @@ import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.ConditionalOrderingExtension;
 import org.javagrader.Grade;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -129,6 +126,7 @@ public class JobShopTest {
     @ParameterizedTest
     @MethodSource("getSmallAndBigInstances")
     @Order(2)
+    @Tag("slow")
     public void testFindOptimality(String instance, int objective) {
         try {
             JobShop jb = new JobShop(instance);

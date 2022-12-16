@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import minicp.cp.BranchingScheme;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -82,6 +83,7 @@ public class TSPTest {
     @Grade(cpuTimeout = 200, unit = TimeUnit.MILLISECONDS)
     @ParameterizedTest(name = "{0}")
     @MethodSource("getModelPair")
+    @Tag("slow")
     public void testAgainstFirstFail(TSP customModel, TSP basicModel) {
         try {
             customModel.buildModel();
@@ -115,6 +117,7 @@ public class TSPTest {
     @ParameterizedTest(name = "[{index}] {0} - beat {1} in {2}s")
     @MethodSource("getLNSInstances")
     @Allow("java.lang.Thread")
+    @Tag("slow")
     public void testLNS(String instance, int objectiveToBeat, double maxRunTimeS) {
         try {
             long maxRunTime = (long) (maxRunTimeS * 1000);

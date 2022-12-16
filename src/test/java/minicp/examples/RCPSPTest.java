@@ -6,6 +6,7 @@ import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.Grade;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -56,6 +57,7 @@ public class RCPSPTest {
             "data/rcpsp/j30_1_2.rcp, 47",
             "data/rcpsp/j30_1_3.rcp, 47",
     })
+    @Tag("slow")
     public void testOptimality(String instance, int bestSolution) {
         try {
             RCPSP model = new RCPSP(instance);
