@@ -20,6 +20,8 @@ import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.Grade;
+import org.javagrader.GraderExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -31,7 +33,7 @@ import java.util.Set;
 import static minicp.cp.Factory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@ExtendWith(GraderExtension.class)
 public class IntVarTest extends SolverTest {
 
     public boolean propagateCalled = false;
@@ -164,7 +166,7 @@ public class IntVarTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    @Grade(value = 0.25, cpuTimeout = 2)
+    @Grade(value = 0.15, cpuTimeout = 1)
     public void arbitrarySetDomains(Solver cp) {
         try {
 
@@ -332,7 +334,7 @@ public class IntVarTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    @Grade(value = 0.25, cpuTimeout = 1)
+    @Grade(value = 0.2, cpuTimeout = 1)
     public void fillArray(Solver cp) {
         try {
 
@@ -359,14 +361,16 @@ public class IntVarTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
+    @Grade(value = 0.15, cpuTimeout = 1)
     public void arbitrarySetDomainsMaxInt(Solver cp) {
         try {
             Set<Integer> dom = new HashSet<>(Arrays.asList(2147483645));
             IntVar var1 = makeIntVar(cp, dom);
             assertEquals(2147483645, var1.max());
-
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
+        } catch (OutOfMemoryError e) {
+            fail("You created an array to big. Look at valid min and max values for constructing your StateSparseSet");
         }
     }
 
