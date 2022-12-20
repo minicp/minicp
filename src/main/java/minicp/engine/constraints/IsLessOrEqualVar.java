@@ -52,12 +52,12 @@ public class IsLessOrEqualVar extends AbstractConstraint {
     @Override
     public void post() {
         // TODO
-         throw new NotImplementedException();
+         throw new NotImplementedException("IsLessOrEqualVar");
     }
 
     @Override
     public void propagate() {
         // TODO
-         throw new NotImplementedException();
+         throw new NotImplementedException("IsLessOrEqualVar");
     }
 }

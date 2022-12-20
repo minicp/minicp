@@ -176,11 +176,8 @@ public class CumulativeTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void testStartFiltering1() {
+    public void testStartFiltering1(Solver cp) {
         try {
-
-            Solver cp = makeSolver();
-
             IntVar[] s = makeIntVarArray(cp, 4, 20);
             int[] d = new int[]{4, 2, 5, 3};
             int[] r = new int[]{1, 1, 1, 1};

@@ -33,7 +33,7 @@ import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Grade(cpuTimeout = 1)
+@Grade(value = 2, cpuTimeout = 1)
 public class DisjunctiveTest extends SolverTest {
 
     private static void decomposeDisjunctive(IntVar[] start, int[] duration) {

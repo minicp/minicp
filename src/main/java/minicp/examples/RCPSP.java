@@ -111,11 +111,13 @@ public class RCPSP extends OptimizationProblem {
         // successors[i] is the sucessors of activity i
 
         // TODO 3: minimize the makespan
+         IntVar makespan = null;
+         objective = null;
 
         // TODO 4: implement the search
 
-        
-        // TODO add the constraints and remove the NotImplementedException
+         dfs = null;
+        // TODO add the constraints, the search and remove the NotImplementedException
          throw new NotImplementedException("RCPSP");
     }
 

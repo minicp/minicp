@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Named.named;
 
-@Grade
+@Grade(value = 2)
 @ExtendWith(ConditionalOrderingExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JobShopTest {
@@ -121,8 +121,7 @@ public class JobShopTest {
         }
     }
 
-    @Timeout(value = 10, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    @Grade(value = 3)
+    @Grade(value = 3, cpuTimeout = 4500, unit = TimeUnit.MILLISECONDS,threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     @ParameterizedTest
     @MethodSource("getSmallAndBigInstances")
     @Order(2)
