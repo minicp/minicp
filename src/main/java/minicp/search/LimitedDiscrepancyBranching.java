@@ -58,6 +58,6 @@ public class LimitedDiscrepancyBranching implements Supplier<Procedure[]> {
         // augment the curD depending on its position
         // +0 for alts[0], ..., +i for alts[i]
 
-         throw new NotImplementedException();
+         throw new NotImplementedException("LimitedDiscrepancy");
     }
 }

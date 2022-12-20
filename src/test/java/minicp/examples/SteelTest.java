@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@Grade
+@Grade(value = 2)
 @ExtendWith(ConditionalOrderingExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SteelTest {
@@ -147,7 +147,7 @@ public class SteelTest {
             SearchStatistics statistics = steel.solve(false);
             assertTrue(statistics.isCompleted());
             assertTrue(statistics.numberOfSolutions() > 0);
-            assertEquals(0, solution.get(), "You did not a solution with a loss of 0");
+            assertEquals(0, solution.get(), "You did not find a solution with a loss of 0");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         } catch (InconsistencyException e) {
