@@ -171,8 +171,8 @@ public class TSPTest {
         double maxRunTime = 3; // in s
         return Stream.of(new LNSRun[] {
                     new LNSRun("data/tsp/tsp_61.txt", 357, maxRunTime),
-                    new LNSRun("data/tsp/tsp_101.txt", 450, maxRunTime),
-                    new LNSRun("data/tsp/tsp_81.txt", 390, maxRunTime),
+                    new LNSRun("data/tsp/tsp_101.txt", 482, maxRunTime),
+                    new LNSRun("data/tsp/tsp_81.txt", 401, maxRunTime),
                 })
                 .map(run -> arguments(named(run.getName(), run.instance), run.objectiveToBeat, run.maxRunTime));
     }
