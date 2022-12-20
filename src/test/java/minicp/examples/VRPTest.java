@@ -60,7 +60,7 @@ public class VRPTest {
         return totalObjective;
     }
 
-    @Grade(cpuTimeout = 200, unit = TimeUnit.MILLISECONDS)
+    @Grade(cpuTimeout = 500, unit = TimeUnit.MILLISECONDS)
     @ParameterizedTest(name = "[{index}] {0} - {1} vehicle(s)")
     @MethodSource("getInstanceAndVehicles")
     @Order(1)
