@@ -45,7 +45,7 @@ public class ConflictOrderingSearchTest {
             cp.post(allDifferent(fourLast));
 
             DFSearch dfs = new DFSearch(cp.getStateManager(), BranchingScheme.conflictOrderingSearch(
-                    () -> { //select first unbound variable in x
+                    () -> { //select first unfixed variable in x
                         for(IntVar z: x)
                             if(!z.isFixed())
                                 return z;
