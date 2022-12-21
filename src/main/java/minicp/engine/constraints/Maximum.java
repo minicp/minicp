@@ -45,12 +45,17 @@ public class Maximum extends AbstractConstraint {
     @Override
     public void post() {
         // TODO
+        //  - call the constraint on all bound changes for the variables (x.propagateOnBoundChange(this))
+        //  - call a first time the propagate() method to trigger the propagation
          throw new NotImplementedException("Maximum");
     }
 
 
     @Override
     public void propagate() {
+        // TODO
+        //  - update the min and max values of each x[i] based on the bounds of y
+        //  - update the min and max values of each y based on the bounds of all x[i]
          throw new NotImplementedException("Maximum");
     }
 }
