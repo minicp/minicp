@@ -20,8 +20,13 @@ import minicp.engine.core.Solver;
 import minicp.search.LimitedDiscrepancyBranching;
 import minicp.search.Sequencer;
 import minicp.util.Procedure;
+import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -175,7 +180,7 @@ public final class BranchingScheme {
      *                      it must be assigned on the left branch (and excluded on the right)
      */
     public static Supplier<Procedure[]> lastConflict(Supplier<IntVar> variableSelector, Function<IntVar, Integer> valueSelector) {
-        throw new NotImplementedException();
+         throw new NotImplementedException();
     }
 
     /**
@@ -191,7 +196,7 @@ public final class BranchingScheme {
      *                      it must be assigned on the left branch (and excluded on the right)
      */
     public static Supplier<Procedure[]> conflictOrderingSearch(Supplier<IntVar> variableSelector, Function<IntVar, Integer> valueSelector) {
-        throw new NotImplementedException();
+         throw new NotImplementedException();
     }
 
 }
