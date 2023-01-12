@@ -26,6 +26,9 @@ import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.makeDfs;
 import static minicp.cp.Factory.makeIntVar;
@@ -152,6 +155,88 @@ public class Element1DTest extends SolverTest {
             assertFalse(y.contains(3));
         } catch (InconsistencyException e) {
             fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @Test
+    public void element1dTest5() {
+        try {
+            Solver cp = solverFactory.get();
+
+            IntVar y = makeIntVar(cp, -1, 16);
+            IntVar z = makeIntVar(cp, -1, 16);
+            // permutation of { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 }
+            int[] T = { 0, 3, 2, 2, 0, 4, 1, 4, 2, 1, 1, 0, 3, 3, 4 };
+
+            cp.post(new Element1D(T, y, z));
+
+            assertEquals(y.size(), T.length);
+            assertEquals(z.size(), 5);
+            assertEquals(z.min(), 0);
+            assertEquals(z.max(), 4);
+
+            cp.getStateManager().saveState();
+            y.removeAbove(0);
+            z.remove(T[0]);
+            try {
+                cp.fixPoint();
+                fail();
+            } catch (InconsistencyException ignored) {
+
+            }
+            cp.getStateManager().restoreState();
+
+            // permutation of { 0, 1, ..., 14 }
+            int[] indices = { 3, 4, 7, 6, 10, 12, 13, 11, 1, 14, 5, 8, 0, 9, 2 };
+
+            int[] valCount = new int[z.size()]; // valCount[i] == number of occurrences of i in z
+            for (int val : T) {
+                ++valCount[val];
+            }
+
+            // Skip the first index, as z will be fixed to T[indices[0]]
+            // after the for loop.
+            for (int i = 1; i < indices.length; i++) {
+                final int index = indices[i];
+                final int val = T[index];
+                assertTrue(y.contains(index));
+                y.remove(index);
+                assertEquals(y.size(), T.length - i);
+                cp.fixPoint();
+                --valCount[val]; // one occurrence has been removed
+                assertTrue(valCount[val] >= 0);
+                if (valCount[val] > 0 || (val > z.min() && val < z.max())) {
+                    assertTrue(String.format("z should still contain %d", val), z.contains(val));
+                } else if (valCount[val] == 0) {
+                    if (val == z.min()) {
+                        for (int v = val; v <= valCount.length && valCount[v] == 0; v++) {
+                            assertFalse(String.format("min value update: z does not contain anymore %d", v), z.contains(v));
+                        }
+                    }
+                    if (val == z.max()) {
+                        for (int v = val; v >= 0 && valCount[v] == 0; v--) {
+                            assertFalse(String.format("max value update: z does not contain anymore %d", v), z.contains(v));
+                        }
+                    }
+                }
+            }
+
+            final int index = indices[0];
+            final int val = T[index];
+            for (int v = 0; v < valCount.length; v++) {
+                if (v == val) {
+                    assertEquals(valCount[v], 1);
+                } else {
+                    assertEquals(valCount[v], 0);
+                }
+            }
+            assertTrue(y.isFixed());
+            assertEquals(y.min(), index);
+            assertTrue(z.isFixed());
+            assertEquals(z.min(), val);
+
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }

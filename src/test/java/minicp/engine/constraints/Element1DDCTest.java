@@ -17,6 +17,7 @@ package minicp.engine.constraints;
 
 import minicp.engine.SolverTest;
 import minicp.util.NotImplementedExceptionAssume;
+import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.junit.Test;
 import com.github.guillaumederval.javagrading.GradeClass;
@@ -26,9 +27,11 @@ import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.Procedure;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import static minicp.cp.BranchingScheme.EMPTY;
 import static minicp.cp.BranchingScheme.branch;
@@ -102,6 +105,58 @@ public class Element1DDCTest extends SolverTest {
             SearchStatistics stats = dfs.solve();
             assertTrue(stats.numberOfSolutions() >= uniqueValues.size());
             assertTrue(stats.numberOfSolutions() <= T.length);
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @Test
+    public void element1dTest2() {
+        try {
+            Solver cp = solverFactory.get();
+
+            IntVar y = makeIntVar(cp, 0, 100);
+            IntVar z = makeIntVar(cp, 0, 100);
+
+            int[] T = new int[15];
+            Arrays.fill(T, 5);
+            T[T.length - 1] = 0;
+
+            cp.post(new Element1DDomainConsistent(T, y, z));
+
+            assertEquals(y.size(), T.length);
+            assertEquals(z.size(), 2);
+            assertEquals(z.min(), 0);
+            assertEquals(z.max(), 5);
+
+            cp.getStateManager().saveState();
+            y.remove(T.length - 1);
+            z.remove(5);
+            try {
+                cp.fixPoint();
+                fail();
+            } catch (InconsistencyException ignored) {
+
+            }
+            cp.getStateManager().restoreState();
+
+            // indices is a permutation of {1, 2, ..., 13 }
+            // the final index, 14, is not present.
+            int[] indices = { 9, 1, 2, 4, 11, 6, 13, 0, 12, 10, 3, 7, 5, 8 };
+
+            for (int i = 0; i < indices.length; i++) {
+                assertEquals(y.size(), T.length - i);
+                assertTrue(y.contains(indices[i]));
+                y.remove(indices[i]);
+                cp.fixPoint();
+                assertEquals(z.min(), 0);
+                if (i == indices.length - 1) {
+                    assertEquals(z.size(), 1);
+                } else {
+                    assertEquals(z.max(), 5);
+                    assertEquals(z.size(), 2);
+                }
+            }
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
