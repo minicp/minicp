@@ -39,6 +39,12 @@ public class GraphColoringTinyCSP {
         public final List<int []> edges;
         public final int maxColor;
 
+        /**
+         *
+         * @param n the number of nodes with indices on {0,...,n-1}
+         * @param edges a list of edges, an edge (a,b) encoded in a size two array [a,b]
+         * @param maxColor, the maximum number of colors allowed in the solution, the allowed colors are {0...maxColor-1}
+         */
         public GraphColoringInstance(int n, List<int []> edges, int maxColor) {
             this.n = n;
             this.edges = edges;

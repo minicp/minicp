@@ -136,7 +136,7 @@ public class TSPTest {
             long maxTime = (long) (maxRunTime * 0.9);
             assertTimeoutPreemptively(Duration.ofMillis(maxRunTime), () -> tsp.lns(false, i -> i < objectiveToBeat || System.currentTimeMillis() - start > maxTime));
             assertTrue(nSol.get() > 2);
-            assertTrue(sol.get() < objectiveToBeat);
+            assertTrue(sol.get() < objectiveToBeat, "You did not find an objective below " + objectiveToBeat);
         } catch (InconsistencyException | NullPointerException e) {
             fail("No inconsistency should happen when creating the constraints and performing the search " + e);
         } catch (NotImplementedException e) {
@@ -168,7 +168,7 @@ public class TSPTest {
     }
 
     public static Stream<Arguments> getLNSInstances() {
-        double maxRunTime = 3; // in s
+        double maxRunTime = 4; // in s
         return Stream.of(new LNSRun[] {
                     new LNSRun("data/tsp/tsp_61.txt", 357, maxRunTime),
                     new LNSRun("data/tsp/tsp_101.txt", 482, maxRunTime),

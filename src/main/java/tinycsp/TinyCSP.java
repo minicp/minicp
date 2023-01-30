@@ -96,9 +96,9 @@ public class TinyCSP {
             onSolution.accept(solution);
         } else {
             Variable y = notFixed.get(); // take the unfixed variable
+
             int v = y.dom.min();
             ArrayList<Domain> backup = backupDomains();
-
             // left branch x = v
             try {
                 y.dom.fix(v);

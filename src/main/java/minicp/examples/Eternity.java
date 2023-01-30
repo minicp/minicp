@@ -83,7 +83,7 @@ public class Eternity extends SatisfactionProblem {
     public void buildModel() {
         // ------------------------
 
-        // TODO: create the table where each line correspond to one possible rotation of a piece
+        // TODO: create the table where each line corresponds to one possible rotation of a piece
         // For instance if the line piece[6] = [2,3,5,1]
         // the four lines created in the table are
         // [6,2,3,5,1] // rotation of 0°

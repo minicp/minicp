@@ -13,11 +13,10 @@
  * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
  */
 
-
 package minicp.state;
 
-
 import java.util.Arrays;
+import minicp.util.exception.NotImplementedException;
 
 
 /**
@@ -27,24 +26,22 @@ import java.util.Arrays;
 public class StateSparseBitSet {
 
     /* Variables used to store value of the bitset */
-    private int nWords;
-    private State<Long>[] words;
+    private final int nWords;
+    private final State<Long>[] words;
 
     /* Variables used to make set sparse */
-    private int[] nonZeroIdx;
-    private StateInt nNonZero;
+    private final int[] nonZeroIdx;
+    private final StateInt nonZeroSize;
 
 
     /**
      * Bitset of the same capacity as the outer {@link StateSparseBitSet}.
      * It is not synchronized with  {@link StateManager}.
      * It is rather intended to be used as parameter to the
-     * {@link #intersect(BitSet)} method to modify the outer {@link StateSparseBitSet}.
+     * {@link #and(BitSet)} method to modify the outer {@link StateSparseBitSet}.
      */
     public class BitSet {
-
-        private long[] words;
-
+        protected long[] words;
         /**
          * Initializes a bit-set with the same capacity as the outer {@link StateSparseBitSet}.
          * All the bits are initially unset. The set it represents is thus empty.
@@ -54,7 +51,8 @@ public class StateSparseBitSet {
         }
 
         /**
-         * Set the ith bit
+         * As for the {@link java.util.BitSet#set(int)}
+         * Sets the bit at the specified index to true
          *
          * @param i the bit to set
          */
@@ -63,36 +61,79 @@ public class StateSparseBitSet {
         }
 
 
+
+
+        @Override
+        public String toString() {
+            // TODO toString value
+            return "";
+        }
+    }
+
+    public class SupportBitSet extends BitSet{
+        protected int residue;
+        public SupportBitSet() {
+            super();
+            residue = 0;
+        }
+    }
+    public class MaskBitSet extends BitSet{
+
         /**
-         * Unset all the bits
+         * Initializes a bit-set with the same capacity as the outer {@link StateSparseBitSet}.
+         * All the bits are initially unset. The set it represents is thus empty.
+         */
+        public MaskBitSet() {
+            super();
+        }
+
+
+        /**
+         * As for {@link java.util.BitSet#clear()}:
+         * Sets all the bits in this BitSet to false
+         * <p>
+         * The clear is optimized to ignore the empty words in the
+         * associated Reversible Sparse Bit Set
          */
         public void clear() {
-            for (int i = 0; i < nNonZero.value(); i++) {
-                words[nonZeroIdx[i]] = 0L;
+            for (int i = 0; i < nonZeroSize.value(); i++) {
+                this.words[nonZeroIdx[i]] = 0L;
             }
         }
 
         /**
-         * Makes the union with another bit-set but
-         * only on non zero-words of the outer sparse-bit-set.
+         * As for {@link java.util.BitSet#or(java.util.BitSet)}:
+         * Performs a logical OR of this bit set with the bit set argument. This
+         * bit set is modified so that a bit in it has the value true if and only
+         * if it either already had the value true or the corresponding bit in the
+         * bit set argument has the value true.
+         * <p>
+         * The logical OR is optimized to ignore the empty words in the
+         * associated Reversible Sparse Bit Set
          *
          * @param other the other bit-set to make the union with
          */
-        public void union(BitSet other) {
-            for (int i = 0; i < nNonZero.value(); i++) {
-                words[nonZeroIdx[i]] |= other.words[nonZeroIdx[i]];
+        public void or(BitSet other) {
+            for (int i = 0; i < nonZeroSize.value(); i++) {
+                this.words[nonZeroIdx[i]] |= other.words[nonZeroIdx[i]];
             }
         }
 
         /**
-         * Makes the intersection with another bit-set but
-         * only on non zero-words of the outer sparse-bit-set.
+         * As for {@link java.util.BitSet#and(java.util.BitSet)}:
+         * Performs a logical AND of this target bit set with the argument
+         * bit set. This bit set is modified so that each bit in it has the value
+         * true if and only if it both initially had the value true and the
+         * corresponding bit in the bit set argument also had the value true.
+         * <p>
+         * The logical AND is optimized to ignore the empty words in the
+         * associated Reversible Sparse Bit Set
          *
          * @param other the other bit-set to make the intersection with
          */
-        public void intersect(BitSet other) {
-            for (int i = 0; i < nNonZero.value(); i++) {
-                words[nonZeroIdx[i]] &= other.words[nonZeroIdx[i]];
+        public void and(BitSet other) {
+            for (int i = 0; i < nonZeroSize.value(); i++) {
+                this.words[nonZeroIdx[i]] &= other.words[nonZeroIdx[i]];
             }
         }
     }
@@ -106,54 +147,96 @@ public class StateSparseBitSet {
      */
     public StateSparseBitSet(StateManager sm, int n) {
         nWords = (n + 63) >>> 6; // divided by 64
-        //System.out.println("nwords:"+nWords);
         words = new State[nWords];
-        Arrays.setAll(words, i -> sm.makeStateRef(Long.valueOf(0xFFFFFFFFFFFFFFFFL)));
+        Arrays.setAll(words, i -> sm.makeStateRef(0xFFFFFFFFFFFFFFFFL));
         nonZeroIdx = new int[nWords];
         Arrays.setAll(nonZeroIdx, i -> i);
-        nNonZero = sm.makeStateInt(nWords);
+        nonZeroSize = sm.makeStateInt(nWords);
     }
 
     /**
-     * Intersect this sparset-set with bs
+     * As for {@link java.util.BitSet#and(java.util.BitSet)}:
+     * Performs a logical AND of this target bit set with the argument
+     * bit set. This bit set is modified so that each bit in it has the value
+     * true if and only if it both initially had the value true and the
+     * corresponding bit in the bit set argument also had the value true.
+     * <p>
+     * The logical AND is optimized to ignore the empty words in the
+     * associated Reversible Sparse Bit Set
      *
      * @param bs the sparset-set to intersect with
      */
-    public void intersect(BitSet bs) {
-        for (int i = nNonZero.value() - 1; i >= 0; i--) {
+    public void and(BitSet bs) {
+        for (int i = nonZeroSize.value() - 1; i >= 0; i--) {
             State<Long> w = words[nonZeroIdx[i]];
             long wn = w.value() & bs.words[nonZeroIdx[i]];
-            if (wn == 0L) {
-                nNonZero.decrement();
+            w.setValue(wn);
+            if (wn == 0L) { // swap with last non-zero word
+                nonZeroSize.decrement();
                 int tmp = nonZeroIdx[i];
-                nonZeroIdx[i] = nonZeroIdx[nNonZero.value()];
-                nonZeroIdx[nNonZero.value()] = tmp;
-            } else {
-                w.setValue(wn);
+                nonZeroIdx[i] = nonZeroIdx[nonZeroSize.value()];
+                nonZeroIdx[nonZeroSize.value()] = tmp;
             }
         }
     }
 
+    /**
+     * As for the {@link java.util.BitSet#isEmpty()} function:
+     * Returns true if this BitSet contains no bits that are set to true.
+     *
+     * @return true if empty, false otherwise
+     */
     public boolean isEmpty() {
-        return nNonZero.value() == 0;
+        return nonZeroSize.value() == 0;
     }
 
-    public boolean hasEmptyIntersection(BitSet bs) {
-        //System.out.println("nonNonZero:"+nNonZero.value());
-        for (int i = nNonZero.value() - 1; i >= 0; i--) {
-            State<Long> w = words[nonZeroIdx[i]];
-            //System.out.println("intersectino word" + nonZeroIdx[i] +" = "+(w.value() & bs.words[nonZeroIdx[i]]));
-            if ((w.value() & bs.words[nonZeroIdx[i]]) != 0L) {
-                return false;
+
+    /**
+     * Returns true if, for the given {@link SupportBitSet#words} id stored in by the {@link SupportBitSet#residue} of
+     * the specified {@link SupportBitSet} bs,
+     * bs has any bits set to true
+     * that are also set to true in the corresponding {@link StateSparseBitSet#words} of this BitSet.
+     * <p>
+     *
+     * @param bs the bitset to test the intersection with
+     * @return true if the intersection is empty
+     */
+    protected boolean intersectsResidueOnly(SupportBitSet bs) {
+        // TODO 1: use the residue to test if the non-empty intersection stored is still non-empty
+         throw new NotImplementedException("StateSparseBitSet");
+    }
+
+    /**
+     * As for the {@link java.util.BitSet#intersects(java.util.BitSet)} function:
+     * Returns true if the specified {@link SupportBitSet} has any bits set to true
+     * that are also set to true in this {@link StateSparseBitSet}.
+     * <p>
+     * The intersection test is optimized to ignore the empty words in the
+     * associated Reversible Sparse Bit Set
+     *
+     * @param bs the bitset to test the intersection with
+     * @return true if the intersection is empty
+     */
+    public boolean intersects(SupportBitSet bs) {
+        if (intersectsResidueOnly(bs)) {
+            return true;
+        }
+        for (int i = nonZeroSize.value() - 1; i >= 0; i--) {
+            int idx = nonZeroIdx[i];
+            State<Long> w = words[idx];
+            if ((w.value() & bs.words[idx]) != 0L) {
+                // TODO 2: store the new non-empty intersection using residue of bs
+                
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
     public String toString() {
         String res = "";
-        for (int i = 0; i < nNonZero.value(); i++) {
+        for (int i = 0; i < nonZeroSize.value(); i++) {
             res += " w" + nonZeroIdx[i] + "=" + Long.toBinaryString(words[nonZeroIdx[i]].value());
         }
         return res;

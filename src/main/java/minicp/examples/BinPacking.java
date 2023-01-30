@@ -62,7 +62,7 @@ public class BinPacking {
 
         // break symmetries imposing increasing loads
         for (int j = 0; j < nBins - 1; j++) {
-            cp.post(lessOrEqual(l[j],l[j+1]));
+            // cp.post(lessOrEqual(l[j],l[j+1]));
         }
 
         int [] values = new int[nBins];
@@ -75,8 +75,9 @@ public class BinPacking {
             else {
                 int maxUsedBin = maxBound(x).orElse(-1); // index max used bin
                 List<Procedure> branches = new LinkedList<>();
+                //for (int j = 0; j <=  nBins - 1; j++) {
                 // dynamic symmetry breaking: branch on at most one empty bin
-                for (int j = 0; j <= Math.max(maxUsedBin + 1, nBins - 1); j++) {
+                for (int j = 0; j <= Math.min(maxUsedBin + 1, nBins - 1); j++) {
                     if (x[item].contains(j)) {
                         final int bin = j;
                         branches.add(() -> cp.post(equal(x[item],bin)));

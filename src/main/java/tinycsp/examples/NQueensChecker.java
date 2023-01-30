@@ -24,7 +24,7 @@ public class NQueensChecker {
     int [] q;
     int n = 0;
 
-    static int nRecur = 0;
+    static long nRecur = 0;
 
     public NQueensChecker(int n) {
         this.n = n;
@@ -39,6 +39,7 @@ public class NQueensChecker {
         nRecur++;
         if (idx == n) {
             if (constraintsSatisfied()) {
+                // output solution
                 onSolution.accept(Arrays.copyOf(q,n));
             }
         } else {
@@ -66,7 +67,10 @@ public class NQueensChecker {
     public static void main(String[] args) {
         NQueensChecker q = new NQueensChecker(8);
         ArrayList<int []> solutions = new ArrayList<>();
+        long t0 = System.currentTimeMillis();
         q.dfs(0, solution -> solutions.add(solution));
+        long t1 = System.currentTimeMillis();
+        System.out.println("# time(ms): " + (t1-t0));
         System.out.println("# solutions: " + solutions.size());
         System.out.println("# recurs: " + nRecur);
     }

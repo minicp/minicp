@@ -237,7 +237,7 @@ public final class Factory {
      * @return a variable that is a view of {@code x+v}
      */
     public static IntVar plus(IntVar x, int v) {
-        return new IntVarViewOffset(x, v);
+        return v == 0 ? x : new IntVarViewOffset(x, v);
     }
 
     /**
@@ -248,7 +248,7 @@ public final class Factory {
      * @return a variable that is a view of {@code x-v}
      */
     public static IntVar minus(IntVar x, int v) {
-        return new IntVarViewOffset(x, -v);
+        return v == 0 ? x: new IntVarViewOffset(x, -v);
     }
 
 
@@ -271,9 +271,12 @@ public final class Factory {
      * @return a variable that represents the absolute value of x
      */
     public static IntVar abs(IntVar x) {
-        IntVar r = makeIntVar(x.getSolver(), 0, x.max());
-        x.getSolver().post(new Absolute(x, r));
-        return r;
+        if (x.min() >= 0) return x;
+        else {
+            IntVar r = makeIntVar(x.getSolver(), 0, x.max());
+            x.getSolver().post(new Absolute(x, r));
+            return r;
+        }
     }
 
     /**

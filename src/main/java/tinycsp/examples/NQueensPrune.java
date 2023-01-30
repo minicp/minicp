@@ -31,7 +31,7 @@ public class NQueensPrune {
     int [] q;
     int n = 0;
 
-    static int nRecur = 0;
+    static long nRecur = 0;
 
     public NQueensPrune(int n) {
         this.n = n;
@@ -68,7 +68,7 @@ public class NQueensPrune {
     }
 
     public static void main(String[] args) {
-        NQueensPrune q = new NQueensPrune(14);
+        NQueensPrune q = new NQueensPrune(15);
         ArrayList<int []> solutions = new ArrayList<>();
         // collect all the solutions
         long t0 = System.currentTimeMillis();
