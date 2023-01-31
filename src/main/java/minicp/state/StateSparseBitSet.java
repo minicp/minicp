@@ -57,16 +57,29 @@ public class StateSparseBitSet {
          * @param i the bit to set
          */
         public void set(int i) {
-            words[i >>> 6] |= 1L << i; // << is a cyclic shift, (1L << 64) == 1L
+            long v = 1L << i;
+            words[i >>> 6] |= v; // << is a cyclic shift, (1L << 64) == 1L
         }
 
-
-
+        /**
+         * As for the {@link java.util.BitSet#get(int)}
+         * Gives the bit at the specified index
+         *
+         * @param i the bit to return
+         * @return true if bit at index i is set
+         */
+        public boolean get(int i) {
+            int wordIndex = i >>> 6;
+            return wordIndex < nWords && (this.words[wordIndex] & 1L << i) != 0L;
+        }
 
         @Override
         public String toString() {
-            // TODO toString value
-            return "";
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < nWords; i++) {
+                res.append(" w").append(i).append("=").append(Long.toBinaryString(words[i]));
+            }
+            return res.toString();
         }
     }
 
@@ -233,12 +246,24 @@ public class StateSparseBitSet {
         return false;
     }
 
+    /**
+     * As for the {@link java.util.BitSet#get(int)}
+     * Gives the bit at the specified index
+     *
+     * @param i the bit to return
+     * @return true if bit at index i is set
+     */
+    public boolean get(int i) {
+        int wordIndex = i >>> 6;
+        return wordIndex < nonZeroSize.value() && (this.words[wordIndex].value() & 1L << i) != 0L;
+    }
+
     @Override
     public String toString() {
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < nonZeroSize.value(); i++) {
-            res += " w" + nonZeroIdx[i] + "=" + Long.toBinaryString(words[nonZeroIdx[i]].value());
+            res.append(" w").append(nonZeroIdx[i]).append("=").append(Long.toBinaryString(words[nonZeroIdx[i]].value()));
         }
-        return res;
+        return res.toString();
     }
 }

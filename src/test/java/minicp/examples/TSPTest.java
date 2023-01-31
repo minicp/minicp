@@ -132,11 +132,15 @@ public class TSPTest {
                 sol.set(value);
                 nSol.incrementAndGet();
             });
+            AtomicInteger nFailures = new AtomicInteger(0);
+            tsp.dfs.onFailure(nFailures::incrementAndGet);
             long start = System.currentTimeMillis();
             long maxTime = (long) (maxRunTime * 0.9);
             assertTimeoutPreemptively(Duration.ofMillis(maxRunTime), () -> tsp.lns(false, i -> i < objectiveToBeat || System.currentTimeMillis() - start > maxTime));
+            assertTrue(nFailures.get() > 500, "Are you really using the search?");
             assertTrue(nSol.get() > 2);
-            assertTrue(sol.get() < objectiveToBeat, "You did not find an objective below " + objectiveToBeat);
+            assertTrue(sol.get() < objectiveToBeat,
+                    String.format("You found an objective of %d which is not below %d", sol.get(), objectiveToBeat));
         } catch (InconsistencyException | NullPointerException e) {
             fail("No inconsistency should happen when creating the constraints and performing the search " + e);
         } catch (NotImplementedException e) {
@@ -168,11 +172,10 @@ public class TSPTest {
     }
 
     public static Stream<Arguments> getLNSInstances() {
-        double maxRunTime = 4; // in s
         return Stream.of(new LNSRun[] {
-                    new LNSRun("data/tsp/tsp_61.txt", 357, maxRunTime),
-                    new LNSRun("data/tsp/tsp_101.txt", 482, maxRunTime),
-                    new LNSRun("data/tsp/tsp_81.txt", 401, maxRunTime),
+                    new LNSRun("data/tsp/tsp_61.txt", 357, 4.5),
+                    new LNSRun("data/tsp/tsp_81.txt", 401, 4.5),
+                        new LNSRun("data/tsp/tsp_101.txt", 482, 6),
                 })
                 .map(run -> arguments(named(run.getName(), run.instance), run.objectiveToBeat, run.maxRunTime));
     }

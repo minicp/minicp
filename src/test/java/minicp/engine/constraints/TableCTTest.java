@@ -1,23 +1,19 @@
 package minicp.engine.constraints;
 
-import minicp.cp.BranchingScheme;
-import minicp.cp.Factory;
 import minicp.engine.SolverTest;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
-import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
+import minicp.state.StateSparseBitSet;
+import minicp.state.StateSparseBitSet.SupportBitSet;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.Grade;
-import org.javagrader.GradeFeedback;
-import org.javagrader.TestResultStatus;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
+import java.util.HashSet;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -37,6 +33,145 @@ public class TableCTTest extends SolverTest {
             for (int j = 0; j < arity; j++)
                 r[i][j] = rand.nextInt(maxvalue - minvalue) + minvalue;
         return r;
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testInitSupports(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 3, 12);
+            int[][] table = new int[][]{
+                    {0, 0, 2},
+                    {3, 5, 7},
+                    {6, 9, 10},
+                    {1, 2, 3},
+                    {0, 0, 3},
+            };
+            TableCT tableCT = new TableCT(x, table);
+            SupportBitSet[][] supports = tableCT.supports;
+            //supports[i][v] is the set of tuples supported by x[i]=v
+            HashSet<Integer> valid = new HashSet<>();
+            for (int i = 0 ; i < 3 ; ++i) {
+                valid.clear(); // values that are valid for x[i]
+                for (int[] ints : table) {
+                    valid.add(ints[i]);
+                }
+                for (int v = 0 ; v < 12 ; ++v) {
+                    if (valid.contains(v)) {
+                        // the value is contained within some row of the table
+                        for (int row = 0 ; row < table.length ; ++row) {
+                            if (table[row][i] == v) {
+                                assertTrue(supports[i][v].get(row),
+                                        String.format("The value %d is valid for x[%d] at row %d but you did not set support[%d][%d] at bit %d",
+                                                v, i, row, i, v, row));
+                            } else {
+                                assertFalse(supports[i][v].get(row),
+                                        String.format("The value %d is not valid for x[%d] at row %d but you set support[%d][%d] at bit %d",
+                                                v, i, row, i, v, row));
+                            }
+                        }
+                        for (int bit = table.length ; bit < 64 ; ++bit) {
+                            assertFalse(supports[i][v].get(bit),
+                                    String.format("The row %d exceeds the table length, support[%d][%d] should not be set at bit %d",
+                                            bit, i, v, bit));
+                        }
+                    } else {
+                        for (int bit = 0 ; bit < 64 ; ++bit) {
+                            assertFalse(supports[i][v].get(bit),
+                                    String.format("The value %d does not appear in the table for x[%d] but you set support[%d][%d] at bit %d",
+                                            v, i, i, v, bit));
+                        }
+                    }
+                }
+            }
+        } catch (InconsistencyException e) {
+            fail("Your constraint should not throw any inconsistency outside of .post() or .propagate()");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testSetSupportedTuples1(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 3, 12);
+            int[][] table = new int[][]{
+                    {-1, 0, 5},
+                    {0, 0, 2},
+                    {2, 0, -9},
+                    {3, 5, 7},
+                    {15, 0, -6},
+                    {6, 9, 10},
+                    {5, -2, 0},
+                    {-1, 0, 7},
+                    {1, 2, 3},
+                    {0, 0, 12},
+            };
+            TableCT tableCT = new TableCT(x, table);
+            cp.post(tableCT);
+            // propagation has been called and supportedTuples should be set
+            StateSparseBitSet supportedTuples = tableCT.supportedTuples;
+            for (int row = 0 ; row < table.length ; ++row) {
+                boolean valid = true;
+                for (int i = 0 ; i < table[row].length ; ++i) {
+                    valid = valid && x[i].contains(table[row][i]);
+                }
+                assertEquals(valid, supportedTuples.get(row),
+                        String.format("The row %d of the table is %svalid but you set supportedTuples[%d] to %b",
+                                row, valid ? "" : "in", row, valid));
+            }
+        } catch (InconsistencyException e) {
+            fail("Your constraint should not throw any inconsistency outside of .post() or .propagate()");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testSetSupportedTuples2(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 3, 12);
+            HashSet<Integer> invalid = new HashSet<>();
+            invalid.add(0);
+            invalid.add(5);
+            invalid.add(7);
+            for (int i = 0 ; i < 3 ; ++i) {
+                for (int v: invalid) {
+                    x[i].remove(v);
+                }
+            }
+            int[][] table = new int[][]{
+                    {-1, 0, 5},
+                    {0, 0, 2},
+                    {2, 0, -9},
+                    {3, 5, 7},
+                    {15, 0, -6},
+                    {6, 9, 10},
+                    {5, -2, 0},
+                    {-1, 0, 7},
+                    {1, 2, 3},
+                    {0, 0, 12},
+            };
+            TableCT tableCT = new TableCT(x, table);
+            cp.post(tableCT);
+            // propagation has been called and supportedTuples should be set
+            StateSparseBitSet supportedTuples = tableCT.supportedTuples;
+            for (int row = 0 ; row < table.length ; ++row) {
+                boolean valid = true;
+                for (int i = 0 ; i < table[row].length ; ++i) {
+                    valid = valid && x[i].contains(table[row][i]);
+                }
+                assertEquals(valid, supportedTuples.get(row),
+                        String.format("The row %d of the table is %svalid but you set supportedTuples[%d] to %b",
+                                row, valid ? "" : "in", row, valid));
+            }
+        } catch (InconsistencyException e) {
+            fail("Your constraint should not throw any inconsistency outside of .post() or .propagate()");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
     }
 
     @ParameterizedTest

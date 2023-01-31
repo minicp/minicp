@@ -36,9 +36,9 @@ public class TableCT extends AbstractConstraint {
     private IntVar[] x; //variables
     private int[][] table; //the table
     //supports[i][v] is the set of tuples supported by x[i]=v
-    private StateSparseBitSet.SupportBitSet[][] supports;
+    protected StateSparseBitSet.SupportBitSet[][] supports;
 
-    private StateSparseBitSet supportedTuples;
+    protected StateSparseBitSet supportedTuples;
     private StateSparseBitSet.MaskBitSet tmpSupport;
 
     private StateInt[] lastDomSize; // store the last size of the domain of the variable
