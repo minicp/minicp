@@ -46,9 +46,9 @@ public class Cumulative extends AbstractConstraint {
      * At any time-point t, the sum of the demands
      * of the activities overlapping t do not overlap the capacity.
      *
-     * @param start the start time of each activities
-     * @param duration the duration of each activities (non negative)
-     * @param requirement the requirement of each activities, non negative
+     * @param start the start time of each activity
+     * @param duration the duration of each activity (non negative)
+     * @param requirement the requirement of each activity, non negative
      * @param capa the capacity of the constraint
      */
     public Cumulative(IntVar[] start, int[] duration, int[] requirement, int capa) {
