@@ -11,6 +11,8 @@ import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import org.javagrader.Grade;
+import org.javagrader.GradeFeedback;
+import org.javagrader.TestResultStatus;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.HashSet;
@@ -37,7 +39,7 @@ public class TableCTTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void testInitSupports(Solver cp) {
+    public void testInitSupports1(Solver cp) {
         try {
             IntVar[] x = makeIntVarArray(cp, 3, 12);
             int[][] table = new int[][]{
@@ -80,6 +82,63 @@ public class TableCTTest extends SolverTest {
                             assertFalse(supports[i][v].get(bit),
                                     String.format("The value %d does not appear in the table for x[%d] but you set support[%d][%d] at bit %d",
                                             v, i, i, v, bit));
+                        }
+                    }
+                }
+            }
+        } catch (InconsistencyException e) {
+            fail("Your constraint should not throw any inconsistency outside of .post() or .propagate()");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @GradeFeedback(message = "How should you handle x = {10_000..10_100}? Do you need more than 10 000 entries?",
+            on = TestResultStatus.FAIL)
+    public void testInitSupports2(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 3, 12);
+            for (int i = 0 ; i < 3 ; ++i) {
+                x[i].removeBelow(i+1);
+            }
+            int[][] table = new int[][]{
+                    {0, 0, 2},
+                    {3, 5, 7},
+                    {6, 9, 10},
+                    {1, 2, 3},
+                    {0, 0, 3},
+            };
+            TableCT tableCT = new TableCT(x, table);
+            SupportBitSet[][] supports = tableCT.supports;
+            //supports[i][v] is the set of tuples supported by x[i]=v
+            HashSet<Integer> valid = new HashSet<>();
+            for (int i = 0 ; i < 3 ; ++i) {
+                valid.clear(); // values that are valid for x[i]
+                for (int[] ints : table) {
+                    if (x[i].contains(ints[i]))
+                        valid.add(ints[i]);
+                }
+                for (int v = 0 ; v < 12 ; ++v) {
+                    int ofs = x[i].min();
+                    if (valid.contains(v)) {
+                        // the value is contained within some row of the table
+                        for (int row = 0 ; row < table.length ; ++row) {
+                            if (table[row][i] == v) {
+                                assertTrue(supports[i][v - ofs].get(row),
+                                        String.format("The value %d is valid for x[%d] at row %d but you did not set support[%d][%d] at bit %d",
+                                                v, i, row, i, v, row));
+                            } else {
+                                assertFalse(supports[i][v - ofs].get(row),
+                                        String.format("The value %d is not valid for x[%d] at row %d but you set support[%d][%d] at bit %d",
+                                                v, i, row, i, v, row));
+                            }
+                        }
+                        for (int bit = table.length ; bit < 64 ; ++bit) {
+                            assertFalse(supports[i][v - ofs].get(bit),
+                                    String.format("The row %d exceeds the table length, support[%d][%d] should not be set at bit %d",
+                                            bit, i, v, bit));
                         }
                     }
                 }
