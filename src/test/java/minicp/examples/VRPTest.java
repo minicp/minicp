@@ -61,7 +61,7 @@ public class VRPTest {
     }
 
     @Grade(cpuTimeout = 500, unit = TimeUnit.MILLISECONDS)
-    @ParameterizedTest(name = "[{index}] {0} - {1} vehicle(s)")
+    @ParameterizedTest(name = "[{index}] {0}")
     @MethodSource("getInstanceAndVehicles")
     @Order(1)
     public void testDistanceMatrix(String file, int nVehicle) {
@@ -189,6 +189,7 @@ public class VRPTest {
                     return l;
                 })
                 .flatMap(Collection::stream)
-                .map(p -> arguments(named(p.file.getName(), p.file.getPath()), p.nVehicle));
+                .map(p -> arguments(named(p.file.getName() + " - " + p.nVehicle + " vehicle" + (p.nVehicle > 1 ? "s" : ""),
+                        p.file.getPath()), p.nVehicle));
     }
 }

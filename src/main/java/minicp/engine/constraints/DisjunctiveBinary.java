@@ -30,12 +30,11 @@ import static minicp.cp.Factory.*;
  */
 public class DisjunctiveBinary extends AbstractConstraint implements Comparable<DisjunctiveBinary> {
 
-    // before = true if activity 1 << activity2, after = true if activity 1 >> activity2 (one of the two must be true)
-    private BoolVar before, after;
+    // only one of before and after must be true
+    private BoolVar before; // before = true if activity 1 << activity2
+    private BoolVar after;  // after =  true if activity 1 >> activity2
     private IntVar start1, start2;
     private IntVar end1, end2;
-
-    int[] duration;
 
     /**
      * Constraint enforcing that two activities cannot overlap

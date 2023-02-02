@@ -44,7 +44,7 @@ public class AllDifferentDC extends AbstractConstraint {
     private ArrayList<Integer>[] in;
     private ArrayList<Integer>[] out;
     private int nNodes;
-    private Graph g = new Graph() {
+    protected Graph g = new Graph() {
         @Override
         public int n() {
             return nNodes;
@@ -61,7 +61,7 @@ public class AllDifferentDC extends AbstractConstraint {
         }
     };
 
-    private int[] match;
+    protected int[] match;
     private boolean[] matched;
 
     private int minVal;

@@ -47,6 +47,7 @@ public class Eternity extends SatisfactionProblem {
     public IntVar[][] d;
     public IntVar[][] l;
     public IntVar[][] r;
+    protected int[][] table;
 
     public Eternity(String instanceFilePath) {
         this(false, instanceFilePath);
@@ -93,7 +94,7 @@ public class Eternity extends SatisfactionProblem {
 
         // Table with makeIntVarArray pieces and for each their 4 possible rotations
 
-        int[][] table = new int[4 * n * m][5];
+        table = new int[4 * n * m][5];
         
 
         Solver cp = makeSolver();

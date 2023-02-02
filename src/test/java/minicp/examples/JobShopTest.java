@@ -102,7 +102,7 @@ public class JobShopTest {
     @ParameterizedTest
     @MethodSource("getTinyInstances")
     @Order(1)
-    public void testModel(String instance, int objective) {
+    public void testModel(String instance, int ignored) {
         try {
             JobShop jb = new JobShop(instance);
             jb.buildModel();
@@ -121,7 +121,7 @@ public class JobShopTest {
         }
     }
 
-    @Grade(value = 3, cpuTimeout = 4500, unit = TimeUnit.MILLISECONDS,threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+    @Grade(value = 3, cpuTimeout = 5,threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     @ParameterizedTest
     @MethodSource("getSmallAndBigInstances")
     @Order(2)

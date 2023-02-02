@@ -20,6 +20,7 @@ import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
+import minicp.state.StateInt;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
@@ -68,6 +69,25 @@ public class CircuitTest extends SolverTest {
             x[i] = makeIntVar(cp, circuit[i], circuit[i]);
         }
         return x;
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testValidIds(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 5, -10, 10);
+            cp.post(new Circuit(x));
+            for (int i = 0 ; i < 5 ; ++i) {
+                assertFalse(x[i].contains(i), "Can the successor of variable x[i] be i?");
+                assertEquals(i == 0 ? 1 : 0, x[i].min(), "A successor is an index within an array");
+                assertEquals(i == 4 ? 3 : 4, x[i].max(), "A successor is an index within an array");
+                assertEquals(4, x[i].size());
+            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
     }
 
     @ParameterizedTest
@@ -164,8 +184,9 @@ public class CircuitTest extends SolverTest {
     @MethodSource("getSolver")
     public void testCompletesCycle(Solver cp) {
         IntVar[] x = makeIntVarArray(cp, 5, 5);
+        Circuit circuit = new Circuit(x);
         try {
-            cp.post(new Circuit(x));
+            cp.post(circuit);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -189,6 +210,27 @@ public class CircuitTest extends SolverTest {
             final int val = var.min();
             final int numUnfixed = nU;
 
+            // some people use dest[i] = dest[j] instead of calling setValue
+            // this compares the objects references to be sure that it is not the case
+            for (int i = 0 ; i < x.length; ++i) {
+                StateInt origI = circuit.orig[i];
+                for (int j = 0 ; j < x.length; ++j) {
+                    if (i != j) {
+                        assertNotSame(origI, circuit.orig[j], "Use orig[i].setValue(...) to set the StateInt, not orig[i] = ...");
+                    }
+                    assertNotSame(origI, circuit.dest[j], "Use orig[i].setValue(...) to set the StateInt, not orig[i] = ...");
+                }
+            }
+            for (int i = 0 ; i < x.length; ++i) {
+                StateInt destI = circuit.dest[i];
+                for (int j = 0 ; j < x.length; ++j) {
+                    if (i != j) {
+                        assertNotSame(destI, circuit.dest[j], "Use dest[i].setValue(...) to set the StateInt, not dest[i] = ...");
+                    }
+                    assertNotSame(destI, circuit.orig[j], "Use dest[i].setValue(...) to set the StateInt, not dest[i] = ...");
+                }
+            }
+
             assertTrue(numUnfixed > 1);
 
             return branch(
@@ -210,7 +252,8 @@ public class CircuitTest extends SolverTest {
                     });
         });
 
-        dfs.solve();
+        SearchStatistics stats = dfs.solve();
+        assertEquals(24, stats.numberOfSolutions());
     }
 
 

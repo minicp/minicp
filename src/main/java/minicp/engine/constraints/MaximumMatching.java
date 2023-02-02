@@ -74,7 +74,13 @@ public class MaximumMatching {
         findInitialMatching();
     }
 
-
+    /**
+     * Computes the maximum matching over the variables {@link MaximumMatching#x}
+     * Stores within the results array the value to which a variable is matched
+     *
+     * @param result array of size >= x. result[i] == value belonging to x[i], to which x[i] is matched
+     * @return size of the maximum matching
+     */
     public int compute(int[] result) {
         for (int k = 0; k < x.length; k++) {
             if (match[k] != NONE) {

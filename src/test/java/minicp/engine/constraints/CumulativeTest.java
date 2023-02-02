@@ -35,8 +35,66 @@ import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Grade(cpuTimeout = 1)
+@Grade(cpuTimeout = 2)
 public class CumulativeTest extends SolverTest {
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBuildProfile1(Solver cp) {
+        try {
+            IntVar[] s = new IntVar[3];
+            s[0] = makeIntVar(cp, 1, 1);
+            s[1] = makeIntVar(cp, 2, 2);
+            s[2] = makeIntVar(cp, 3, 3);
+            int[] d = new int[] {8, 3, 3};
+            int[] r = new int[] {1, 1, 2};
+            Cumulative cumulative = new Cumulative(s, d, r, 4);
+            Profile profile = cumulative.buildProfile();
+            assertEquals(7, profile.size(), "There are 7 rectangles composing the profile");
+            int[] starts = new int[] {1, 2, 3, 5, 6};
+            int[] duration = new int[] {1, 1, 2, 1, 3};
+            int[] height = new int[] {1, 2, 4, 3, 1};
+            for (int i = 0 ; i < starts.length ; ++i) {
+                Rectangle rect = profile.get(i+1);
+                assertEquals(starts[i], rect.start());
+                assertEquals(duration[i], rect.dur());
+                assertEquals(height[i], rect.height());
+            }
+        } catch (InconsistencyException e) {
+            fail("There is no inconsistency with the provided arguments to the cumulative constraint");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBuildProfile2(Solver cp) {
+        try {
+            IntVar[] s = new IntVar[3];
+            s[0] = makeIntVar(cp, 1, 5); // not fixed but has a mandatory part
+            s[1] = makeIntVar(cp, 2, 2);
+            s[2] = makeIntVar(cp, 3, 3);
+            int[] d = new int[] {8, 3, 3};
+            int[] r = new int[] {1, 1, 2};
+            Cumulative cumulative = new Cumulative(s, d, r, 4);
+            Profile profile = cumulative.buildProfile();
+            assertEquals(6, profile.size(), "There are 6 rectangles composing the profile");
+            int[] starts = new int[] {2, 3, 5, 6};
+            int[] duration = new int[] {1, 2, 1, 3};
+            int[] height = new int[] {1, 3, 3, 1};
+            for (int i = 0 ; i < starts.length ; ++i) {
+                Rectangle rect = profile.get(i+1);
+                assertEquals(starts[i], rect.start());
+                assertEquals(duration[i], rect.dur());
+                assertEquals(height[i], rect.height());
+            }
+        } catch (InconsistencyException e) {
+            fail("There is no inconsistency with the provided arguments to the cumulative constraint");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
 
     @ParameterizedTest
     @MethodSource("getSolver")
@@ -55,7 +113,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(120, stats.numberOfSolutions(), "cumulative alldiff expect makeIntVarArray permutations");
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -77,7 +135,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(5, s[1].min());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -99,7 +157,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(0, s[1].max());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -135,7 +193,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(15649, stats.numberOfSolutions());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -192,7 +250,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(19, s[3].max());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -218,7 +276,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(15, s[5].min());
             assertEquals(29, s[5].max());
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -247,7 +305,7 @@ public class CumulativeTest extends SolverTest {
             assertEquals(29, s[7].max());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -273,7 +331,7 @@ public class CumulativeTest extends SolverTest {
             assertTrue(s[4].isFixed());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
