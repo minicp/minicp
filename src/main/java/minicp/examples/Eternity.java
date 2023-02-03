@@ -84,7 +84,7 @@ public class Eternity extends SatisfactionProblem {
     public void buildModel() {
         // ------------------------
 
-        // TODO: create the table where each line corresponds to one possible rotation of a piece
+        // TODO 1: create the table where each line corresponds to one possible rotation of a piece
         // For instance if the line piece[6] = [2,3,5,1]
         // the four lines created in the table are
         // [6,2,3,5,1] // rotation of 0°
@@ -143,7 +143,7 @@ public class Eternity extends SatisfactionProblem {
 
         // The constraints of the problem
 
-        // TODO: State the constraints of the problem
+        // TODO 2: State the constraints of the problem
 
         // Constraint1: all the pieces placed are different
 
@@ -157,7 +157,7 @@ public class Eternity extends SatisfactionProblem {
         // The search using the and combinator
 
         dfs = makeDfs(cp,
-                /* TODO: continue, are you branching on all the variables ? */
+                /* TODO 3: continue, are you branching on all the variables ? */
                  and(firstFail(flatten((id))), firstFail(flatten(u)))
         );
         // TODO add the constraints and remove the NotImplementedException

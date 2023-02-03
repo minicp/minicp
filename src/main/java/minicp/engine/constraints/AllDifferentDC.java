@@ -61,7 +61,7 @@ public class AllDifferentDC extends AbstractConstraint {
         }
     };
 
-    protected int[] match;
+    private int[] match;
     private boolean[] matched;
 
     private int minVal;

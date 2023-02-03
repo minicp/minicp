@@ -43,6 +43,7 @@ public class VRP extends OptimizationProblem{
         for (int i = 0 ; i < distanceMatrix.length ; ++i) {
             for (int j = 0 ; j < distanceMatrix.length; ++j) {
                 // TODO 2: extend the distance matrix to put the correct distances
+                //  from initialDistanceMatrix
                 //  the nodes 0..nVehicle correspond to the depot nodes
                 //  the other nodes are the city that must be visited
                  distanceMatrix[i][j] = initialDistanceMatrix[i][j];
