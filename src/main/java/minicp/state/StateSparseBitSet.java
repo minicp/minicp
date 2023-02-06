@@ -212,7 +212,7 @@ public class StateSparseBitSet {
      * <p>
      *
      * @param bs the bitset to test the intersection with
-     * @return true if the intersection is empty
+     * @return true if the intersection is non-empty
      */
     protected boolean intersectsResidueOnly(SupportBitSet bs) {
         // TODO 1: use the residue to test if the non-empty intersection stored is still non-empty
@@ -228,7 +228,7 @@ public class StateSparseBitSet {
      * associated Reversible Sparse Bit Set
      *
      * @param bs the bitset to test the intersection with
-     * @return true if the intersection is empty
+     * @return true if the intersection is non-empty
      */
     public boolean intersects(SupportBitSet bs) {
         if (intersectsResidueOnly(bs)) {
