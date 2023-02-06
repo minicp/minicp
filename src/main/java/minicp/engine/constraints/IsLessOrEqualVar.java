@@ -33,7 +33,8 @@ public class IsLessOrEqualVar extends AbstractConstraint {
     private final IntVar x;
     private final IntVar y;
 
-    
+    private final Constraint lEqC;
+    private final Constraint grC;
 
     /**
      * Creates a reified is less or equal constraint {@code b <=> x <= y}.
@@ -46,18 +47,34 @@ public class IsLessOrEqualVar extends AbstractConstraint {
         this.b = b;
         this.x = x;
         this.y = y;
-        
+        lEqC = lessOrEqual(x, y);
+        grC = lessOrEqual(plus(y, 1), x);
     }
 
     @Override
     public void post() {
-        // TODO
-         throw new NotImplementedException("IsLessOrEqualVar");
+        x.propagateOnBoundChange(this);
+        y.propagateOnBoundChange(this);
+        b.propagateOnFix(this);
+        propagate();
     }
 
     @Override
     public void propagate() {
-        // TODO
-         throw new NotImplementedException("IsLessOrEqualVar");
+        if (b.isTrue()) {
+            getSolver().post(lEqC, false);
+            setActive(false);
+        } else if (b.isFalse()) {
+            getSolver().post(grC, false);
+            setActive(false);
+        } else {
+            if (x.max() <= y.min()) {
+                b.fix(1);
+                setActive(false);
+            } else if (x.min() > y.max()) {
+                b.fix(0);
+                setActive(false);
+            }
+        }
     }
 }

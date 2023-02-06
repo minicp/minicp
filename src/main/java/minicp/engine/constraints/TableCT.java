@@ -83,7 +83,9 @@ public class TableCT extends AbstractConstraint {
         // Set the supports for each var-va
         for (int t = 0; t < table.length; t++) { // t is the index of the tuple (in table)
             for (int i = 0; i < x.length; i++) { // i is the index of the current variable (in x)
-                // TODO 1: fill the support bitset, hint: use {@link StateSparseBitSet.SupportBitSet#set(t}
+                // TODO 1: fill the support bitset
+                //  supports[i][v] is the set of tuples supported by x[i]=v
+                //  hint: use supports[i][v].set(...)
                  throw new NotImplementedException("TableCT");
             }
         }

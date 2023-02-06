@@ -146,6 +146,8 @@ public class Eternity extends SatisfactionProblem {
         // TODO 2: State the constraints of the problem
 
         // Constraint1: all the pieces placed are different
+        // hint1: have a look at the AllDifferentBinary constraint
+        // hint2: a flatten method is provided to transform a matrix of variables into one array
 
         // Constraint2: all the pieces placed are valid ones i.e. one of the given mxn pieces possibly rotated
 

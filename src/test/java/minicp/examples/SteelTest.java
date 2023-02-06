@@ -17,9 +17,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -128,7 +130,7 @@ public class SteelTest {
         }
     }
 
-    @Grade(value = 3, cpuTimeout = 20)
+    @Grade(value = 3, cpuTimeout = 20, noRestrictedImport = true)
     @ParameterizedTest
     @MethodSource("getInstances")
     @Order(3)
@@ -144,9 +146,11 @@ public class SteelTest {
                 assertTrue(value < solution.get());
                 solution.set(value);
             });
-            SearchStatistics statistics = steel.solve(false);
-            assertTrue(statistics.isCompleted());
-            assertTrue(statistics.numberOfSolutions() > 0);
+            AtomicReference<SearchStatistics> statistics = new AtomicReference<>(null);
+            assertTimeoutPreemptively(Duration.ofSeconds(20), () ->  statistics.set(steel.solve(false)));
+            assertNotNull(statistics.get());
+            assertTrue(statistics.get().isCompleted());
+            assertTrue(statistics.get().numberOfSolutions() > 0);
             assertEquals(0, solution.get(), "You did not find a solution with a loss of 0");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);

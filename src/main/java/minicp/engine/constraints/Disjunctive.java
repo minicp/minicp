@@ -98,7 +98,7 @@ public class Disjunctive extends AbstractConstraint {
 
     @Override
     public void propagate() {
-        // HINT: for the TODO 1-4 you'll need the ThetaTree data-structure
+        // HINT: for the TODO 3-6 you'll need the ThetaTree data-structure
 
         // TODO 3: read and understand the OverLoadCheck algorithm implementation
 

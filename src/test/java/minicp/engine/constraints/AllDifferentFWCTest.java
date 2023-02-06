@@ -40,8 +40,15 @@ public class AllDifferentFWCTest extends SolverTest {
         IntVar[] x = makeIntVarArray(cp, 5, 5);
 
         try {
-            cp.post(new AllDifferentFWC(x));
+            AllDifferentFWC allDiff = new AllDifferentFWC(x);
+            allDiff.post();
+            allDiff.setActive(false);
             cp.post(equal(x[0], 0));
+            for (int i = 1; i < x.length; i++) {
+                assertEquals(5, x[i].size());
+                assertEquals(0, x[i].min());
+            }
+            allDiff.propagate();
             for (int i = 1; i < x.length; i++) {
                 assertEquals(4, x[i].size());
                 assertEquals(1, x[i].min());
@@ -79,11 +86,14 @@ public class AllDifferentFWCTest extends SolverTest {
 
         IntVar[] x = makeIntVarArray(cp, 5, 5);
         try {
-            cp.post(new AllDifferentFWC(x));
+            AllDifferentFWC allDiff = new AllDifferentFWC(x);
+            allDiff.post();
+            allDiff.setActive(false);
 
-            cp.post(equal(x[2], 3), false);
+            cp.post(equal(x[2], 3));
+            cp.post(equal(x[1], 3));
 
-            assertThrowsExactly(InconsistencyException.class, () -> cp.post(equal(x[1], 3)));
+            assertThrowsExactly(InconsistencyException.class, allDiff::propagate);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }

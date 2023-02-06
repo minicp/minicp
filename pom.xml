@@ -47,7 +47,7 @@
             <groupId>io.github.ucl-ingi</groupId>
             <artifactId>JavaGrader</artifactId>
             <scope>test</scope>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>

@@ -127,7 +127,7 @@ public class RCPSP extends OptimizationProblem {
     }
 
     public static void main(String[] args) {
-        RCPSP rcpsp = new RCPSP("data/rcpsp/j30_1_3.rcp");
+        RCPSP rcpsp = new RCPSP("data/rcpsp/j30_1_1.rcp");
         rcpsp.buildModel();
         rcpsp.solve( true);
     }
