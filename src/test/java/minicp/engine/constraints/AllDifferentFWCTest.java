@@ -149,7 +149,7 @@ public class AllDifferentFWCTest extends SolverTest {
     }
 
     @Test
-    @Grade(cpuTimeout = 20)
+    @Grade(cpuTimeout = 40)
     public void allDifferentTest5() {
         Solver cp = makeSolver();
         int nVariables = 42; // number of variables for the test

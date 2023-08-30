@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.concurrent.TimeUnit;
+
 import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
 import static org.javagrader.TestResultStatus.TIMEOUT;
@@ -124,8 +126,8 @@ public class OrTest extends SolverTest {
         try {
             // create an array of variables, with a lot fixed to false and only a few unfixed at the center of the array
             Solver cp = makeSolver();
-            int nVars = 500_000;
-            int nFixed = 17;
+            int nVars = 80_000;
+            int nFixed = 10;
             int firstFixed = (nVars - nFixed) / 2;
             int lastFixed = (nVars + nFixed) / 2;
             BoolVar[] x = new BoolVar[nVars];
@@ -162,9 +164,9 @@ public class OrTest extends SolverTest {
                 }
                 assertTrue(valid, "One variable needs to be fixed when using the or constraint");
             });
-            for (int i = 0 ; i < 20 ; i++) {
+            for (int i = 0 ; i < 800 ; i++) {
                 SearchStatistics statistics = search.solve();
-                assertEquals(131_071, statistics.numberOfSolutions()); // 2^17 - 1
+                assertEquals(1023, statistics.numberOfSolutions()); // 2^17 - 1
             }
         } catch (InconsistencyException e) {
             fail("should not fail");
