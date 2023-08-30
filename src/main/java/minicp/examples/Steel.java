@@ -103,7 +103,7 @@ public class Steel extends OptimizationProblem {
         try {
             cp = makeSolver();
             x = makeIntVarArray(cp, nOrder, nSlab); // x[i] = j if order i is placed in slab j
-            l = makeIntVarArray(cp, nSlab, maxCapa + 1); // loss of each slab
+            l = makeIntVarArray(cp, nSlab, maxCapa + 1); // load of each slab
 
             inSlab = new BoolVar[nSlab][nOrder]; // inSlab[j][i] = 1 if order i is placed in slab j
 

@@ -116,13 +116,12 @@ public class CumulativeDecompTest extends SolverTest {
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("getSolver")
-    @Grade(cpuTimeout = 12)
+    @Test
+    @Grade(cpuTimeout = 2)
     @Order(2)
     @Tag("slow")
-    public void testCapaOk(Solver cp) {
-
+    public void testCapaOk() {
+        Solver cp = makeSolver();
         try {
             IntVar[] s = makeIntVarArray(cp, 5, 10);
             int[] d = new int[]{5, 10, 3, 6, 1};

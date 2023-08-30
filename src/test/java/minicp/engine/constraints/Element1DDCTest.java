@@ -135,8 +135,9 @@ public class Element1DDCTest extends SolverTest {
             z.remove(5);
             try {
                 cp.fixPoint();
-                fail();
-            } catch (InconsistencyException ignored) {
+                fail("An inconsistency needs to be" +
+                        "thrown when no solution where the constraint holds exists");
+            } catch (InconsistencyException e) {
 
             }
             cp.getStateManager().restoreState();

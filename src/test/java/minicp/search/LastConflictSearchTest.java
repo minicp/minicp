@@ -16,6 +16,7 @@
 package minicp.search;
 
 import minicp.cp.BranchingScheme;
+import minicp.engine.constraints.AllDifferentBinary;
 import minicp.engine.core.AbstractConstraint;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
@@ -35,8 +36,7 @@ import java.util.stream.Collectors;
 
 import static minicp.cp.Factory.*;
 import static minicp.util.exception.InconsistencyException.INCONSISTENCY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Grade(cpuTimeout = 1)
 public class LastConflictSearchTest {
@@ -97,7 +97,15 @@ public class LastConflictSearchTest {
                     },
                     IntVar::min //select smallest value
             ));
-            dfs.solve(searchStatistics -> searchStatistics.numberOfNodes() >= 7);
+            // stops the search after the end of the example, and checks the value of x
+            dfs.solve(stats -> {
+                if (stats.numberOfNodes() >= 7) {
+                    assertTrue(x.isFixed());
+                    assertEquals(0, x.min());
+                    return true;
+                }
+                return false;
+            });
         }
         catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
@@ -115,7 +123,53 @@ public class LastConflictSearchTest {
             // apply alldifferent on the four last variables.
             // of course, this cannot work!
             IntVar[] fourLast = Arrays.stream(x).skip(4).toArray(IntVar[]::new);
-            cp.post(allDifferent(fourLast));
+            cp.post(new AllDifferentBinary(fourLast));
+
+            DFSearch dfs = new DFSearch(cp.getStateManager(), BranchingScheme.lastConflict(
+                    () -> { //select first unfixed variable in x
+                        for(IntVar z: x)
+                            if(!z.isFixed())
+                                return z;
+                        return null;
+                    },
+                    IntVar::min //select smallest value
+            ));
+
+            SearchStatistics stats = dfs.solve(statistics -> {
+                if (statistics.numberOfNodes() >= 61 && statistics.numberOfNodes() <= 64) {
+                    int nFixed = 0;
+                    for (int i = 0 ; i < 4 ; i++) {
+                        if (x[i].isFixed()) {
+                            nFixed += 1;
+                        }
+                    }
+                    assertNotEquals(nFixed, 4,
+                            "Last conflict should take the upper hands on the search provided" +
+                                    " and branch first on the variable causing the latest conflict");
+                }
+                return false;
+            });
+            assertEquals(0, stats.numberOfSolutions());
+            assertEquals(70, stats.numberOfFailures());
+            assertEquals(138, stats.numberOfNodes());
+        }
+        catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @Test
+    public void testExample2() {
+        try {
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 10, 10);
+            for(int i = 5; i < 10; i++)
+                x[i].removeAbove(3);
+
+            // apply alldifferent on the five last variables.
+            // of course, this cannot work!
+            IntVar[] fiveLast = Arrays.stream(x).skip(5).toArray(IntVar[]::new);
+            cp.post(new AllDifferentBinary(fiveLast));
 
             DFSearch dfs = new DFSearch(cp.getStateManager(), BranchingScheme.lastConflict(
                     () -> { //select first unfixed variable in x
@@ -129,8 +183,8 @@ public class LastConflictSearchTest {
 
             SearchStatistics stats = dfs.solve();
             assertEquals(0, stats.numberOfSolutions());
-            assertEquals(70, stats.numberOfFailures());
-            assertEquals(138, stats.numberOfNodes());
+            assertEquals(894, stats.numberOfFailures());
+            assertEquals(1786, stats.numberOfNodes());
         }
         catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);

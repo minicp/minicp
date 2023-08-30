@@ -346,6 +346,23 @@ public final class Factory {
     }
 
     /**
+     * Returns a constraint imposing that the variable larger or
+     * equal to some given value.
+     *
+     * @param x the variable that is constrained bo be larger or equal to v
+     * @param v the value that must be the lower bound on x
+     * @return a constraint so that {@code x >= v}
+     */
+    public static Constraint largerOrEqual(IntVar x, int v) {
+        return new AbstractConstraint(x.getSolver()) {
+            @Override
+            public void post() {
+                x.removeBelow(v);
+            }
+        };
+    }
+
+    /**
      * Returns a constraint imposing that the variable is different
      * from some given value.
      *

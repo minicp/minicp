@@ -28,6 +28,7 @@ import org.javagrader.Grade;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
@@ -329,6 +330,35 @@ public class CumulativeTest extends SolverTest {
 
             assertEquals(6, s[4].min()); // s[4] needs to be fixed at the middle of the profile
             assertTrue(s[4].isFixed());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testIterateOnRectangle(Solver cp) {
+        try {
+
+            IntVar[] s = makeIntVarArray(cp, 5, 12_000);
+            int[] d = new int[]{1000, 2000, 3000, 2000, 2000};
+            int[] r = new int[]{1, 1, 1, 2, 2};
+
+            // Each cp.post triggers the propagation from the cumulative constraint
+            // If the algorithm considers the rectangles, the filtering is not expensive (there are only 5 activities here)
+            // Otherwise this might take too much time!
+            assertTimeoutPreemptively(Duration.ofMillis(400), () -> {
+                cp.post(new Cumulative(s, d, r, 2));
+                cp.post(equal(s[0], 2000));
+                cp.post(equal(s[1], 3000));
+                cp.post(equal(s[4], 8000));
+                cp.post(notEqual(s[3], 0));
+            }, "Your implementation should iterate over the rectangles from the profile, " +
+                    "not over the time points from the domains of the start time");
+            assertEquals(5000, s[3].min());
 
         } catch (InconsistencyException e) {
             fail("should not fail");

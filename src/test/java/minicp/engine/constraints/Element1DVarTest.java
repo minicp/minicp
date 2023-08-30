@@ -137,7 +137,8 @@ public class Element1DVarTest extends SolverTest {
 
             DFSearch dfs = makeDfs(cp, firstFail(y, z));
             dfs.onSolution(() ->
-                    assertEquals(T[y.min()].min(), z.min())
+                    assertEquals(T[y.min()].min(), z.min(),
+                            String.format("T[y] != z : T[%d] == %d, which is different from %d", y.min(), T[y.min()].min(), z.min()))
             );
             SearchStatistics stats = dfs.solve();
 

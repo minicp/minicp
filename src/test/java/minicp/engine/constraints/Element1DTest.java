@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
@@ -23,27 +22,39 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
+import org.javagrader.Allow;
+import org.javagrader.Forbid;
 import org.javagrader.Grade;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
+import java.time.Duration;
+import java.util.Random;
+import java.util.stream.Stream;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Grade(cpuTimeout = 1)
-public class Element1DTest extends SolverTest {
+@Forbid("minicp.engine.constraints.Element2D")
+public class Element1DTest {
+
+    public static Stream<String> getSolver() {
+        return Stream.of("Trailer", "Copier");
+    }
+
+    private static Solver solver(String type) {
+        return type.equals("Copier") ? makeSolver(true) : makeSolver(false);
+    }
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void element1dTest1(Solver cp) {
-
+    public void element1dInit(String solver) {
         try {
 
+            Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, 2, 40);
 
@@ -80,10 +91,50 @@ public class Element1DTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void element1dTest2(Solver cp) {
-
+    public void element1dTest1(String solver) {
         try {
 
+            Solver cp = solver(solver);
+            IntVar y = makeIntVar(cp, -3, 10);
+            IntVar z = makeIntVar(cp, 2, 40);
+
+            int[] T = new int[]{9, 8, 7, 5, 6};
+
+            cp.post(new Element1D(T, y, z));
+
+            assertEquals(0, y.min());
+            assertEquals(4, y.max());
+
+
+            assertEquals(5, z.min());
+            assertEquals(9, z.max());
+
+            z.removeAbove(7);
+            cp.fixPoint();
+
+            assertEquals(2, y.min());
+
+
+            y.remove(3);
+            cp.fixPoint();
+
+            assertEquals(7, z.max());
+            assertEquals(6, z.min());
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dTest2(String solver) {
+        try {
+
+            Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, -20, 40);
 
@@ -108,9 +159,10 @@ public class Element1DTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void element1dTest3(Solver cp) {
+    public void element1dTest3(String solver) {
         try {
 
+            Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, 0, 4);
             IntVar z = makeIntVar(cp, 5, 9);
 
@@ -135,9 +187,10 @@ public class Element1DTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void element1dTest4(Solver cp) {
+    public void element1dTest4(String solver) {
         try {
 
+            Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, 0, 4);
             IntVar z = makeIntVar(cp, 5, 9);
 
@@ -160,8 +213,10 @@ public class Element1DTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
-    public void element1dTest5(Solver cp) {
+    public void element1dTest5(String solver) {
         try {
+
+            Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, -1, 16);
             IntVar z = makeIntVar(cp, -1, 16);
             // permutation of { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 }
@@ -239,4 +294,38 @@ public class Element1DTest extends SolverTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Allow("java.lang.Thread")
+    public void element1dTest6(String solver) {
+        try {
+
+            int n = 1_000_000;
+            int w = 1000;
+            Solver cp = solver(solver);
+            IntVar y = makeIntVar(cp, n/2 - w/2, n/2 + w/2);
+            IntVar z = makeIntVar(cp, 0, n-1);
+
+            int[] T = IntStream.range(0, n).toArray();
+            cp.post(new Element1D(T, y, z));
+
+            Random random = new Random(42);
+            assertTimeoutPreemptively(Duration.ofSeconds(3), () -> {
+                for (int i = 0 ; i < w ; ++i) {
+                    if (random.nextBoolean())
+                        cp.post(notEqual(y, y.min()));
+                    else
+                        cp.post(notEqual(y, y.max()));
+                    // the array is sorted in increasing order here
+                    assertEquals(T[y.min()], z.min());
+                    assertEquals(T[y.max()], z.max());
+                }
+            }, "Are you using the StateInt low and up? You should use them to iterate over a part of the array instead of its entirety");
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
 }

@@ -29,7 +29,8 @@ public class GraphColoringTinyCSPTest {
             for (int[] edge : instance.edges) {
                 int i = edge[0];
                 int j = edge[1];
-                assertNotEquals(solution[i], solution[j]);
+                assertNotEquals(solution[i], solution[j],
+                        String.format("Nodes %d and %d are adjacent but have the same color", i, j));
             }
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
