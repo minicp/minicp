@@ -38,7 +38,7 @@ public class StateSparseSet {
      *
      * @param sm the state manager that will save and restore the set when
      *        {@link StateManager#saveState()} / {@link StateManager#restoreState()}
-     *           mehtods are called
+     *           methods are called
      * @param n  the number of elements in the set
      * @param ofs the minimum value in the set containing {@code {ofs,ofs+1,...,ofs+n-1}}
      */
