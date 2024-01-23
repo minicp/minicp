@@ -273,7 +273,7 @@ public final class Factory {
     public static IntVar abs(IntVar x) {
         if (x.min() >= 0) return x;
         else {
-            IntVar r = makeIntVar(x.getSolver(), 0, x.max());
+            IntVar r = makeIntVar(x.getSolver(), 0, Math.max(-x.min(), x.max()));
             x.getSolver().post(new Absolute(x, r));
             return r;
         }
