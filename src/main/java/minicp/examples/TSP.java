@@ -21,10 +21,10 @@ import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.io.InputReader;
 import minicp.search.SearchStatistics;
-import minicp.util.exception.NotImplementedException;
 
 import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
+import minicp.util.exception.NotImplementedException;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;

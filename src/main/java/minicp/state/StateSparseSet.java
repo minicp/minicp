@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 public class StateSparseSet {
 
     private int[] values;
-    private int[] indices;
+    private int[] indexes;
     private StateInt size;
     private StateInt min;
     private StateInt max;
@@ -38,7 +38,7 @@ public class StateSparseSet {
      *
      * @param sm the state manager that will save and restore the set when
      *        {@link StateManager#saveState()} / {@link StateManager#restoreState()}
-     *           methods are called
+     *           mehtods are called
      * @param n  the number of elements in the set
      * @param ofs the minimum value in the set containing {@code {ofs,ofs+1,...,ofs+n-1}}
      */
@@ -49,10 +49,10 @@ public class StateSparseSet {
         min = sm.makeStateInt(0);
         max = sm.makeStateInt(n - 1);
         values = new int[n];
-        indices = new int[n];
+        indexes = new int[n];
         for (int i = 0; i < n; i++) {
             values[i] = i;
-            indices[i] = i;
+            indexes[i] = i;
         }
     }
 
@@ -62,12 +62,12 @@ public class StateSparseSet {
         assert (checkVal(val2));
         int v1 = val1;
         int v2 = val2;
-        int i1 = indices[v1];
-        int i2 = indices[v2];
+        int i1 = indexes[v1];
+        int i2 = indexes[v2];
         values[i1] = v2;
         values[i2] = v1;
-        indices[v1] = i2;
-        indices[v2] = i1;
+        indexes[v1] = i2;
+        indexes[v2] = i1;
     }
 
     private boolean checkVal(int val) {
@@ -199,7 +199,7 @@ public class StateSparseSet {
         if (val < 0 || val >= n)
             return false;
         else
-            return indices[val] < size();
+            return indexes[val] < size();
     }
 
     /**
@@ -213,7 +213,7 @@ public class StateSparseSet {
         if (val < 0 || val >= n)
             return false;
         else
-            return indices[val] < size();
+            return indexes[val] < size();
     }
 
     /**
@@ -227,10 +227,10 @@ public class StateSparseSet {
         v -= ofs;
         assert (checkVal(v));
         int val = values[0];
-        int index = indices[v];
-        indices[v] = 0;
+        int index = indexes[v];
+        indexes[v] = 0;
         values[0] = v;
-        indices[val] = index;
+        indexes[val] = index;
         values[index] = val;
         min.setValue(v);
         max.setValue(v);

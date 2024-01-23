@@ -38,12 +38,12 @@ public interface DomainListener {
     void change();
 
     /**
-     * Called whenever the minimum value of the domain is lost.
+     * Called whenever the maximum value of the domain is lost.
      */
     void changeMin();
 
     /**
-     * Called whenever the maximum value of the domain is lost.
+     * Called whenever the minmum value of the domain is lost.
      */
     void changeMax();
 }

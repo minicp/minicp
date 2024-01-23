@@ -37,14 +37,14 @@ public class GraphUtil {
         int n();
 
         /**
-         * Returns the incoming node indices in the specified node
+         * Returns the incoming node indexes in the specified node
          * @param id the identifier of the specified node
          * @return the identifiers of the nodes pointing to the specified node
          */
         Iterable<Integer> in(int id);
 
         /**
-         * Returns the outgoing node indices from the specified node
+         * Returns the outgoing node indexes from the specified node
          * @param id the identifier of the specified node
          * @return the identifiers of the nodes originating from the specified node
          */
