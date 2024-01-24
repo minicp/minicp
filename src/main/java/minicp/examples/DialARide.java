@@ -1,10 +1,8 @@
 package minicp.examples;
 
 import minicp.util.io.InputReader;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class DialARide {
 
@@ -23,6 +21,27 @@ public class DialARide {
         // Each ride stop must be reached before a given time (window_end) by a vehicle.
         // use distance() to compute the distance between two points.
         return null;
+    }
+
+    public static List<DialARideSolution> findAll(int nVehicles, int maxRouteDuration, int vehicleCapacity,
+                                                  int maxRideTime, ArrayList<RideStop> pickupRideStops, ArrayList<RideStop> dropRideStops,
+                                                  RideStop depot) {
+        // TODO
+        // Given a series of dial-a-ride request made by single persons (for request i, pickupRideStops[i] gives the spot
+        // where the person wants to be taken, and dropRideStops[i] the spot where (s)he would like to be dropped),
+        // minimize the total ride time of all the vehicles.
+        // You have nVehicles vehicles, each of them can take at most vehicleCapacity person inside at any time.
+        // The maximum time a single person can remain in the vehicle is maxRideTime, and the maximum time a single
+        // vehicle can be on the road for a single day is maxRouteDuration.
+        // all vehicles start at the depot, and end their day at the depot.
+        // Each ride stop must be reached before a given time (window_end) by a vehicle.
+        // use distance() to compute the distance between two points.
+
+        // WARNING: this function should only be used for debugging purposes, to check that you find all solutions
+        // to a given instance
+        // it is not mandatory in the project and can be left as it is: it has no impact on the grading
+        // (but is still useful for debugging!)
+         return null;
     }
 
     /**
@@ -88,6 +107,14 @@ public class DialARide {
             this.maxRouteDuration = maxRouteDuration;
         }
 
+        /**
+         * Add a stop on the path of a vehicle
+         * No need to add the last stop to the depot, it is implicit
+         *
+         * @param vehicleId id of the vehicle where the stop occurs
+         * @param rideId    id of the ride related to the stop
+         * @param isPickup  true if the point is the pickup of the ride, false if it is the drop
+         */
         public void addStop(int vehicleId, int rideId, boolean isPickup) {
             stops[vehicleId].add(rideId + (isPickup ? 0 : pickupRideStops.size()));
         }
@@ -174,7 +201,7 @@ public class DialARide {
         // Reading the data
 
         //TODO change file to test the various instances.
-        InputReader reader = new InputReader("data/dialaride/custom0");
+        InputReader reader = new InputReader("data/dialaride/training");
 
         int nVehicles = reader.getInt();
         reader.getInt(); //ignore
