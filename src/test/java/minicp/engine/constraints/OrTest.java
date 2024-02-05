@@ -48,7 +48,6 @@ public class OrTest extends SolverTest {
     public void or1(Solver cp) {
         try {
             BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
-            cp.post(new Or(x));
 
             for (BoolVar xi : x) {
                 assertTrue(!xi.isFixed());
@@ -57,6 +56,8 @@ public class OrTest extends SolverTest {
             cp.post(equal(x[1], 0));
             cp.post(equal(x[2], 0));
             cp.post(equal(x[3], 0));
+
+            new Or(x).post();
             assertTrue(x[0].isTrue());
 
         } catch (InconsistencyException e) {
@@ -110,7 +111,7 @@ public class OrTest extends SolverTest {
                 xi.fix(false);
             }
             
-            cp.post(new Or(x));
+            new Or(x).post();
             fail("should fail");
             
         } catch (InconsistencyException e) {

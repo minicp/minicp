@@ -50,21 +50,27 @@ public class Element1DVarTest extends SolverTest {
         try {
 
             IntVar y = makeIntVar(cp, -3, 10);
-            IntVar z = makeIntVar(cp, 2, 40);
+            IntVar z = makeIntVar(cp, -20, 20);
 
-            IntVar[] T = new IntVar[]{makeIntVar(cp, 9, 9), makeIntVar(cp, 8, 8), makeIntVar(cp, 7, 7), makeIntVar(cp, 5, 5), makeIntVar(cp, 6, 6)};
+            IntVar[] T = new IntVar[]{
+                    makeIntVar(cp, 3, 3),
+                    makeIntVar(cp, 2, 2),
+                    makeIntVar(cp, 1, 1),
+                    makeIntVar(cp, -1, -1),
+                    makeIntVar(cp, 0, 0)};
 
-            cp.post(new Element1DVar(T, y, z));
+            Element1DVar element1DVar = new Element1DVar(T, y, z);
+            element1DVar.post();
 
             assertEquals(0, y.min());
             assertEquals(4, y.max());
 
 
-            assertEquals(5, z.min());
-            assertEquals(9, z.max());
+            assertEquals(-1, z.min());
+            assertEquals(3, z.max());
 
-            z.removeAbove(7);
-            cp.fixPoint();
+            z.removeAbove(1);
+            element1DVar.propagate();
 
             assertEquals(2, y.min());
 
@@ -72,8 +78,8 @@ public class Element1DVarTest extends SolverTest {
             y.remove(3);
             cp.fixPoint();
 
-            assertEquals(7, z.max());
-            assertEquals(6, z.min());
+            assertEquals(1, z.max());
+            assertEquals(0, z.min());
 
 
         } catch (InconsistencyException e) {
@@ -92,29 +98,29 @@ public class Element1DVarTest extends SolverTest {
             IntVar z = makeIntVar(cp, -4, 40);
 
             IntVar[] T = new IntVar[]{makeIntVar(cp, 1, 2),
-                    makeIntVar(cp, 3, 4),
-                    makeIntVar(cp, 5, 6),
-                    makeIntVar(cp, 7, 8),
-                    makeIntVar(cp, 9, 10)};
+                    makeIntVar(cp, -3, -2),
+                    makeIntVar(cp, -1, 0),
+                    makeIntVar(cp, 1, 2),
+                    makeIntVar(cp, 3, 4)};
 
-            cp.post(new Element1DVar(T, y, z));
+            new Element1DVar(T, y, z).post();
 
             assertEquals(0, y.min());
             assertEquals(4, y.max());
 
-            assertEquals(1, z.min());
-            assertEquals(10, z.max());
+            assertEquals(-3, z.min());
+            assertEquals(4, z.max());
 
             y.removeAbove(2);
             cp.fixPoint();
 
-            assertEquals(6, z.max());
+            assertEquals(2, z.max());
 
             y.fix(2);
             cp.fixPoint();
 
-            assertEquals(5, z.min());
-            assertEquals(6, z.max());
+            assertEquals(-1, z.min());
+            assertEquals(0, z.max());
 
         } catch (InconsistencyException e) {
             fail("should not fail");
@@ -131,7 +137,12 @@ public class Element1DVarTest extends SolverTest {
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, -20, 40);
 
-            IntVar[] T = new IntVar[]{makeIntVar(cp, 9, 9), makeIntVar(cp, 8, 8), makeIntVar(cp, 7, 7), makeIntVar(cp, 5, 5), makeIntVar(cp, 6, 6)};
+            IntVar[] T = new IntVar[]{
+                    makeIntVar(cp, 9, 9),
+                    makeIntVar(cp, 8, 8),
+                    makeIntVar(cp, 7, 7),
+                    makeIntVar(cp, 5, 5),
+                    makeIntVar(cp, 6, 6)};
 
             cp.post(new Element1DVar(T, y, z));
 
@@ -162,7 +173,7 @@ public class Element1DVarTest extends SolverTest {
             IntVar x2 = makeIVar(cp, -2, 0);
 
 
-            cp.post(new Element1DVar(new IntVar[]{x0}, x1, x2));
+            new Element1DVar(new IntVar[]{x0}, x1, x2).post();
 
             assertEquals(0, x0.min());
             assertEquals(0, x1.min());
@@ -191,7 +202,7 @@ public class Element1DVarTest extends SolverTest {
             IntVar y = makeIVar(cp, -1, 0, 1, 2, 3);
             IntVar z = makeIVar(cp, -2, 0, 1, 5, 6, 9);
 
-            cp.post(new Element1DVar(new IntVar[]{x0, x1, x2}, y, z));
+            new Element1DVar(new IntVar[]{x0, x1, x2}, y, z).post();
 
             assertEquals(1, x0.min());
             assertEquals(5, x0.max());
@@ -279,7 +290,7 @@ public class Element1DVarTest extends SolverTest {
             IntVar y = makeIntVar(cp, 0, 2);
             IntVar z = makeIVar(cp,5, 6, 9);
 
-            cp.post(new Element1DVar(new IntVar[]{x0, x1, x2}, y, z));
+            new Element1DVar(new IntVar[]{x0, x1, x2}, y, z).post();
 
             assertEquals(1, y.min());
             assertEquals(1, y.max());

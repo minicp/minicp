@@ -20,6 +20,7 @@ import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
+import minicp.util.GraphUtil;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
@@ -27,6 +28,7 @@ import org.javagrader.Grade;
 import org.javagrader.GradeFeedback;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,8 +48,10 @@ public class AllDifferentDCTest extends SolverTest {
         IntVar[] x = makeIntVarArray(cp, 5, 5);
 
         try {
-            cp.post(new AllDifferentDC(x));
-            cp.post(equal(x[0], 0));
+            AllDifferentDC allDifferentDC = new AllDifferentDC(x);
+            allDifferentDC.post();
+            x[0].fix(0);
+            allDifferentDC.propagate();
             for (int i = 1; i < x.length; i++) {
                 assertEquals(4, x[i].size());
                 assertEquals(1, x[i].min());
@@ -103,42 +107,10 @@ public class AllDifferentDCTest extends SolverTest {
                 x[i] = makeIntVar(cp, domainsBefore[i]);
             }
             AllDifferentDC allDiff = new AllDifferentDC(x);
-            cp.post(allDiff, false); // no fixpoint to be sure that the propagation is done only once
-            int n = allDiff.g.n();
-            Set<Integer> [] in = new Set[n];
-            Set<Integer> [] out = new Set[n];
-            for (int i = 0 ; i < n ; ++i) {
-                in[i] = new HashSet<>();
-                for (int j: allDiff.g.in(i))
-                    in[i].add(j);
-                out[i] = new HashSet<>();
-                for (int j: allDiff.g.out(i))
-                    out[i].add(j);
-            }
-            int sink = -1;
-            for (int i = 0 ; i < n ; ++i) {
-                for (int ingoing: in[i]) {
-                    assertTrue(out[ingoing].contains(i),
-                            String.format("%d belongs to in[%d] <=> %d belongs to out[%d]", ingoing, i, i, ingoing));
-                }
-                for (int outgoing: out[i]) {
-                    assertTrue(in[outgoing].contains(i),
-                            String.format("%d belongs to out[%d] <=> %d belongs to in[%d]", outgoing, i, i, outgoing));
-                }
-                if (out[i].size() == x.length) {
-                    assertNotEquals(sink, x.length, "There is only one sink");
-                    sink = i;
-                }
-            }
-            // test the sink
-            assertNotEquals(-1, sink, "You should have a sink with " + x.length + " outgoing links in your graph");
-            // from the sink, retrieve the values
-            for (int value: out[sink]) {
-                assertEquals(1, out[value].size(), "Values to which the sink points towards have only one outgoing link");
-                for (int var: out[value]) {
-                    assertEquals(1, in[var].size(), "Variables have only one ingoing link");
-                }
-            }
+            allDiff.post(); // no fixpoint to be sure that the propagation is done only once
+            assertValidGraph(allDiff.g, x);
+            DFSearch search = searchWithCheckingGraph(allDiff, x);
+            search.solve();
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
@@ -162,41 +134,9 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 5, 7)};
             AllDifferentDC allDiff = new AllDifferentDC(x);
             cp.post(allDiff);
-            int n = allDiff.g.n();
-            Set<Integer> [] in = new Set[n];
-            Set<Integer> [] out = new Set[n];
-            for (int i = 0 ; i < n ; ++i) {
-                in[i] = new HashSet<>();
-                for (int j: allDiff.g.in(i))
-                    in[i].add(j);
-                out[i] = new HashSet<>();
-                for (int j: allDiff.g.out(i))
-                    out[i].add(j);
-            }
-            int sink = -1;
-            for (int i = 0 ; i < n ; ++i) {
-                for (int ingoing: in[i]) {
-                    assertTrue(out[ingoing].contains(i),
-                            String.format("%d belongs to in[%d] <=> %d belongs to out[%d]", ingoing, i, i, ingoing));
-                }
-                for (int outgoing: out[i]) {
-                    assertTrue(in[outgoing].contains(i),
-                            String.format("%d belongs to out[%d] <=> %d belongs to in[%d]", outgoing, i, i, outgoing));
-                }
-                if (out[i].size() == x.length) {
-                    assertNotEquals(sink, x.length, "There is only one sink");
-                    sink = i;
-                }
-            }
-            // test the sink
-            assertNotEquals(-1, sink, "You should have a sink with " + x.length + " outgoing links in your graph");
-            // from the sink, retrieve the values
-            for (int value: out[sink]) {
-                assertEquals(1, out[value].size(), "Values to which the sink points towards have only one outgoing link");
-                for (int var: out[value]) {
-                    assertEquals(1, in[var].size(), "Variables have only one ingoing link");
-                }
-            }
+            assertValidGraph(allDiff.g, x);
+            DFSearch search = searchWithCheckingGraph(allDiff, x);
+            search.solve();
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
@@ -216,50 +156,110 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 1, 10),
             };
             AllDifferentDC allDiff = new AllDifferentDC(x);
+            allDiff.post();
+            assertEquals(8, x[0].size());
+            assertEquals(3, x[1].size());
+            assertEquals(3, x[2].size());
+            assertEquals(2, x[3].size());
+            assertValidGraph(allDiff.g, x);
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @GradeFeedback(message = "How are you handling the case when the values do not start from 0?")
+    public void testUpdateGraph4(Solver cp) {
+        try {
+            IntVar[] x = new IntVar[]{
+                    makeIVar(cp, 2, 3, 4, 5, 6, 7, 8, 9),
+                    makeIVar(cp, 2, 4, 7),
+                    makeIVar(cp, 2, 3, 7),
+                    makeIVar(cp, 1, 10),
+            };
+            AllDifferentDC allDiff = new AllDifferentDC(x);
             cp.post(allDiff);
             assertEquals(8, x[0].size());
             assertEquals(3, x[1].size());
             assertEquals(3, x[2].size());
             assertEquals(2, x[3].size());
-            int n = allDiff.g.n();
-            Set<Integer> [] in = new Set[n];
-            Set<Integer> [] out = new Set[n];
-            for (int i = 0 ; i < n ; ++i) {
-                in[i] = new HashSet<>();
-                for (int j: allDiff.g.in(i))
-                    in[i].add(j);
-                out[i] = new HashSet<>();
-                for (int j: allDiff.g.out(i))
-                    out[i].add(j);
-            }
-            int sink = -1;
-            for (int i = 0 ; i < n ; ++i) {
-                for (int ingoing: in[i]) {
-                    assertTrue(out[ingoing].contains(i),
-                            String.format("%d belongs to in[%d] <=> %d belongs to out[%d]", ingoing, i, i, ingoing));
-                }
-                for (int outgoing: out[i]) {
-                    assertTrue(in[outgoing].contains(i),
-                            String.format("%d belongs to out[%d] <=> %d belongs to in[%d]", outgoing, i, i, outgoing));
-                }
-                if (out[i].size() == x.length) {
-                    assertNotEquals(sink, x.length, "There is only one sink");
-                    sink = i;
-                }
-            }
-            // test the sink
-            assertNotEquals(-1, sink, "You should have a sink with " + x.length + " outgoing links in your graph");
-            // from the sink, retrieve the values
-            for (int value: out[sink]) {
-                assertEquals(1, out[value].size(), "Values to which the sink points towards have only one outgoing link");
-                for (int var: out[value]) {
-                    assertEquals(1, in[var].size(), "Variables have only one ingoing link");
-                }
-            }
+            //assertValidGraph(allDiff.g, x);
+            DFSearch search = searchWithCheckingGraph(allDiff, x);
+            SearchStatistics stats = search.solve();
+            assertTrue(stats.numberOfSolutions() >= 1);
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    private static DFSearch searchWithCheckingGraph(AllDifferentDC allDiff, IntVar[] x) {
+        Solver cp = x[0].getSolver();
+        return makeDfs(cp, () -> {
+            try {
+                assertValidGraph(allDiff.g, x);
+            } catch (AssertionFailedError e) {
+                throw new AssertionFailedError("Your graph was not correctly updated after one propagation\n" + e.getMessage(), e);
+            }
+            IntVar xs = selectMin(x,
+                    xi -> xi.size() > 1,
+                    xi -> xi.size());
+            if (xs == null)
+                return EMPTY;
+            else {
+                int v = xs.min();
+                return branch(() -> xs.getSolver().post(equal(xs, v)),
+                        () -> xs.getSolver().post(notEqual(xs, v)));
+            }
+        });
+    }
+
+    /**
+     * Asserts that a variable-value graph respects some basic properties:
+     * - the sink has a number of outgoing links equal to the ingoing links
+     * - the
+     * @param g
+     * @param x
+     */
+    private static void assertValidGraph(GraphUtil.Graph g, IntVar[] x) {
+        int n = g.n();
+        Set<Integer> [] in = new Set[n];
+        Set<Integer> [] out = new Set[n];
+        for (int i = 0 ; i < n ; ++i) {
+            in[i] = new HashSet<>();
+            for (int j: g.in(i))
+                in[i].add(j);
+            out[i] = new HashSet<>();
+            for (int j: g.out(i))
+                out[i].add(j);
+        }
+        int sink = -1;
+        for (int i = 0 ; i < n ; ++i) {
+            for (int ingoing: in[i]) {
+                assertTrue(out[ingoing].contains(i),
+                        String.format("%d belongs to in[%d] <=> %d belongs to out[%d]", ingoing, i, i, ingoing));
+            }
+            for (int outgoing: out[i]) {
+                assertTrue(in[outgoing].contains(i),
+                        String.format("%d belongs to out[%d] <=> %d belongs to in[%d]", outgoing, i, i, outgoing));
+            }
+            if (out[i].size() == x.length) {
+                assertNotEquals(sink, x.length, "There is only one sink");
+                sink = i;
+            }
+        }
+        // test the sink
+        assertNotEquals(-1, sink, "You should have a sink with " + x.length + " outgoing links in your graph");
+        // from the sink, retrieve the values
+        for (int value: out[sink]) {
+            assertEquals(1, out[value].size(), "Values to which the sink points towards have only one outgoing link");
+            for (int var: out[value]) {
+                assertEquals(1, in[var].size(), "Variables have only one ingoing link");
+            }
         }
     }
 
@@ -272,7 +272,7 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 1, 2),
                     makeIVar(cp, 1, 2, 3, 4)};
 
-            cp.post(new AllDifferentDC(x));
+            new AllDifferentDC(x).post();
 
             assertEquals(x[2].min(), 3);
             assertEquals(x[2].size(), 2);
@@ -300,7 +300,7 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 6, 7, 8, 9),
                     makeIVar(cp, 6, 7, 8)};
 
-            cp.post(new AllDifferentDC(x));
+            new AllDifferentDC(x).post();
 
             assertEquals(x[0].size(), 2);
             assertEquals(x[2].size(), 2);
@@ -330,26 +330,11 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 3, 4, 5),
                     makeIVar(cp, 6, 7, 8, 9),
                     makeIVar(cp, 6, 7, 8)};
+            AllDifferentDC allDiff = new AllDifferentDC(x);
+            cp.post(allDiff);
 
-            cp.post(new AllDifferentDC(x));
-
-            DFSearch dfs = makeDfs(cp, () -> {
-                IntVar xs = selectMin(x,
-                        xi -> xi.size() > 1,
-                        xi -> -xi.size());
-                if (xs == null)
-                    return EMPTY;
-                else {
-                    int v = xs.min();
-                    return branch(
-                            () -> {
-                                cp.post(equal(xs, v));
-                            },
-                            () -> {
-                                cp.post(notEqual(xs, v));
-                            });
-                }
-            });
+            DFSearch dfs = searchWithCheckingGraph(allDiff, x);
+            dfs.solve();
 
             SearchStatistics stats = dfs.solve();
             // GAC filter with a single constraint should have no fail
@@ -379,7 +364,7 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, 5, 6, 7, 8),
                     makeIVar(cp, 5, 6, 7)};
 
-            cp.post(new AllDifferentDC(x));
+            new AllDifferentDC(x).post();
 
             assertFalse(x[4].contains(3));
             assertFalse(x[4].contains(4));
@@ -405,7 +390,7 @@ public class AllDifferentDCTest extends SolverTest {
                     makeIVar(cp, -4,-2,0,2,3),
                     makeIVar(cp, -1)};
 
-            cp.post(new AllDifferentDC(x));
+            new AllDifferentDC(x).post();
 
             assertFalse(x[2].contains(-1));
 

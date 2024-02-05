@@ -62,7 +62,7 @@ public class Circuit extends AbstractConstraint {
     }
 
 
-    private void fix(int i) {
+    protected void fix(int i) {
         // TODO
          throw new NotImplementedException("Circuit");
     }

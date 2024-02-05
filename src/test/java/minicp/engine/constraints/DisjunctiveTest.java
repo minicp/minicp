@@ -134,8 +134,8 @@ public class DisjunctiveTest extends SolverTest {
             try {
                 disjunctive.overLoadChecker();
                 fail();
-            } catch (InconsistencyException e) {
-                assert (true);
+            } catch (InconsistencyException ignored) {
+                ;
             } catch (NotImplementedException e) {
                 NotImplementedExceptionAssume.fail(e);
             }
@@ -143,7 +143,7 @@ public class DisjunctiveTest extends SolverTest {
 
         // Integration test by posting the constraint:
         try {
-            cp.post(disjunctive);
+            disjunctive.post();
             fail();
         } catch (InconsistencyException e) {
             assert (true);
@@ -179,7 +179,7 @@ public class DisjunctiveTest extends SolverTest {
 
         // Integration test by posting the constraint:
         try {
-            cp.post(disjunctive);
+            disjunctive.post();
             assertEquals(10, sC.min(), "detectable precedence should set sC.min() to 10");
         } catch (InconsistencyException e) {
             fail();
@@ -217,7 +217,7 @@ public class DisjunctiveTest extends SolverTest {
 
         // Integration test by posting the constraint:
         try {
-            cp.post(disjunctive);
+            disjunctive.post();
             assertEquals(6, sC.max(), "not last should set sC.max() to 6");
             assertEquals(1, sA.max(), "not last should set sA.max() to 1");
         } catch (InconsistencyException e) {
@@ -322,7 +322,7 @@ public class DisjunctiveTest extends SolverTest {
         int d3 = 3;
 
         try {
-            cp.post(new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}));
+            new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}).post();
             assertEquals(10, sA.size());
             assertEquals(10, sB.size());
             assertEquals(6, sC.size());
@@ -346,7 +346,7 @@ public class DisjunctiveTest extends SolverTest {
         int d3 = 4;
 
         try {
-            cp.post(new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}));
+            new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}).post();
             assertEquals(0, sA.min());
             assertEquals(1, sA.max());
             assertEquals(9, sB.min());

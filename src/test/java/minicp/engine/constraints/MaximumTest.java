@@ -49,7 +49,7 @@ public class MaximumTest extends SolverTest {
 
             IntVar[] x = makeIntVarArray(cp, 3, 10);
             IntVar y = makeIntVar(cp, -5, 20);
-            cp.post(new Maximum(x, y));
+            new Maximum(x, y).post();
 
             // x[i] = 0..9
             // y = 0..9
@@ -185,7 +185,7 @@ public class MaximumTest extends SolverTest {
 
             IntVar[] x = makeIntVarArray(cp, 3, 10);
             IntVar y = makeIntVar(cp, -5, 20);
-            cp.post(new Maximum(x, y));
+            new Maximum(x, y).post();
 
             assertEquals(9, y.max());
             assertEquals(0, y.min());
@@ -212,7 +212,7 @@ public class MaximumTest extends SolverTest {
             IntVar[] x = makeIntVarArray(cp, 3, 15);
             IntVar y = makeIntVar(cp, 4, 10);
 
-            cp.post(new Maximum(x, y));
+            new Maximum(x, y).post();
             for (IntVar xi: x) {
                 assertEquals(10, xi.max(), "x[i].max() cannot exceed y.max()");
             }
@@ -330,7 +330,7 @@ public class MaximumTest extends SolverTest {
             };
             IntVar y = makeIntVar(cp, -10, 13);
 
-            cp.post(new Maximum(x, y));
+            new Maximum(x, y).post();
             assertEquals(8, y.max());
             assertEquals(3, y.min(), "What happens if all x's are fixed to their min value?");
 
@@ -512,7 +512,7 @@ public class MaximumTest extends SolverTest {
             };
             IntVar y = makeIntVar(cp, -10, -2);
             try {
-                cp.post(new Maximum(x, y));
+                new Maximum(x, y).post();
                 fail();
             } catch (InconsistencyException e) {
 

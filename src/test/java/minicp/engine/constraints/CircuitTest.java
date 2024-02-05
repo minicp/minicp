@@ -134,6 +134,96 @@ public class CircuitTest extends SolverTest {
 
     @ParameterizedTest
     @MethodSource("getSolver")
+    public void testManualFix1(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 6, 6);
+            Circuit circuit = new Circuit(x);
+            circuit.post();
+            assertDifferentStateInts(circuit, x);
+            x[0].fix(5);
+            circuit.fix(0); // variable 0 has become fixed
+            // current links: 0 -> 5
+            assertDifferentStateInts(circuit, x);
+            assertEquals(5, circuit.dest[0].value());
+            assertEquals(0, circuit.orig[0].value());
+            assertEquals(1, circuit.lengthToDest[0].value());
+            assertEquals(5, circuit.dest[5].value());
+            assertEquals(0, circuit.orig[5].value());
+            assertEquals(0, circuit.lengthToDest[5].value());
+            x[2].fix(0);
+            circuit.fix(2); // variable 2 has become fixed
+            // current links: 2 -> 0 -> 5
+            assertDifferentStateInts(circuit, x);
+            assertEquals(5, circuit.dest[2].value());
+            assertEquals(2, circuit.orig[2].value());
+            assertEquals(2, circuit.lengthToDest[2].value());
+            assertEquals(5, circuit.dest[5].value());
+            assertEquals(2, circuit.orig[5].value());
+            assertEquals(0, circuit.lengthToDest[5].value());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testManualFix2(Solver cp) {
+        try {
+            IntVar[] x = makeIntVarArray(cp, 6, 6);
+            Circuit circuit = new Circuit(x);
+            circuit.post();
+            assertDifferentStateInts(circuit, x);
+            x[0].fix(5);
+            circuit.fix(0); // variable 0 has become fixed
+            // current links: 0 -> 5
+            assertDifferentStateInts(circuit, x);
+            assertEquals(5, circuit.dest[0].value());
+            assertEquals(0, circuit.orig[0].value());
+            assertEquals(1, circuit.lengthToDest[0].value());
+            assertEquals(5, circuit.dest[5].value());
+            assertEquals(0, circuit.orig[5].value());
+            assertEquals(0, circuit.lengthToDest[5].value());
+            x[2].fix(4);
+            circuit.fix(2); // variable 2 has become fixed
+            // current links: 2 -> 4 && 0 -> 5
+            assertDifferentStateInts(circuit, x);
+            assertEquals(4, circuit.dest[2].value());
+            assertEquals(2, circuit.orig[2].value());
+            assertEquals(1, circuit.lengthToDest[2].value());
+            assertEquals(4, circuit.dest[4].value());
+            assertEquals(2, circuit.orig[4].value());
+            assertEquals(0, circuit.lengthToDest[4].value());
+            // untouched
+            assertEquals(5, circuit.dest[0].value());
+            assertEquals(0, circuit.orig[0].value());
+            assertEquals(1, circuit.lengthToDest[0].value());
+            assertEquals(5, circuit.dest[5].value());
+            assertEquals(0, circuit.orig[5].value());
+            assertEquals(0, circuit.lengthToDest[5].value());
+
+            x[4].fix(0);
+            circuit.fix(4); // variable 4 has become fixed
+            // current links: 2 -> 4 -> 0 -> 5
+            assertDifferentStateInts(circuit, x);
+            assertEquals(5, circuit.dest[2].value());
+            assertEquals(2, circuit.orig[2].value());
+            assertEquals(3, circuit.lengthToDest[2].value());
+            assertEquals(5, circuit.dest[5].value());
+            assertEquals(2, circuit.orig[5].value());
+            assertEquals(0, circuit.lengthToDest[5].value());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
     public void testAllSolutions(Solver cp) {
         try {
             IntVar[] x = makeIntVarArray(cp, 5, 5);
@@ -354,26 +444,7 @@ public class CircuitTest extends SolverTest {
             final int val = var.min();
             final int numUnfixed = nU;
 
-            // some people use dest[i] = dest[j] instead of calling setValue
-            // this compares the objects references to be sure that it is not the case
-            for (int i = 0; i < x.length; ++i) {
-                StateInt origI = circuit.orig[i];
-                for (int j = 0; j < x.length; ++j) {
-                    if (i != j) {
-                        assertNotSame(origI, circuit.orig[j], "Use orig[i].setValue(...) to set the StateInt, not orig[i] = ...");
-                    }
-                    assertNotSame(origI, circuit.dest[j], "Use orig[i].setValue(...) to set the StateInt, not orig[i] = ...");
-                }
-            }
-            for (int i = 0; i < x.length; ++i) {
-                StateInt destI = circuit.dest[i];
-                for (int j = 0; j < x.length; ++j) {
-                    if (i != j) {
-                        assertNotSame(destI, circuit.dest[j], "Use dest[i].setValue(...) to set the StateInt, not dest[i] = ...");
-                    }
-                    assertNotSame(destI, circuit.orig[j], "Use dest[i].setValue(...) to set the StateInt, not dest[i] = ...");
-                }
-            }
+            assertDifferentStateInts(circuit, x);
 
             assertTrue(numUnfixed > 1);
 
@@ -400,5 +471,27 @@ public class CircuitTest extends SolverTest {
         assertEquals(24, stats.numberOfSolutions());
     }
 
+    private void assertDifferentStateInts(Circuit circuit, IntVar[] x) {
+        // some people use dest[i] = dest[j] instead of calling setValue
+        // this compares the objects references to be sure that it is not the case
+        for (int i = 0; i < x.length; ++i) {
+            StateInt origI = circuit.orig[i];
+            for (int j = 0; j < x.length; ++j) {
+                if (i != j) {
+                    assertNotSame(origI, circuit.orig[j], "Use orig[i].setValue(...) to set the StateInt, not orig[i] = ...");
+                }
+                assertNotSame(origI, circuit.dest[j], "Use orig[i].setValue(...) to set the StateInt, not orig[i] = ...");
+            }
+        }
+        for (int i = 0; i < x.length; ++i) {
+            StateInt destI = circuit.dest[i];
+            for (int j = 0; j < x.length; ++j) {
+                if (i != j) {
+                    assertNotSame(destI, circuit.dest[j], "Use dest[i].setValue(...) to set the StateInt, not dest[i] = ...");
+                }
+                assertNotSame(destI, circuit.orig[j], "Use dest[i].setValue(...) to set the StateInt, not dest[i] = ...");
+            }
+        }
+    }
 
 }

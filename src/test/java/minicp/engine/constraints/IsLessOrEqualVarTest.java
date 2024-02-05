@@ -34,7 +34,6 @@ import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Grade(cpuTimeout = 1)
 public class IsLessOrEqualVarTest extends SolverTest {
 
     @ParameterizedTest

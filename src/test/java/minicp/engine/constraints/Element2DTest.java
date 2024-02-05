@@ -98,10 +98,10 @@ public class Element2DTest extends SolverTest {
             IntVar z = makeIntVar(cp, -20, 40);
 
             int[][] T = new int[][]{
-                    {9, 8, 7, 5, 6},
-                    {9, 1, 5, 2, 8},
-                    {8, 3, 1, 4, 9},
-                    {9, 1, 2, 8, 6},
+                    {3,  2,  1, -1, 0},
+                    {3, -5, -1, -4, 2},
+                    {2, -3, -5, -2, 3},
+                    {3, -5, -4,  2, 0},
             };
 
             cp.post(new Element2D(T, x, y, z));

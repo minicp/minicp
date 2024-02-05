@@ -181,7 +181,7 @@ public class TableCTTest extends SolverTest {
                     {0, 0, 12},
             };
             TableCT tableCT = new TableCT(x, table);
-            cp.post(tableCT);
+            tableCT.post();
             // propagation has been called and supportedTuples should be set
             assertSupportedTuples(tableCT, x, table);
         } catch (InconsistencyException e) {
@@ -209,7 +209,7 @@ public class TableCTTest extends SolverTest {
                     {0, 0, 12},
             };
             TableCT tableCT = new TableCT(x, table);
-            cp.post(tableCT);
+            tableCT.post();
             // propagation has been called and supportedTuples should be set
             assertSupportedTuples(tableCT, x, table);
             HashSet<Integer> invalid = new HashSet<>();
@@ -237,7 +237,7 @@ public class TableCTTest extends SolverTest {
         try {
             IntVar[] x = makeIntVarArray(cp, 2, 1);
             int[][] table = new int[][]{{0, 0}};
-            cp.post(new TableCT(x, table));
+            new TableCT(x, table).post();
         } catch (InconsistencyException e) {
             fail("Your implementation does finds inconsistent the simple CSP with D(x)={0}, D(y)={0} " +
                     "and a simple table with scope (x,y) and composed of unique tuple (0,0)");
@@ -252,7 +252,7 @@ public class TableCTTest extends SolverTest {
         try {
             IntVar[] x = makeIntVarArray(cp, 2, 1);
             int[][] table = new int[][]{};
-            cp.post(new TableCT(x, table));
+            new TableCT(x, table).post();
             fail("Your implementation doesn't filter well invalid tuples");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
@@ -280,7 +280,7 @@ public class TableCTTest extends SolverTest {
                     {3, 5, 7},
                     {6, 9, 10},
                     {1, 2, 3}};
-            cp.post(new TableCT(x, table));
+            new TableCT(x, table).post();
 
             String str0 = (x[0].size() > 4? "not enough" : "too much");
             assertEquals(4, x[0].size(), "Your filtering seems to filter " + str0 + " values");
@@ -310,7 +310,7 @@ public class TableCTTest extends SolverTest {
                     {3, 5, 7},
                     {6, 9, 10},
                     {1, 2, 3}};
-            cp.post(new TableCT(x, table));
+            new TableCT(x, table).post();
             String warn = "(this test declares variable where min(D(x)) > 0, " +
                     "if this is the only filtering test failing, you may not be handling the offset of variable well)";
 

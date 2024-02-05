@@ -55,6 +55,8 @@ public class CumulativeTest extends SolverTest {
             int[] starts = new int[] {1, 2, 3, 5, 6};
             int[] duration = new int[] {1, 1, 2, 1, 3};
             int[] height = new int[] {1, 2, 4, 3, 1};
+            assertEquals(0, profile.get(0).height());
+            assertEquals(0, profile.get(6).height());
             for (int i = 0 ; i < starts.length ; ++i) {
                 Rectangle rect = profile.get(i+1);
                 assertEquals(starts[i], rect.start());
@@ -84,6 +86,138 @@ public class CumulativeTest extends SolverTest {
             int[] starts = new int[] {2, 3, 5, 6};
             int[] duration = new int[] {1, 2, 1, 3};
             int[] height = new int[] {1, 3, 3, 1};
+            assertEquals(0, profile.get(0).height());
+            assertEquals(0, profile.get(5).height());
+            for (int i = 0 ; i < starts.length ; ++i) {
+                Rectangle rect = profile.get(i+1);
+                assertEquals(starts[i], rect.start());
+                assertEquals(duration[i], rect.dur());
+                assertEquals(height[i], rect.height());
+            }
+        } catch (InconsistencyException e) {
+            fail("There is no inconsistency with the provided arguments to the cumulative constraint");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBuildProfile3(Solver cp) {
+        try {
+            IntVar[] s = new IntVar[4];
+            s[0] = makeIntVar(cp, 1, 5); // not fixed but has a mandatory part
+            s[1] = makeIntVar(cp, 2, 2);
+            s[2] = makeIntVar(cp, 3, 3);
+            s[3] = makeIntVar(cp, 2, 7); // not fixed but has a mandatory part
+            int[] d = new int[] {8, 3, 3, 9};
+            int[] r = new int[] {1, 1, 2, 1};
+            Cumulative cumulative = new Cumulative(s, d, r, 4);
+            Profile profile = cumulative.buildProfile();
+            assertEquals(8, profile.size(), "There are 8 rectangles composing the profile");
+            int[] starts = new int[] {2, 3, 5, 6, 7, 9};
+            int[] duration = new int[] {1, 2, 1, 1, 2, 2};
+            int[] height = new int[] {1, 3, 3, 1, 2, 1};
+            assertEquals(0, profile.get(0).height());
+            assertEquals(0, profile.get(7).height());
+            for (int i = 0 ; i < starts.length ; ++i) {
+                Rectangle rect = profile.get(i+1);
+                assertEquals(starts[i], rect.start());
+                assertEquals(duration[i], rect.dur());
+                assertEquals(height[i], rect.height());
+            }
+        } catch (InconsistencyException e) {
+            fail("There is no inconsistency with the provided arguments to the cumulative constraint");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBuildProfile4(Solver cp) {
+        try {
+            IntVar[] s = new IntVar[5];
+            s[0] = makeIntVar(cp, 1, 5); // not fixed but has a mandatory part
+            s[1] = makeIntVar(cp, 2, 2);
+            s[2] = makeIntVar(cp, 3, 10); // no mandatory part, does not count in the profile
+            s[3] = makeIntVar(cp, 3, 3);
+            s[4] = makeIntVar(cp, 2, 7); // not fixed but has a mandatory part
+            int[] d = new int[] {8, 3, 2, 3, 9};
+            int[] r = new int[] {1, 1, 2, 2, 1};
+            Cumulative cumulative = new Cumulative(s, d, r, 4);
+            Profile profile = cumulative.buildProfile();
+            assertEquals(8, profile.size(), "There are 8 rectangles composing the profile");
+            int[] starts = new int[] {2, 3, 5, 6, 7, 9};
+            int[] duration = new int[] {1, 2, 1, 1, 2, 2};
+            int[] height = new int[] {1, 3, 3, 1, 2, 1};
+            assertEquals(0, profile.get(0).height());
+            assertEquals(0, profile.get(7).height());
+            for (int i = 0 ; i < starts.length ; ++i) {
+                Rectangle rect = profile.get(i+1);
+                assertEquals(starts[i], rect.start());
+                assertEquals(duration[i], rect.dur());
+                assertEquals(height[i], rect.height());
+            }
+        } catch (InconsistencyException e) {
+            fail("There is no inconsistency with the provided arguments to the cumulative constraint");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBuildProfile5(Solver cp) {
+        try {
+            IntVar[] s = new IntVar[4];
+            s[0] = makeIntVar(cp, 1, 5);  // not fixed but has a mandatory part
+            s[1] = makeIntVar(cp, 2, 5);  // no mandatory part, does not count in the profile
+            s[2] = makeIntVar(cp, 3, 10); // no mandatory part, does not count in the profile
+            s[3] = makeIntVar(cp, 2, 7);  // not fixed but has a mandatory part
+            int[] d = new int[] {8, 1, 2, 9};
+            int[] r = new int[] {1, 1, 2, 1};
+            Cumulative cumulative = new Cumulative(s, d, r, 4);
+            Profile profile = cumulative.buildProfile();
+            assertEquals(5, profile.size(), "There are 5 rectangles composing the profile");
+            int[] starts = new int[] {5, 7, 9};
+            int[] duration = new int[] {2, 2, 2};
+            int[] height = new int[] {1, 2, 1};
+            assertEquals(0, profile.get(0).height());
+            assertEquals(0, profile.get(4).height());
+            for (int i = 0 ; i < starts.length ; ++i) {
+                Rectangle rect = profile.get(i+1);
+                assertEquals(starts[i], rect.start());
+                assertEquals(duration[i], rect.dur());
+                assertEquals(height[i], rect.height());
+            }
+        } catch (InconsistencyException e) {
+            fail("There is no inconsistency with the provided arguments to the cumulative constraint");
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBuildProfileSlideExample(Solver cp) {
+        try {
+            IntVar[] s = new IntVar[4];
+            s[0] = makeIntVar(cp, 0, 0);
+            s[1] = makeIntVar(cp, 1, 1);
+            s[2] = makeIntVar(cp, 3, 3);
+            s[3] = makeIntVar(cp, 4, 4);
+            int[] d = new int[] {4, 2, 2, 3};
+            int[] r = new int[] {1, 2, 1, 2};
+            Cumulative cumulative = new Cumulative(s, d, r, 3);
+            Profile profile = cumulative.buildProfile();
+            assertEquals(7, profile.size(), "There are 7 rectangles composing the profile");
+            int[] starts = new int[] {0, 1, 3, 4, 5};
+            int[] duration = new int[] {1, 2, 1, 1, 2};
+            int[] height = new int[] {1, 3, 2, 3, 2};
+            assertEquals(0, profile.get(0).height());
+            assertEquals(0, profile.get(6).height());
             for (int i = 0 ; i < starts.length ; ++i) {
                 Rectangle rect = profile.get(i+1);
                 assertEquals(starts[i], rect.start());

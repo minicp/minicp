@@ -56,20 +56,20 @@ public class Element1DTest {
 
             Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, -3, 10);
-            IntVar z = makeIntVar(cp, 2, 40);
+            IntVar z = makeIntVar(cp, -20, 20);
 
-            int[] T = new int[]{9, 8, 7, 5, 6};
+            int[] T = new int[]{3, 2, 1, -1, 0};
 
-            cp.post(new Element1D(T, y, z));
+            new Element1D(T, y, z).post();
 
             assertEquals(0, y.min());
             assertEquals(4, y.max());
 
 
-            assertEquals(5, z.min());
-            assertEquals(9, z.max());
+            assertEquals(-1, z.min());
+            assertEquals(3, z.max());
 
-            z.removeAbove(7);
+            z.removeAbove(1);
             cp.fixPoint();
 
             assertEquals(2, y.min());
@@ -78,9 +78,8 @@ public class Element1DTest {
             y.remove(3);
             cp.fixPoint();
 
-            assertEquals(7, z.max());
-            assertEquals(6, z.min());
-
+            assertEquals(1, z.max());
+            assertEquals(0, z.min());
 
         } catch (InconsistencyException e) {
             fail("should not fail");
@@ -96,20 +95,20 @@ public class Element1DTest {
 
             Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, -3, 10);
-            IntVar z = makeIntVar(cp, 2, 40);
+            IntVar z = makeIntVar(cp, -20, 20);
 
-            int[] T = new int[]{9, 8, 7, 5, 6};
+            int[] T = new int[]{3, 2, 1, -1, 0};
 
-            cp.post(new Element1D(T, y, z));
+            new Element1D(T, y, z).post();
 
             assertEquals(0, y.min());
             assertEquals(4, y.max());
 
 
-            assertEquals(5, z.min());
-            assertEquals(9, z.max());
+            assertEquals(-1, z.min());
+            assertEquals(3, z.max());
 
-            z.removeAbove(7);
+            z.removeAbove(1);
             cp.fixPoint();
 
             assertEquals(2, y.min());
@@ -118,9 +117,8 @@ public class Element1DTest {
             y.remove(3);
             cp.fixPoint();
 
-            assertEquals(7, z.max());
-            assertEquals(6, z.min());
-
+            assertEquals(1, z.max());
+            assertEquals(0, z.min());
 
         } catch (InconsistencyException e) {
             fail("should not fail");
@@ -138,9 +136,9 @@ public class Element1DTest {
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, -20, 40);
 
-            int[] T = new int[]{9, 8, 7, 5, 6};
+            int[] T = new int[]{3, 2, 1, -1, 0};
 
-            cp.post(new Element1D(T, y, z));
+            new Element1D(T, y, z).post();
 
             DFSearch dfs = makeDfs(cp, firstFail(y, z));
             dfs.onSolution(() ->
@@ -164,20 +162,21 @@ public class Element1DTest {
 
             Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, 0, 4);
-            IntVar z = makeIntVar(cp, 5, 9);
+            IntVar z = makeIntVar(cp, -1, 3);
 
 
-            int[] T = new int[]{9, 8, 7, 5, 6};
+            int[] T = new int[]{3, 2, 1, -1, 0};
 
-            cp.post(new Element1D(T, y, z));
+            Element1D element1D = new Element1D(T, y, z);
+            element1D.post();
 
-            y.remove(3); //T[4]=5
-            y.remove(0); //T[0]=9
+            y.remove(3); //T[3]=-1
+            y.remove(0); //T[0]=3
 
-            cp.fixPoint();
+            element1D.propagate();
 
-            assertEquals(6, z.min());
-            assertEquals(8, z.max());
+            assertEquals(0, z.min());
+            assertEquals(2, z.max());
         } catch (InconsistencyException e) {
             fail("should not fail");
         } catch (NotImplementedException e) {
@@ -192,15 +191,16 @@ public class Element1DTest {
 
             Solver cp = solver(solver);
             IntVar y = makeIntVar(cp, 0, 4);
-            IntVar z = makeIntVar(cp, 5, 9);
+            IntVar z = makeIntVar(cp, -1, 3);
 
-            int[] T = new int[]{9, 8, 7, 5, 6};
+            int[] T = new int[]{3, 2, 1, -1, 0};
 
-            cp.post(new Element1D(T, y, z));
+            Element1D element1D = new Element1D(T, y, z);
+            element1D.post();
 
-            z.remove(9); //new max is 8
-            z.remove(5); //new min is 6
-            cp.fixPoint();
+            z.remove(3); // new max is 2
+            z.remove(-1); // new min is 0
+            element1D.propagate();
 
             assertFalse(y.contains(0));
             assertFalse(y.contains(3));
@@ -222,7 +222,8 @@ public class Element1DTest {
             // permutation of { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 }
             int[] T = { 0, 3, 2, 2, 0, 4, 1, 4, 2, 1, 1, 0, 3, 3, 4 };
 
-            cp.post(new Element1D(T, y, z));
+            Element1D element1D = new Element1D(T, y, z);
+            element1D.post();
 
             assertEquals(y.size(), T.length);
             assertEquals(z.size(), 5);
@@ -233,7 +234,7 @@ public class Element1DTest {
             y.removeAbove(0);
             z.remove(T[0]);
             try {
-                cp.fixPoint();
+                element1D.propagate();
                 fail();
             } catch (InconsistencyException ignored) {
 
@@ -256,7 +257,7 @@ public class Element1DTest {
                 assertTrue(y.contains(index));
                 y.remove(index);
                 assertEquals(y.size(), T.length - i);
-                cp.fixPoint();
+                element1D.propagate();
                 --valCount[val]; // one occurrence has been removed
                 assertTrue(valCount[val] >= 0);
                 if (valCount[val] > 0 || (val > z.min() && val < z.max())) {
