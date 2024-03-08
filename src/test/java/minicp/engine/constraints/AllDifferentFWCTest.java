@@ -148,9 +148,32 @@ public class AllDifferentFWCTest extends SolverTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest5(Solver cp) {
+
+        IntVar[] x = makeIntVarArray(cp, 8, 8);
+        try {
+            cp.post(new AllDifferentFWC(x));
+            try {
+                cp.post(equal(x[1], 2));
+                cp.post(equal(x[2], 4));
+
+                cp.post(equal(x[6], 1));
+                cp.post(equal(x[3], 1));
+                fail();
+            } catch (InconsistencyException e) {
+
+            }
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+
+    }
+
     @Test
     @Grade(cpuTimeout = 40)
-    public void allDifferentTest5() {
+    public void allDifferentTest6() {
         Solver cp = makeSolver();
         int nVariables = 42; // number of variables for the test
         int domainSize = 2; // domain size for each variable
