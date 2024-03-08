@@ -33,7 +33,7 @@ public class TableDecomp extends AbstractConstraint {
      * as the user enumerates the set of solutions that can be taken
      * by the variables.
      *
-     * @param x  the non empty set of variables to constraint
+     * @param x  the non-empty set of variables to constraint
      * @param table the possible set of solutions for x.
      *              The second dimension must be of the same size as the array x.
      */

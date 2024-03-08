@@ -196,7 +196,7 @@ public final class BranchingScheme {
      *                      it must be assigned on the left branch (and excluded on the right)
      */
     public static Supplier<Procedure[]> conflictOrderingSearch(Supplier<IntVar> variableSelector, Function<IntVar, Integer> valueSelector) {
-         throw new NotImplementedException();
+         throw new NotImplementedException("conflictOrderingSearch");
     }
 
 }

@@ -19,18 +19,18 @@ import minicp.engine.SolverTest;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.exception.InconsistencyException;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class NotEqualTest extends SolverTest {
 
-    @Test
-    public void notEqualTest() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void notEqualTest(Solver cp) {
 
         IntVar x = makeIntVar(cp, 10);
         IntVar y = makeIntVar(cp, 10);
@@ -44,7 +44,7 @@ public class NotEqualTest extends SolverTest {
             assertEquals(9, y.size());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         }
         assertFalse(y.contains(6));
     }

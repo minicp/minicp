@@ -28,7 +28,7 @@ public class NQueensTinyCSP {
 
     public static void main(String[] args) {
 
-        int n = 14;
+        int n = 15;
         TinyCSP csp = new TinyCSP();
         Variable[] q = new Variable[n];
 

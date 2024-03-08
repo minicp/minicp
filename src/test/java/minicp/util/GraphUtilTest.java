@@ -15,9 +15,9 @@
 
 package minicp.util;
 
-import com.github.guillaumederval.javagrading.GradingRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.javagrader.GraderExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +27,11 @@ import java.util.Random;
 import static minicp.util.GraphUtil.Graph;
 import static minicp.util.GraphUtil.pathExists;
 import static minicp.util.GraphUtil.stronglyConnectedComponents;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@RunWith(GradingRunner.class)
+@ExtendWith(GraderExtension.class)
 public class GraphUtilTest {
-
 
     @Test
     public void simpleTestSCC0() {

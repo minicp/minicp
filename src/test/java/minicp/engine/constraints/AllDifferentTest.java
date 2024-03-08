@@ -20,19 +20,21 @@ import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-
+@Grade(cpuTimeout = 1)
 public class AllDifferentTest extends SolverTest {
 
-    @Test
-    public void allDifferentTest1() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest1(Solver cp) {
 
         IntVar[] x = makeIntVarArray(cp, 5, 5);
 
@@ -45,15 +47,13 @@ public class AllDifferentTest extends SolverTest {
             }
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         }
     }
 
-
-    @Test
-    public void allDifferentTest2() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void allDifferentTest2(Solver cp) {
 
         IntVar[] x = makeIntVarArray(cp, 5, 5);
 
@@ -64,7 +64,7 @@ public class AllDifferentTest extends SolverTest {
             assertEquals(120, stats.numberOfSolutions());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         }
     }
 

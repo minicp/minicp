@@ -28,9 +28,9 @@ import static minicp.cp.Factory.allDifferent;
 public class Circuit extends AbstractConstraint {
 
     private final IntVar[] x;
-    private final StateInt[] dest;
-    private final StateInt[] orig;
-    private final StateInt[] lengthToDest;
+    protected final StateInt[] dest;
+    protected final StateInt[] orig;
+    protected final StateInt[] lengthToDest;
 
     /**
      * Creates an Hamiltonian Circuit Constraint
@@ -62,7 +62,7 @@ public class Circuit extends AbstractConstraint {
     }
 
 
-    private void fix(int i) {
+    protected void fix(int i) {
         // TODO
          throw new NotImplementedException("Circuit");
     }

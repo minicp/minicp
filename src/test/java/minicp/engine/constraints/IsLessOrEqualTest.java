@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.BoolVar;
 import minicp.engine.core.IntVar;
@@ -25,20 +24,21 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
 public class IsLessOrEqualTest extends SolverTest {
 
-    @Test
-    public void test1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test1(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
 
             BoolVar b = makeBoolVar(cp);
@@ -63,12 +63,11 @@ public class IsLessOrEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test2() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test2(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
 
             BoolVar b = makeBoolVar(cp);
@@ -92,11 +91,11 @@ public class IsLessOrEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test3() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test3(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
             cp.post(equal(x, -2));
             {
@@ -117,11 +116,11 @@ public class IsLessOrEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test4() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test4(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -4, 7);
             BoolVar b = makeBoolVar(cp);
 
@@ -145,11 +144,11 @@ public class IsLessOrEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test5() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test5(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, 10);
             BoolVar b = makeBoolVar(cp);
 
@@ -172,11 +171,11 @@ public class IsLessOrEqualTest extends SolverTest {
         }
     }
 
-    @Test
-    public void test6() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void test6(Solver cp) {
         try {
 
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, -3);
             BoolVar b = makeBoolVar(cp);
 

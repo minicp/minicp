@@ -74,7 +74,7 @@ public class Profile {
 
         @Override
         public String toString() {
-            return "[solve:" + start + " dur:" + dur + " end:" + (end) + "] h:" + height;
+            return "[start:" + start + " dur:" + dur + " end:" + (end) + "] h:" + height;
         }
     }
 

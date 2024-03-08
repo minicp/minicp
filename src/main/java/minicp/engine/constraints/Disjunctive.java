@@ -39,6 +39,13 @@ public class Disjunctive extends AbstractConstraint {
     private final IntVar[] end;
 
     
+    private final Integer[] permLct;
+    private final Integer[] permEst;
+    private final int[] rankEst;
+    private final int[] startMin;
+    private final int[] endMax;
+
+    private final ThetaTree thetaTree;
 
     /**
      * Creates a disjunctive constraint that enforces
@@ -59,6 +66,16 @@ public class Disjunctive extends AbstractConstraint {
         this.duration = duration;
         this.end = Factory.makeIntVarArray(start.length, i -> plus(start[i], duration[i]));
 
+        startMin = new int[start.length];
+        endMax = new int[start.length];
+        permEst = new Integer[start.length];
+        permLct = new Integer[start.length];
+        rankEst = new int[start.length];
+        for (int i = 0; i < start.length; i++) {
+            permEst[i] = i;
+            permLct[i] = i;
+        }
+        thetaTree = new ThetaTree(start.length);
         
     }
 
@@ -73,7 +90,7 @@ public class Disjunctive extends AbstractConstraint {
         getSolver().post(new Cumulative(start, duration, demands, 1), false);
 
 
-        // TODO 1: replace by  posting  binary decomposition using IsLessOrEqualVar
+        // TODO 1: replace by posting binary decomposition (DisjunctiveBinary) using IsLessOrEqualVar
         // TODO 2: add the mirror filtering as done in the Cumulative Constraint
          throw new NotImplementedException("Disjunctive");
 
@@ -81,15 +98,15 @@ public class Disjunctive extends AbstractConstraint {
 
     @Override
     public void propagate() {
-        // HINT: for the TODO 1-4 you'll need the ThetaTree data-structure
+        // HINT: for the TODO 3-6 you'll need the ThetaTree data-structure
 
-        // TODO 3: add the OverLoadCheck algorithms
+        // TODO 3: read and understand the OverLoadCheck algorithm implementation
 
         // TODO 4: add the Detectable Precedences algorithm
 
         // TODO 5: add the Not-Last algorithm
 
-        // TODO 6 (optional, for a bonus): implement the Lambda-Theta tree and implement the Edge-Finding        overLoadChecker();
+        // TODO 6 (optional): implement the Lambda-Theta tree and implement the Edge-Finding
 
         boolean changed = true;
         while (changed) {
@@ -100,10 +117,27 @@ public class Disjunctive extends AbstractConstraint {
         }
 
     }
-    
+
+    private void update() {
+        Arrays.sort(permEst, Comparator.comparingInt(i -> start[i].min()));
+        for (int i = 0; i < start.length; i++) {
+            rankEst[permEst[i]] = i;
+            startMin[i] = start[i].min();
+            endMax[i] = end[i].max();
+        }
+    }
 
     public void overLoadChecker() {
-         throw new NotImplementedException("Disjunctive");
+        update();
+        Arrays.sort(permLct, Comparator.comparingInt(i -> end[i].max()));
+        thetaTree.reset();
+        for (int i = 0; i < start.length; i++) {
+            int activity = permLct[i];
+            thetaTree.insert(rankEst[activity], end[activity].min(), duration[activity]);
+            if (thetaTree.getECT() > end[activity].max()) {
+                throw new InconsistencyException();
+            }
+        }
     }
 
     /**

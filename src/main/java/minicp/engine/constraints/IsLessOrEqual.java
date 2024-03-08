@@ -48,7 +48,33 @@ public class IsLessOrEqual extends AbstractConstraint { // b <=> x <= v
 
     @Override
     public void post() {
-        // TODO
-         throw new NotImplementedException("IsLessOrEqual");
+        if (b.isTrue()) {
+            x.removeAbove(v);
+        } else if (b.isFalse()) {
+            x.removeBelow(v + 1);
+        } else if (x.max() <= v) {
+            b.fix(1);
+        } else if (x.min() > v) {
+            b.fix(0);
+        } else {
+            b.whenFixed(() -> {
+                // should deactivate the constraint as it is entailed
+                if (b.isTrue()) {
+                    x.removeAbove(v);
+
+                } else {
+                    x.removeBelow(v + 1);
+                }
+            });
+            x.whenBoundChange(() -> {
+                if (x.max() <= v) {
+                    // should deactivate the constraint as it is entailed
+                    b.fix(1);
+                } else if (x.min() > v) {
+                    // should deactivate the constraint as it is entailed
+                    b.fix(0);
+                }
+            });
+        }
     }
 }

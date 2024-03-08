@@ -15,36 +15,30 @@
 
 package minicp.engine.core;
 
-import com.github.guillaumederval.javagrading.Grade;
 import minicp.engine.SolverTest;
-import minicp.util.NotImplementedExceptionAssume;
-import minicp.util.exception.InconsistencyException;
-import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class BoolVarTest extends SolverTest {
 
     public boolean propagateCalled = false;
 
-    @Test
-    public void testBoolVar() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBoolVar(Solver cp) {
 
         BoolVar b = makeBoolVar(cp);
 
         BoolVar notB = new BoolVarImpl(new IntVarViewOffset(new IntVarViewOpposite(b), 1)); // 1 - b
 
-        assertTrue(!b.isFixed());
-        assertTrue(!notB.isFixed());
+        assertFalse(b.isFixed());
+        assertFalse(notB.isFixed());
 
         b.fix(false);
 

@@ -17,11 +17,12 @@ package minicp.engine.constraints;
 
 import minicp.engine.core.AbstractConstraint;
 import minicp.engine.core.IntVar;
+import minicp.state.StateInt;
+import minicp.state.StateSparseBitSet;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 
 import java.util.Arrays;
-import java.util.BitSet;
 
 import static minicp.cp.Factory.minus;
 
@@ -35,11 +36,12 @@ public class TableCT extends AbstractConstraint {
     private IntVar[] x; //variables
     private int[][] table; //the table
     //supports[i][v] is the set of tuples supported by x[i]=v
-    private BitSet[][] supports;
+    protected StateSparseBitSet.SupportBitSet[][] supports;
 
-    private BitSet supportedTuples;
-    private BitSet tmpSupport;
+    protected StateSparseBitSet supportedTuples;
+    private StateSparseBitSet.MaskBitSet tmpSupport;
 
+    private StateInt[] lastDomSize; // store the last size of the domain of the variable
     private int[] dom; // domain iterator
 
     /**
@@ -64,63 +66,73 @@ public class TableCT extends AbstractConstraint {
         this.table = table;
         dom = new int[Arrays.stream(x).map(var -> var.size()).max(Integer::compare).get()];
 
-        // Allocate supportedByVarVal
-        supports = new BitSet[x.length][];
+        supportedTuples = new StateSparseBitSet(this.getSolver().getStateManager(), table.length);
+
+        // Allocate supports
+        supports = new StateSparseBitSet.SupportBitSet[x.length][];
+        lastDomSize = new StateInt[x.length];
         for (int i = 0; i < x.length; i++) {
             this.x[i] = minus(x[i], x[i].min()); // map the variables domain to start at 0
-            supports[i] = new BitSet[x[i].max() - x[i].min() + 1];
-            for (int j = 0; j < supports[i].length; j++)
-                supports[i][j] = new BitSet();
+            supports[i] = new StateSparseBitSet.SupportBitSet[x[i].max() - x[i].min() + 1];
+            for (int v = 0; v < supports[i].length; v++) {
+                supports[i][v] = supportedTuples.new SupportBitSet();
+            }
+            lastDomSize[i] = this.getSolver().getStateManager().makeStateInt(-1); // put to -1 to force initial propagation to check all vars
         }
 
-        // Set values in supportedByVarVal, which contains all the tuples supported by each var-val pair
-        for (int t = 0; t < table.length; t++) { //i is the index of the tuple (in table)
-            for (int i = 0; i < x.length; i++) { //j is the index of the current variable (in x)
-                if (x[i].contains(table[t][i])) {
-                    supports[i][table[t][i] - x[i].min()].set(t);
-                }
+        // Set the supports for each var-va
+        for (int t = 0; t < table.length; t++) { // t is the index of the tuple (in table)
+            for (int i = 0; i < x.length; i++) { // i is the index of the current variable (in x)
+                // TODO 1: fill the support bitset
+                //  supports[i][v] is the set of tuples supported by x[i]=v
+                //  hint: use supports[i][v].set(...)
+                 throw new NotImplementedException("TableCT");
             }
         }
 
-        supportedTuples = new BitSet(table.length);
-        tmpSupport = new BitSet(table.length);
+        tmpSupport = supportedTuples.new MaskBitSet();
     }
 
     @Override
     public void post() {
-        for (IntVar var : x)
+        for (IntVar var : x) {
             var.propagateOnDomainChange(this);
+        }
         propagate();
     }
 
-
+    /**
+     * Tells if a variable x[i] has been modified since the last call node in the search tree
+     * Uses the value of {@link TableCT#lastDomSize} to verify if the domain size has changed since the last propagation
+     *
+     * @param i index of the variable in {@link TableCT#x} that must be checked
+     * @return true if the domain of x[i] has been changed since the last propagation
+     */
+    public boolean hasChanged(int i) {
+        // TODO 2: use lastDomSize[i] to verify if the domain size of x[i] has changed since last propagation
+         throw new NotImplementedException("TableCT");
+    }
 
     @Override
     public void propagate() {
-
-
-        // Bit-set of tuple indices all set to 1
-        supportedTuples.set(0, table.length);
-
-        // TODO 1: compute supportedTuples as
-        // supportedTuples = (supports[0][x[0].min()] | ... | supports[0][x[0].max()] ) & ... &
-        //                   (supports[x.length][x[0].min()] | ... | supports[x.length][x[0].max()] )
-        //
-
-         // This should be displayed instead of the actual code
-
-        // TODO 2
         for (int i = 0; i < x.length; i++) {
-            int nVal = x[i].fillArray(dom);
-            for (int v = 0; v < nVal; v++) {
-                    // TODO 2 the condition for removing the setValue dom[v] from x[i] is to check if
-                    // there is no intersection between supportedTuples and the support[i][dom[v]]
-                     throw new NotImplementedException();
-
+            if (hasChanged(i)) {
+                // TODO 3: update supportedTuples as
+                // supportedTuples &= (supports[i][x[i].min()] | ... | supports[i][x[i].max()] )
+                // for all x[i] modified since last call node in the search tree (see TODO 2 )
             }
         }
 
+        // TODO 4 filter impossible values
+        for (int i = 0; i < x.length; i++) {
+            int nVal = x[i].fillArray(dom);
+            for (int v = 0; v < nVal; v++) {
+                    // TODO 4 the condition for removing the setValue dom[v] from x[i] is to check if
+                    //  there is no intersection between supportedTuples and the support[i][dom[v]]
 
-        //throw new NotImplementedException("TableCT");
+            }
+            lastDomSize[i].setValue(x[i].size()); // store the current domain size to compare during next propagation
+        }
+         throw new NotImplementedException("TableCT");
     }
 }

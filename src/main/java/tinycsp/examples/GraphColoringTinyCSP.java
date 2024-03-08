@@ -39,6 +39,12 @@ public class GraphColoringTinyCSP {
         public final List<int []> edges;
         public final int maxColor;
 
+        /**
+         *
+         * @param n the number of nodes with indices on {0,...,n-1}
+         * @param edges a list of edges, an edge (a,b) encoded in a size two array [a,b]
+         * @param maxColor, the maximum number of colors allowed in the solution, the allowed colors are {0...maxColor-1}
+         */
         public GraphColoringInstance(int n, List<int []> edges, int maxColor) {
             this.n = n;
             this.edges = edges;
@@ -114,7 +120,7 @@ public class GraphColoringTinyCSP {
         // TODO: solve the graph coloring problem using TinyCSP and return a solution
         // Hint: you can stop the search on first solution throwing and catching an exception
         //       in the onSolution closure or you can modify the dfs search
-         throw new NotImplementedException("AllDifferentDC");
+         throw new NotImplementedException("GraphColoringTinyCSP");
     }
 
 

@@ -35,7 +35,7 @@ import static minicp.cp.Factory.plus;
  */
 public class NQueensPaper {
     public static void main(String[] args) {
-        int n = 8;
+        int n = 12;
         Solver cp = Factory.makeSolver(false);
         IntVar[] q = Factory.makeIntVarArray(cp, n, n);
 
@@ -63,9 +63,15 @@ public class NQueensPaper {
                 return new Procedure[]{left, right};
             }
         });
-        search.onSolution(() ->
-                System.out.println("solution:" + Arrays.toString(q))
-        );
-        search.solve();
+        int[] nSols = new int[]{0};
+        search.onSolution(() -> {
+            nSols[0]++;
+            //System.out.println("solution:" + Arrays.toString(q))
+        });
+        long t0 = System.currentTimeMillis();
+        SearchStatistics stats = search.solve();
+        long t1 = System.currentTimeMillis();
+        System.out.println(stats);
+        System.out.println("time (ms):"+(t1-t0));
     }
 }

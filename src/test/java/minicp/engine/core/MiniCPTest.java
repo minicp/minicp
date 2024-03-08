@@ -18,17 +18,18 @@ package minicp.engine.core;
 import minicp.engine.SolverTest;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.*;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class MiniCPTest extends SolverTest {
 
-
-    @Test
+    @ParameterizedTest
+    @MethodSource("getSolver")
     public void testSolveSubjectTo() {
         Solver cp = makeSolver();
         IntVar[] x = makeIntVarArray(cp, 3, 2);
@@ -49,9 +50,9 @@ public class MiniCPTest extends SolverTest {
 
     }
 
-    @Test
-    public void testDFS() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDFS(Solver cp) {
         IntVar[] values = makeIntVarArray(cp, 3, 2);
 
         DFSearch dfs = makeDfs(cp, () -> {
@@ -69,9 +70,9 @@ public class MiniCPTest extends SolverTest {
 
         SearchStatistics stats = dfs.solve();
 
-        assertEquals (8,stats.numberOfSolutions());
-        assertEquals (0,stats.numberOfFailures());
-        assertEquals ((8 + 4 + 2),stats.numberOfNodes());
+        assertEquals(8,stats.numberOfSolutions());
+        assertEquals(0,stats.numberOfFailures());
+        assertEquals((8 + 4 + 2),stats.numberOfNodes());
     }
 
 

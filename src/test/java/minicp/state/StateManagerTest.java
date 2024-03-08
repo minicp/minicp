@@ -15,25 +15,13 @@
 
 package minicp.state;
 
-import com.github.guillaumederval.javagrading.GradingRunnerWithParametersFactory;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
-@Parameterized.UseParametersRunnerFactory(GradingRunnerWithParametersFactory.class)
 public abstract class StateManagerTest {
 
-    @Parameterized.Parameters
-    public static Supplier<StateManager>[] data() {
-        return new Supplier[]{
-                () -> new Trailer(),
-                () -> new Copier(),
-        };
+    public static Stream<StateManager> getStateManager() {
+        return Stream.of(new Trailer(), new Copier());
     }
 
-
-    @Parameterized.Parameter
-    public Supplier<StateManager> stateFactory;
 }

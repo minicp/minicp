@@ -52,12 +52,12 @@ public class LimitedDiscrepancyBranching implements Supplier<Procedure[]> {
     @Override
     public Procedure[] get() {
         // Hint:
-        // Filter-out alternatives from that would exceed maxD
+        // Filter-out alternatives from bs that would exceed maxD
         // Therefore wrap each alternative
         // such that the call method of the wrapped alternatives
-        // augment the curD depending on its position
-        // +0 for alts[0], ..., +i for alts[i]
+        // sets the curD depending on its position
+        // curD = d + 0 for alts[0], ..., +i for alts[i]
 
-         throw new NotImplementedException();
+         throw new NotImplementedException("LimitedDiscrepancy");
     }
 }

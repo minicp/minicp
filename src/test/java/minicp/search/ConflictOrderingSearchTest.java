@@ -15,25 +15,23 @@
 
 package minicp.search;
 
-import com.github.guillaumederval.javagrading.GradeClass;
-import com.github.guillaumederval.javagrading.GradingRunner;
 import minicp.cp.BranchingScheme;
+import minicp.engine.constraints.AllDifferentBinary;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.javagrader.Grade;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@RunWith(GradingRunner.class)
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class ConflictOrderingSearchTest {
-
 
     @Test
     public void testExample1() {
@@ -49,7 +47,53 @@ public class ConflictOrderingSearchTest {
             cp.post(allDifferent(fourLast));
 
             DFSearch dfs = new DFSearch(cp.getStateManager(), BranchingScheme.conflictOrderingSearch(
-                    () -> { //select first unbound variable in x
+                    () -> { //select first unfixed variable in x
+                        for(IntVar z: x)
+                            if(!z.isFixed())
+                                return z;
+                        return null;
+                    },
+                    IntVar::min //select smallest value
+            ));
+
+            SearchStatistics stats = dfs.solve(statistics -> {
+                if (statistics.numberOfFailures() > 4) {
+                    int nFixed = 0;
+                    for (int i = 0 ; i < 4 ; i++) {
+                        if (x[i].isFixed()) {
+                            nFixed += 1;
+                        }
+                    }
+                    assertNotEquals(nFixed, 4,
+                            "Conflict ordering should take the upper hands on the search provided" +
+                                    " and branch on the variables causing the most recent conflicts");
+                }
+                return false;
+            });
+            assertEquals(0, stats.numberOfSolutions());
+            assertEquals(30, stats.numberOfFailures());
+            assertEquals(58, stats.numberOfNodes());
+        }
+        catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @Test
+    public void testExample2() {
+        try {
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 10, 10);
+            for(int i = 5; i < 10; i++)
+                x[i].removeAbove(3);
+
+            // apply alldifferent on the five last variables.
+            // of course, this cannot work!
+            IntVar[] fiveLast = Arrays.stream(x).skip(5).toArray(IntVar[]::new);
+            cp.post(new AllDifferentBinary(fiveLast));
+
+            DFSearch dfs = new DFSearch(cp.getStateManager(), BranchingScheme.conflictOrderingSearch(
+                    () -> { //select first unfixed variable in x
                         for(IntVar z: x)
                             if(!z.isFixed())
                                 return z;
@@ -60,13 +104,12 @@ public class ConflictOrderingSearchTest {
 
             SearchStatistics stats = dfs.solve();
             assertEquals(0, stats.numberOfSolutions());
-            assertEquals(30, stats.numberOfFailures());
-            assertEquals(58, stats.numberOfNodes());
+            assertEquals(144, stats.numberOfFailures());
+            assertEquals(286, stats.numberOfNodes());
         }
         catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
     }
-
 
 }

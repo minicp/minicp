@@ -60,9 +60,11 @@ public class QAP extends OptimizationProblem {
     public IntVar[] x;
     public IntVar[] weightedDistances;
     public IntVar totCost;
+    String instance;
 
     public QAP(String instanceFilePath) {
         InputReader reader = new InputReader(instanceFilePath);
+        instance = reader.getFilename();
 
         int n = reader.getInt();
         // Weights
@@ -132,6 +134,11 @@ public class QAP extends OptimizationProblem {
         */
         // TODO implement the search and remove the NotImplementedException
          throw new NotImplementedException("QAP");
+    }
+
+    @Override
+    public String toString() {
+        return "QAP(" + instance + ')';
     }
 
     public static void main(String[] args) {

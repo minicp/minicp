@@ -15,12 +15,15 @@
 
 package minicp.engine.core;
 
-import com.github.guillaumederval.javagrading.Grade;
 import minicp.engine.SolverTest;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
+import org.javagrader.Grade;
+import org.javagrader.GraderExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,22 +31,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-
+@ExtendWith(GraderExtension.class)
 public class IntVarTest extends SolverTest {
 
     public boolean propagateCalled = false;
 
-    @Test
-    public void testIntVar() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testIntVar(Solver cp) {
 
         IntVar x = makeIntVar(cp, 10);
         IntVar y = makeIntVar(cp, 10);
 
         cp.getStateManager().saveState();
-
 
         try {
 
@@ -80,10 +82,10 @@ public class IntVarTest extends SolverTest {
 
     }
 
-    @Test
-    public void onDomainChangeOnBind() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void onDomainChangeOnBind(Solver cp) {
         propagateCalled = false;
-        Solver cp = solverFactory.get();
 
         IntVar x = makeIntVar(cp, 10);
         IntVar y = makeIntVar(cp, 10);
@@ -117,12 +119,11 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void arbitraryRangeDomains() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void arbitraryRangeDomains(Solver cp) {
 
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar x = makeIntVar(cp, -10, 10);
 
@@ -146,12 +147,7 @@ public class IntVarTest extends SolverTest {
                 fail("should not fail here");
             }
 
-            try {
-                x.fix(8);
-                fail("should have failed");
-            } catch (InconsistencyException expectedException) {
-            }
-
+            assertThrowsExactly(InconsistencyException.class, () -> x.fix(8));
 
             cp.getStateManager().restoreState();
 
@@ -168,14 +164,11 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-
-    @Test
-    @Grade(value = 0.5, cpuTimeout = 2000)
-    public void arbitrarySetDomains() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Grade(value = 0.15, cpuTimeout = 1)
+    public void arbitrarySetDomains(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             Set<Integer> dom = new HashSet<>(Arrays.asList(-7, -10, 6, 9, 10, 12));
 
@@ -198,12 +191,7 @@ public class IntVarTest extends SolverTest {
                 fail("should not fail here");
             }
 
-            try {
-                x.fix(-10);
-                fail("should have failed");
-            } catch (InconsistencyException expectedException) {
-            }
-
+            assertThrowsExactly(InconsistencyException.class, () -> x.fix(-10));
 
             cp.getStateManager().restoreState();
 
@@ -219,11 +207,9 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void onBoundChange() {
-
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void onBoundChange(Solver cp) {
 
         IntVar x = makeIntVar(cp, 10);
         IntVar y = makeIntVar(cp, 10);
@@ -263,13 +249,10 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-
-    @Test
-    public void removeAbove() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void removeAbove(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar x = makeIntVar(cp, 10);
 
@@ -304,12 +287,10 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void removeBelow() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void removeBelow(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, 10);
 
             Constraint cons = new AbstractConstraint(cp) {
@@ -351,12 +332,11 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-
-    @Test
-    @Grade(value = 0.5, cpuTimeout = 1000)
-    public void fillArray() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Grade(value = 0.2, cpuTimeout = 1)
+    public void fillArray(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
 
             IntVar x = makeIntVar(cp, 2, 9);
             x.remove(3);
@@ -379,18 +359,18 @@ public class IntVarTest extends SolverTest {
         }
     }
 
-    @Test
-    public void arbitrarySetDomainsMaxInt() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Grade(value = 0.15, cpuTimeout = 1)
+    public void arbitrarySetDomainsMaxInt(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
             Set<Integer> dom = new HashSet<>(Arrays.asList(2147483645));
             IntVar var1 = makeIntVar(cp, dom);
             assertEquals(2147483645, var1.max());
-
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
+        } catch (OutOfMemoryError e) {
+            fail("You created an array to big. Look at valid min and max values for constructing your StateSparseSet");
         }
     }
 

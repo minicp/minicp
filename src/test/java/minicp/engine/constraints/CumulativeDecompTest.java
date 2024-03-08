@@ -15,8 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.Grade;
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.constraints.Profile.Rectangle;
 import minicp.engine.core.IntVar;
@@ -26,27 +24,32 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.javagrader.ConditionalOrderingExtension;
+import org.javagrader.Grade;
+import org.javagrader.GraderExtension;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade
+@ExtendWith(ConditionalOrderingExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CumulativeDecompTest extends SolverTest {
 
-
-    @Test
-    public void testAllDiffWithCumulative() {
-
+    @Timeout(1)
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Order(1)
+    public void testAllDiffWithCumulative(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
-
             IntVar[] s = makeIntVarArray(cp, 5, 5);
             int[] d = new int[5];
             Arrays.fill(d, 1);
@@ -56,8 +59,7 @@ public class CumulativeDecompTest extends SolverTest {
             cp.post(new CumulativeDecomposition(s, d, r, 100));
 
             SearchStatistics stats = makeDfs(cp, firstFail(s)).solve();
-            assertEquals("cumulative alldiff expect makeIntVarArray permutations", 120, stats.numberOfSolutions());
-
+            assertEquals(120, stats.numberOfSolutions(), "cumulative alldiff expect makeIntVarArray permutations");
         } catch (InconsistencyException e) {
             assert (false);
         } catch (NotImplementedException e) {
@@ -66,12 +68,13 @@ public class CumulativeDecompTest extends SolverTest {
 
     }
 
-    @Test
-    public void testBasic1() {
+    @Timeout(1)
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Order(1)
+    public void testBasic1(Solver cp) {
 
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar[] s = makeIntVarArray(cp, 2, 10);
             int[] d = new int[]{5, 5};
@@ -83,19 +86,18 @@ public class CumulativeDecompTest extends SolverTest {
             assertEquals(5, s[1].min());
 
         } catch (InconsistencyException e) {
-            assert (false);
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
     }
 
-
-    @Test
-    public void testBasic2() {
-
+    @Timeout(1)
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    @Order(1)
+    public void testBasic2(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar[] s = makeIntVarArray(cp, 2, 10);
             int[] d = new int[]{5, 5};
@@ -114,15 +116,13 @@ public class CumulativeDecompTest extends SolverTest {
         }
     }
 
-
     @Test
-    @Grade(value = 1, cpuTimeout = 12000)
+    @Grade(cpuTimeout = 2)
+    @Order(2)
+    @Tag("slow")
     public void testCapaOk() {
-
+        Solver cp = makeSolver();
         try {
-
-            Solver cp = solverFactory.get();
-
             IntVar[] s = makeIntVarArray(cp, 5, 10);
             int[] d = new int[]{5, 10, 3, 6, 1};
             int[] r = new int[]{3, 7, 1, 4, 8};
@@ -130,8 +130,6 @@ public class CumulativeDecompTest extends SolverTest {
             cp.post(new CumulativeDecomposition(s, d, r, 12));
 
             DFSearch search = makeDfs(cp, firstFail(s));
-
-            SearchStatistics stats = search.solve();
 
             search.onSolution(() -> {
                 Rectangle[] rects = IntStream.range(0, s.length).mapToObj(i -> {
@@ -142,9 +140,12 @@ public class CumulativeDecompTest extends SolverTest {
                 }).toArray(Rectangle[]::new);
                 int[] discreteProfile = discreteProfile(rects);
                 for (int h : discreteProfile) {
-                    assertTrue("capa exceeded in cumulative constraint", h <= 12);
+                    assertTrue(h <= 12, "capa exceeded in cumulative constraint");
                 }
             });
+
+            SearchStatistics stats = search.solve();
+            assertEquals(15649, stats.numberOfSolutions());
 
         } catch (InconsistencyException e) {
             assert (false);
@@ -153,10 +154,9 @@ public class CumulativeDecompTest extends SolverTest {
         }
     }
 
-
     private static int[] discreteProfile(Rectangle... rectangles) {
-        int min = Arrays.stream(rectangles).filter(r -> r.height() > 0).map(r -> r.start()).min(Integer::compare).get();
-        int max = Arrays.stream(rectangles).filter(r -> r.height() > 0).map(r -> r.end()).max(Integer::compare).get();
+        int min = Arrays.stream(rectangles).filter(r -> r.height() > 0).map(Rectangle::start).min(Integer::compare).get();
+        int max = Arrays.stream(rectangles).filter(r -> r.height() > 0).map(Rectangle::end).max(Integer::compare).get();
         int[] heights = new int[max - min];
         // discrete profileRectangles of rectangles
         for (Rectangle r : rectangles) {

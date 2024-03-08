@@ -19,7 +19,7 @@ package minicp.engine.constraints;
 import minicp.engine.constraints.Profile.Rectangle;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -21,23 +21,24 @@ import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
-import org.junit.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.makeDfs;
 import static minicp.cp.Factory.makeIntVar;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-
+@Timeout(1)
 public class Element2DTest extends SolverTest {
 
-    @Test
-    public void element2dTest1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element2dTest1(Solver cp) {
 
         try {
-
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -2, 40);
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, 2, 40);
@@ -87,21 +88,20 @@ public class Element2DTest extends SolverTest {
         }
     }
 
-    @Test
-    public void element2dTest2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element2dTest2(Solver cp) {
 
         try {
-
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -2, 40);
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, -20, 40);
 
             int[][] T = new int[][]{
-                    {9, 8, 7, 5, 6},
-                    {9, 1, 5, 2, 8},
-                    {8, 3, 1, 4, 9},
-                    {9, 1, 2, 8, 6},
+                    {3,  2,  1, -1, 0},
+                    {3, -5, -1, -4, 2},
+                    {2, -3, -5, -2, 3},
+                    {3, -5, -4,  2, 0},
             };
 
             cp.post(new Element2D(T, x, y, z));

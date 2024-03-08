@@ -46,12 +46,14 @@ public class RCPSP extends OptimizationProblem {
     public final int[] duration;
     public final int[][] consumption;
     public final int[][] successors;
+    String instance;
 
     public IntVar[] start;
     public IntVar[] end;
     public RCPSP(String instanceFilePath) {
         // Reading the data
         InputReader reader = new InputReader(instanceFilePath);
+        instance = reader.getFilename();
         // use all instances at data/rcpsp
 
         nActivities = reader.getInt();
@@ -109,16 +111,23 @@ public class RCPSP extends OptimizationProblem {
         // successors[i] is the sucessors of activity i
 
         // TODO 3: minimize the makespan
+         IntVar makespan = null;
+         objective = null;
 
         // TODO 4: implement the search
 
-        
-        // TODO add the constraints and remove the NotImplementedException
+         dfs = null;
+        // TODO add the constraints, the search and remove the NotImplementedException
          throw new NotImplementedException("RCPSP");
     }
 
+    @Override
+    public String toString() {
+        return "RCPSP(" + instance + ')';
+    }
+
     public static void main(String[] args) {
-        RCPSP rcpsp = new RCPSP("data/rcpsp/j30_1_3.rcp");
+        RCPSP rcpsp = new RCPSP("data/rcpsp/j30_1_1.rcp");
         rcpsp.buildModel();
         rcpsp.solve( true);
     }

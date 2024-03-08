@@ -40,12 +40,14 @@ public class Eternity extends SatisfactionProblem {
     public final int m;
     public final int max;
     public final int[][] pieces;
+    String instance;
 
     public IntVar[][] id;
     public IntVar[][] u;
     public IntVar[][] d;
     public IntVar[][] l;
     public IntVar[][] r;
+    protected int[][] table;
 
     public Eternity(String instanceFilePath) {
         this(false, instanceFilePath);
@@ -53,6 +55,7 @@ public class Eternity extends SatisfactionProblem {
 
     public Eternity(boolean verbose, String instanceFilePath) {
         InputReader reader = new InputReader(instanceFilePath); // Reading the data
+        instance = reader.getFilename();
         n = reader.getInt();
         m = reader.getInt();
 
@@ -81,7 +84,7 @@ public class Eternity extends SatisfactionProblem {
     public void buildModel() {
         // ------------------------
 
-        // TODO: create the table where each line correspond to one possible rotation of a piece
+        // TODO 1: create the table where each line corresponds to one possible rotation of a piece
         // For instance if the line piece[6] = [2,3,5,1]
         // the four lines created in the table are
         // [6,2,3,5,1] // rotation of 0°
@@ -91,7 +94,7 @@ public class Eternity extends SatisfactionProblem {
 
         // Table with makeIntVarArray pieces and for each their 4 possible rotations
 
-        int[][] table = new int[4 * n * m][5];
+        table = new int[4 * n * m][5];
         
 
         Solver cp = makeSolver();
@@ -140,9 +143,11 @@ public class Eternity extends SatisfactionProblem {
 
         // The constraints of the problem
 
-        // TODO: State the constraints of the problem
+        // TODO 2: State the constraints of the problem
 
         // Constraint1: all the pieces placed are different
+        // hint1: have a look at the AllDifferentBinary constraint
+        // hint2: a flatten method is provided to transform a matrix of variables into one array
 
         // Constraint2: all the pieces placed are valid ones i.e. one of the given mxn pieces possibly rotated
 
@@ -154,7 +159,7 @@ public class Eternity extends SatisfactionProblem {
         // The search using the and combinator
 
         dfs = makeDfs(cp,
-                /* TODO: continue, are you branching on all the variables ? */
+                /* TODO 3: continue, are you branching on all the variables ? */
                  and(firstFail(flatten((id))), firstFail(flatten(u)))
         );
         // TODO add the constraints and remove the NotImplementedException
@@ -187,6 +192,11 @@ public class Eternity extends SatisfactionProblem {
             }
             System.out.println(line);
         });
+    }
+
+    @Override
+    public String toString() {
+        return "Eternity(" + instance + ')';
     }
 
     public static void main(String[] args) {

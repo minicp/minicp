@@ -15,7 +15,6 @@
 
 package minicp.engine.constraints;
 
-import com.github.guillaumederval.javagrading.GradeClass;
 import minicp.engine.SolverTest;
 import minicp.engine.core.BoolVar;
 import minicp.engine.core.IntVar;
@@ -25,17 +24,16 @@ import minicp.search.SearchStatistics;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Assume;
-import org.junit.Test;
-
+import org.javagrader.Grade;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 import static minicp.cp.BranchingScheme.firstFail;
 import static minicp.cp.Factory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(value = 2, cpuTimeout = 1)
 public class DisjunctiveTest extends SolverTest {
 
     private static void decomposeDisjunctive(IntVar[] start, int[] duration) {
@@ -53,10 +51,10 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testAllDiffDisjunctive() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testAllDiffDisjunctive(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar[] s = makeIntVarArray(cp, 5, 5);
 
             int[] d = new int[5];
@@ -71,12 +69,10 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testNotRemovingSolutions() {
-
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testNotRemovingSolutions(Solver cp) {
         try {
-
-            Solver cp = solverFactory.get();
 
             IntVar[] s = makeIntVarArray(cp, 4, 20);
             int[] d = new int[]{5, 4, 6, 7};
@@ -103,9 +99,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testBinaryDecomposition() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testBinaryDecomposition(Solver cp) {
         IntVar s1 = makeIntVar(cp, 0, 10);
         int d1 = 10;
         IntVar s2 = makeIntVar(cp, 6, 15);
@@ -121,9 +117,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testOverloadChecker() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testOverloadChecker(Solver cp) {
         IntVar sA = makeIntVar(cp, 0, 9);
         int d1 = 5;
         IntVar sB = makeIntVar(cp, 1, 10);
@@ -138,8 +134,8 @@ public class DisjunctiveTest extends SolverTest {
             try {
                 disjunctive.overLoadChecker();
                 fail();
-            } catch (InconsistencyException e) {
-                assert (true);
+            } catch (InconsistencyException ignored) {
+                ;
             } catch (NotImplementedException e) {
                 NotImplementedExceptionAssume.fail(e);
             }
@@ -147,7 +143,7 @@ public class DisjunctiveTest extends SolverTest {
 
         // Integration test by posting the constraint:
         try {
-            cp.post(disjunctive);
+            disjunctive.post();
             fail();
         } catch (InconsistencyException e) {
             assert (true);
@@ -156,9 +152,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testDetectablePrecedence() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDetectablePrecedence(Solver cp) {
         IntVar sA = makeIntVar(cp, 0, 9);
         int d1 = 5;
         IntVar sB = makeIntVar(cp, 1, 10);
@@ -172,7 +168,7 @@ public class DisjunctiveTest extends SolverTest {
         cp.getStateManager().withNewState(() -> {
             try {
                 assertTrue(disjunctive.detectablePrecedence());
-                assertEquals("detectable precedence should set sC.min() to 10", 10, sC.min());
+                assertEquals(10, sC.min(), "detectable precedence should set sC.min() to 10");
                 assertFalse(disjunctive.detectablePrecedence());
             } catch (InconsistencyException e) {
                 fail();
@@ -183,8 +179,8 @@ public class DisjunctiveTest extends SolverTest {
 
         // Integration test by posting the constraint:
         try {
-            cp.post(disjunctive);
-            assertEquals("detectable precedence should set sC.min() to 10", 10, sC.min());
+            disjunctive.post();
+            assertEquals(10, sC.min(), "detectable precedence should set sC.min() to 10");
         } catch (InconsistencyException e) {
             fail();
         } catch (NotImplementedException e) {
@@ -192,9 +188,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testNotLast() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testNotLast(Solver cp) {
         IntVar sA = makeIntVar(cp, 0, 9);
         int d1 = 5;
         IntVar sB = makeIntVar(cp, 1, 10);
@@ -208,10 +204,10 @@ public class DisjunctiveTest extends SolverTest {
         cp.getStateManager().withNewState(() -> {
             try {
                 assertTrue(disjunctive.notLast());
-                assertEquals("not last should set sC.max() to 6", 6, sC.max());
+                assertEquals(6, sC.max(), "not last should set sC.max() to 6");
                 assertTrue(disjunctive.notLast());
-                assertEquals("not last should set sA.max() to 6", 1, sA.max());
-                Assume.assumeFalse(disjunctive.notLast());
+                assertEquals(1, sA.max(), "not last should set sA.max() to 1");
+                assertFalse(disjunctive.notLast(), "the second not last iteration should not detect any changes");
             } catch (InconsistencyException e) {
                 fail();
             } catch (NotImplementedException e) {
@@ -221,9 +217,9 @@ public class DisjunctiveTest extends SolverTest {
 
         // Integration test by posting the constraint:
         try {
-            cp.post(disjunctive);
-            assertEquals("not last should set sC.max() to 6", 6, sC.max());
-            assertEquals("not last should set sA.max() to 2", 1, sA.max());
+            disjunctive.post();
+            assertEquals(6, sC.max(), "not last should set sC.max() to 6");
+            assertEquals(1, sA.max(), "not last should set sA.max() to 1");
         } catch (InconsistencyException e) {
             fail();
         } catch (NotImplementedException e) {
@@ -231,9 +227,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testUsingManualLoop() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testUsingManualLoop(Solver cp) {
         IntVar[] s = new IntVar[] {
                 makeIntVar(cp, 0, 19),
                 makeIntVar(cp, 9, 17),
@@ -284,19 +280,19 @@ public class DisjunctiveTest extends SolverTest {
                 disjunctive.overLoadChecker();
 
                 String message = String.format("iteration: %d", i);
-                assertEquals(message, performDetPrec[i], disjunctive.detectablePrecedence());
+                assertEquals(performDetPrec[i], disjunctive.detectablePrecedence(), message);
                 for (int j = 0; j < s.length; j++) {
-                    assertEquals(message, minDetPrec[i][j], s[j].min());
-                    assertEquals(message, maxDetPrec[i][j], s[j].max());
-                    assertEquals(message, 1 + maxDetPrec[i][j] - minDetPrec[i][j], s[j].size());
+                    assertEquals(minDetPrec[i][j], s[j].min(), message);
+                    assertEquals(maxDetPrec[i][j], s[j].max(), message);
+                    assertEquals(1 + maxDetPrec[i][j] - minDetPrec[i][j], s[j].size(), message);
                 }
                 if (!performDetPrec[i]) {
-                    assertEquals(message, !performDetPrec[i], disjunctive.notLast());
+                    assertEquals(!performDetPrec[i], disjunctive.notLast());
                 }
                 for (int j = 0; j < s.length; j++) {
-                    assertEquals(message, minNotLast[i][j], s[j].min());
-                    assertEquals(message, maxNotLast[i][j], s[j].max());
-                    assertEquals(message, 1 + maxNotLast[i][j] - minNotLast[i][j], s[j].size());
+                    assertEquals(minNotLast[i][j], s[j].min(), message);
+                    assertEquals(maxNotLast[i][j], s[j].max(), message);
+                    assertEquals(1 + maxNotLast[i][j] - minNotLast[i][j], s[j].size(), message);
                 }
             }
             disjunctive.overLoadChecker();
@@ -315,9 +311,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testDisjunctive1() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDisjunctive1(Solver cp) {
         IntVar sA = makeIntVar(cp, 0, 9);
         int d1 = 5;
         IntVar sB = makeIntVar(cp, 1, 10);
@@ -326,7 +322,7 @@ public class DisjunctiveTest extends SolverTest {
         int d3 = 3;
 
         try {
-            cp.post(new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}));
+            new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}).post();
             assertEquals(10, sA.size());
             assertEquals(10, sB.size());
             assertEquals(6, sC.size());
@@ -339,9 +335,9 @@ public class DisjunctiveTest extends SolverTest {
         }
     }
 
-    @Test
-    public void testDisjunctive2() {
-        Solver cp = solverFactory.get();
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void testDisjunctive2(Solver cp) {
         IntVar sA = makeIntVar(cp, 0, 9);
         int d1 = 5;
         IntVar sB = makeIntVar(cp, 1, 10);
@@ -350,7 +346,7 @@ public class DisjunctiveTest extends SolverTest {
         int d3 = 4;
 
         try {
-            cp.post(new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}));
+            new Disjunctive(new IntVar[]{sA, sB, sC}, new int[]{d1, d2, d3}).post();
             assertEquals(0, sA.min());
             assertEquals(1, sA.max());
             assertEquals(9, sB.min());
@@ -358,7 +354,7 @@ public class DisjunctiveTest extends SolverTest {
             assertEquals(5, sC.min());
             assertEquals(6, sC.max());
         } catch (InconsistencyException e) {
-            fail();
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }

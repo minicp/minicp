@@ -110,4 +110,9 @@ public class MiniCP implements Solver {
         b.fix(true);
         fixPoint();
     }
+
+    @Override
+    public String toString() {
+        return "MiniCP(" + sm + ")";
+    }
 }

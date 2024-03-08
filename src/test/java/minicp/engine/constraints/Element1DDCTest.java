@@ -19,13 +19,15 @@ import minicp.engine.SolverTest;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
-import com.github.guillaumederval.javagrading.GradeClass;
+import org.javagrader.Grade;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.Procedure;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,32 +39,32 @@ import static minicp.cp.BranchingScheme.EMPTY;
 import static minicp.cp.BranchingScheme.branch;
 import static minicp.cp.Factory.*;
 import static minicp.cp.Factory.notEqual;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class Element1DDCTest extends SolverTest {
 
-    @Test
-    public void element1dTest1() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dTest1(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
 
             Random rand = new Random(678);
-            IntVar y = makeIntVar(cp, 0, 100);
-            IntVar z = makeIntVar(cp, 0, 100);
+            IntVar y = makeIntVar(cp, -1, 100);
+            IntVar z = makeIntVar(cp, -50, 50);
 
 
             int[] T = new int[70];
             HashSet<Integer> uniqueValues = new HashSet<>(T.length);
             for (int i = 0; i < T.length; i++) {
-                T[i] = rand.nextInt(100);
+                T[i] = rand.nextInt(100) - 50;
                 uniqueValues.add(T[i]);
             }
 
             cp.post(new Element1DDomainConsistent(T, y, z));
 
-            assertEquals(y.size(), T.length);
-            assertEquals(z.size(), uniqueValues.size());
+            assertEquals(T.length, y.size());
+            assertEquals(uniqueValues.size(), z.size());
 
             assertTrue(y.max() < T.length);
 
@@ -79,12 +81,12 @@ public class Element1DDCTest extends SolverTest {
 
                 HashSet<Integer> possibleValues = new HashSet<>();
                 HashSet<Integer> possibleValues2 = new HashSet<>();
-                for (int i = 0; i < possibleZ.length; i++)
-                    possibleValues.add(possibleZ[i]);
+                for (int j : possibleZ)
+                    possibleValues.add(j);
 
-                for (int i = 0; i < possibleY.length; i++) {
-                    assertTrue(possibleValues.contains(T[possibleY[i]]));
-                    possibleValues2.add(T[possibleY[i]]);
+                for (int j : possibleY) {
+                    assertTrue(possibleValues.contains(T[j]));
+                    possibleValues2.add(T[j]);
                 }
                 assertEquals(possibleValues.size(), possibleValues2.size());
 
@@ -110,20 +112,20 @@ public class Element1DDCTest extends SolverTest {
         }
     }
 
-    @Test
-    public void element1dTest2() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void element1dTest2(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
-
             IntVar y = makeIntVar(cp, 0, 100);
-            IntVar z = makeIntVar(cp, 0, 100);
+            IntVar z = makeIntVar(cp, -50, 100);
 
             int[] T = new int[15];
             Arrays.fill(T, 5);
             T[T.length - 1] = 0;
 
-            cp.post(new Element1DDomainConsistent(T, y, z));
+            new Element1DDomainConsistent(T, y, z).post();
 
+            assertEquals(y.min(), 0);
             assertEquals(y.size(), T.length);
             assertEquals(z.size(), 2);
             assertEquals(z.min(), 0);
@@ -134,7 +136,8 @@ public class Element1DDCTest extends SolverTest {
             z.remove(5);
             try {
                 cp.fixPoint();
-                fail();
+                fail("An inconsistency needs to be" +
+                        "thrown when no solution where the constraint holds exists");
             } catch (InconsistencyException ignored) {
 
             }

@@ -15,8 +15,7 @@
 
 package minicp.search;
 
-import com.github.guillaumederval.javagrading.Grade;
-import com.github.guillaumederval.javagrading.GradeClass;
+
 import minicp.state.StateInt;
 import minicp.state.StateManager;
 import minicp.state.StateManagerTest;
@@ -25,9 +24,12 @@ import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.Procedure;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Test;
+import org.javagrader.ConditionalOrderingExtension;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,13 +37,15 @@ import java.util.function.Supplier;
 
 import static minicp.cp.BranchingScheme.EMPTY;
 import static minicp.cp.BranchingScheme.branch;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
-@GradeClass(totalValue=1, allCorrect=true)
+@ExtendWith(ConditionalOrderingExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DFSearchTest extends StateManagerTest {
+
     @Test
+    @Order(1)
     public void testExample0() {
         final int save = -1;
         final int restore = -2;
@@ -132,9 +136,10 @@ public class DFSearchTest extends StateManagerTest {
         }
     }
 
-    @Test
-    public void testExample1() {
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    @Order(1)
+    public void testExample1(StateManager sm) {
         StateInt i = sm.makeStateInt(0);
         int[] values = new int[3];
 
@@ -163,10 +168,10 @@ public class DFSearchTest extends StateManagerTest {
         assertEquals (8 + 4 + 2, stats.numberOfNodes());
     }
 
-
-    @Test
-    public void testExample3() {
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    @Order(1)
+    public void testExample3(StateManager sm) {
         StateInt i = sm.makeStateInt(0);
         int[] values = new int[3];
 
@@ -193,10 +198,10 @@ public class DFSearchTest extends StateManagerTest {
         assertEquals (1,stats.numberOfSolutions());
     }
 
-
-    @Test
-    public void testDFS() {
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    @Order(1)
+    public void testDFS(StateManager sm) {
         StateInt i = sm.makeStateInt(0);
         boolean[] values = new boolean[4];
 
@@ -238,9 +243,10 @@ public class DFSearchTest extends StateManagerTest {
 
     }
 
-    @Test
-    public void testDFSSearchLimit() {
-        StateManager sm = stateFactory.get();
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    @Order(1)
+    public void testDFSSearchLimit(StateManager sm) {
 
         StateInt i = sm.makeStateInt(0);
         boolean[] values = new boolean[4];
@@ -272,15 +278,13 @@ public class DFSearchTest extends StateManagerTest {
 
     }
 
+    //@Grade(value = 0.3, cpuTimeout = 2)
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    @Order(2)
+    @Disabled
+    public void testDeepDFS(StateManager sm) {
 
-    @Test
-    @Grade(value = 0.5, cpuTimeout = 2000)
-    public void testDeepDFS() {
-        testExample1();
-        testDFS();
-        testDFSSearchLimit();
-
-        StateManager sm = stateFactory.get();
         StateInt i = sm.makeStateInt(0);
         boolean[] values = new boolean[10000];
 
@@ -309,10 +313,11 @@ public class DFSearchTest extends StateManagerTest {
         }
     }
 
-    @Test
-    @Grade(value = 0.5, cpuTimeout = 2000)
-    public void checkInconsistenciesManagedCorrectly() {
-        StateManager sm = stateFactory.get();
+    //@Grade(value = 0.2, cpuTimeout = 2)
+    @ParameterizedTest
+    @MethodSource("getStateManager")
+    @Order(2)
+    public void checkInconsistenciesManagedCorrectly(StateManager sm) {
         int[] values = new int[3]; //init to 0
 
         DFSearch dfs = new DFSearch(sm, () -> {

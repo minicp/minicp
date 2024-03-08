@@ -21,20 +21,19 @@ import minicp.engine.core.Solver;
 import minicp.util.exception.InconsistencyException;
 import minicp.util.exception.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static minicp.cp.Factory.makeIntVar;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class LessOrEqualTest extends SolverTest {
 
-
-    @Test
-    public void simpleTest0() {
+    @ParameterizedTest
+    @MethodSource("getSolver")
+    public void simpleTest0(Solver cp) {
         try {
-            Solver cp = solverFactory.get();
             IntVar x = makeIntVar(cp, -5, 5);
             IntVar y = makeIntVar(cp, -10, 10);
 

@@ -15,8 +15,7 @@
 
 package minicp.search;
 
-import com.github.guillaumederval.javagrading.GradeClass;
-import com.github.guillaumederval.javagrading.GradingRunner;
+
 import minicp.cp.BranchingScheme;
 import minicp.state.StateInt;
 import minicp.state.StateManager;
@@ -24,19 +23,18 @@ import minicp.state.Trailer;
 import minicp.util.NotImplementedExceptionAssume;
 import minicp.util.Procedure;
 import minicp.util.exception.NotImplementedException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.javagrader.Grade;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(GradingRunner.class)
-@GradeClass(totalValue = 1, defaultCpuTimeout = 1000)
+@Grade(cpuTimeout = 1)
 public class LimitedDiscrepancyBranchingTest {
 
-
+    @Grade
     @Test
     public void testExample1() {
         try {
@@ -68,7 +66,7 @@ public class LimitedDiscrepancyBranchingTest {
                 for (int k = 0; k < values.length; k++) {
                     n1 += values[k];
                 }
-                Assert.assertTrue(n1 <= 2);
+                assertTrue(n1 <= 2);
             });
 
             SearchStatistics stats = dfs.solve();
@@ -80,6 +78,5 @@ public class LimitedDiscrepancyBranchingTest {
             NotImplementedExceptionAssume.fail(e);
         }
     }
-
 
 }
