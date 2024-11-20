@@ -65,12 +65,42 @@ public class GraphColoringTinyCSPTest {
 
     }
 
-    public static Stream<Arguments> getInstancePaths() {
-        //I want my code to read input.txt line by line and feed the input in an arraylist so that it returns an equivalent of the code below
-        List<String> files = new LinkedList<>();
-        for (int i = 0; i < 10; i++) {
-            files.add("data/graph_coloring/gc_15_30_"+i);
+    public void testSolve() {
+        GraphColoringTinyCSP.GraphColoringInstance instance = readInstance(path);
+        try {
+            int[] solution = GraphColoringTinyCSP.solve(instance);
+            for (int[] edge : instance.edges) {
+                int i = edge[0];
+                int j = edge[1];
+                assertTrue(solution[i] != solution[j]);
+            }
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
         }
-        return files.stream().map(file -> arguments(named(new File(file).getName(), file)));
+    }
+
+
+    @Parameterized.Parameters
+    public static Collection<String> getNum() throws IOException {
+        List<String> files = new LinkedList<>();
+        File inputFile = new File("input.txt"); // Path to the input.txt file
+
+        if (inputFile.exists()) {
+            // Read file paths line by line
+            try (Scanner scanner = new Scanner(inputFile)) {
+                while (scanner.hasNextLine()) {
+                    String path = scanner.nextLine().trim();
+                    if (!path.isEmpty()) {
+                        files.add(path);
+                    }
+                }
+            }
+        } else {
+            // Fallback: Default paths if input.txt does not exist
+            for (int i = 0; i < 10; i++) {
+                files.add("data/graph_coloring/gc_15_30_" + i);
+            }
+        }
+        return files;
     }
 }
