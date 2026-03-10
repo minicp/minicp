@@ -4,30 +4,38 @@ on:
   push:
     branches:
       - master
+
 jobs:
   testsolution:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        maven: ['3.8.5']
-        java: [ '8' ]
-    steps:
-      - name: Step - Setup Maven Action
-        uses: s4u/setup-maven-action@v1.2.1
-        with:
-          java-version: ${{ matrix.java }}
-          maven-version: ${{ matrix.maven }}
-      - name: Step - Build with Maven
-        run: mvn verify
+        java: ['21']
 
-      - name: Step - Create javadoc
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B verify
+
+      - name: Create javadoc
         run: |
           javadoc -encoding utf8 -d javadoc -sourcepath src/main/java -subpackages minicp minicp
           mv javadoc /tmp/.
+
       - uses: actions/checkout@v3
         with:
           ref: gh-pages
-      - name: Step - add new javadoc
+
+      - name: Add new javadoc
         run: |
           git config --local user.email "github-actions@users.noreply.github.com"
           git config --local user.name "github-actions"
@@ -35,8 +43,9 @@ jobs:
           cp -r /tmp/javadoc/* .
           touch .nojekyll
           git add -A
-          git commit -m "update javadoc"
-      - name: Step - Push changes to gh-page branch
+          git commit -m "update javadoc" || echo "No changes"
+
+      - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           branch: gh-pages
