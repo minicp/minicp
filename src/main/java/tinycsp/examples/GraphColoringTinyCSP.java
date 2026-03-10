@@ -116,19 +116,6 @@ public class GraphColoringTinyCSP {
      * @return the color of each node such that no two adjacent nodes receive a same color,
      *         or null if the problem is unfeasible
      */
-    public static int[] solve_(GraphColoringInstance instance) {
-        // TODO: solve the graph coloring problem using TinyCSP and return a solution
-        // Hint: you can stop the search on first solution throwing and catching an exception
-        //       in the onSolution closure or you can modify the dfs search
-         throw new NotImplementedException("GraphColoringTinyCSP");
-    }
-
-    /**
-     * Solve the graph coloring problem
-     * @param instance a graph coloring instance
-     * @return the color of each node such that no two adjacent nodes receive a same color,
-     *         or null if the problem is unfeasible
-     */
     public static int[] solve(GraphColoringTinyCSP.GraphColoringInstance instance) {
         // TODO: solve the graph coloring problem using TinyCSP and return a solution
         // Hint: you can stop the search on first solution throwing and catching an exception
