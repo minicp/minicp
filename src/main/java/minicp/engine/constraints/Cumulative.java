@@ -92,6 +92,16 @@ public class Cumulative extends AbstractConstraint {
             if (!start[i].isFixed()) {
                 // j is the index of the profile rectangle overlapping t
                 int j = profile.rectangleIndex(start[i].min());
+                int t = start[i].min();
+                while (j < profile.size()
+                        && profile.get(j).start() < Math.min(t + duration[i], start[i].max())) {
+                    if (capa - demand[i]
+                            <  profile.get(j).height()) {
+                        t = Math.min(profile.get(j).end(), start[i].max());
+                    }
+                    j++;
+                }
+                start[i].removeBelow(t);
                 // TODO 3: postpone i to a later point in time
                 // hint:
                 // Check that at every point in the interval

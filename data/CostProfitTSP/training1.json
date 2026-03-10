@@ -1,0 +1,83 @@
+{
+    "n_nodes": 10,
+    "mandatory": [
+        8,
+        3,
+        1
+    ],
+    "start": 7,
+    "end": 6,
+    "time_budget": 966,
+    "visits": [
+        {
+            "id": 0,
+            "x": 41,
+            "y": 0,
+            "service_time": 51,
+            "reward": 186
+        },
+        {
+            "id": 1,
+            "x": 47,
+            "y": 31,
+            "service_time": 83,
+            "reward": 118
+        },
+        {
+            "id": 2,
+            "x": 74,
+            "y": 0,
+            "service_time": 48,
+            "reward": 104
+        },
+        {
+            "id": 3,
+            "x": 3,
+            "y": 66,
+            "service_time": 24,
+            "reward": 101
+        },
+        {
+            "id": 4,
+            "x": 73,
+            "y": 40,
+            "service_time": 26,
+            "reward": 184
+        },
+        {
+            "id": 5,
+            "x": 75,
+            "y": 75,
+            "service_time": 45,
+            "reward": 194
+        },
+        {
+            "id": 6,
+            "x": 7,
+            "y": 40,
+            "service_time": 92,
+            "reward": 123
+        },
+        {
+            "id": 7,
+            "x": 61,
+            "y": 27,
+            "service_time": 94,
+            "reward": 163
+        },
+        {
+            "id": 8,
+            "x": 70,
+            "y": 41,
+            "service_time": 33,
+            "reward": 198
+        },
+        {
+            "id": 9,
+            "x": 53,
+            "y": 77,
+            "service_time": 69,
+            "reward": 106
+        }
+    ]
+}
