@@ -1,0 +1,545 @@
+{
+  "n_nodes": 75,
+  "mandatory": [
+    16,
+    61,
+    57,
+    22,
+    65,
+    3,
+    64,
+    62,
+    36,
+    1
+  ],
+  "start": 17,
+  "end": 51,
+  "time_budget": 3077,
+  "visits": [
+    {
+      "id": 0,
+      "x": 71,
+      "y": 56,
+      "service_time": 73,
+      "reward": 180
+    },
+    {
+      "id": 1,
+      "x": 98,
+      "y": 75,
+      "service_time": 87,
+      "reward": 110
+    },
+    {
+      "id": 2,
+      "x": 85,
+      "y": 7,
+      "service_time": 48,
+      "reward": 196
+    },
+    {
+      "id": 3,
+      "x": 15,
+      "y": 87,
+      "service_time": 88,
+      "reward": 149
+    },
+    {
+      "id": 4,
+      "x": 96,
+      "y": 44,
+      "service_time": 65,
+      "reward": 165
+    },
+    {
+      "id": 5,
+      "x": 40,
+      "y": 81,
+      "service_time": 29,
+      "reward": 155
+    },
+    {
+      "id": 6,
+      "x": 68,
+      "y": 75,
+      "service_time": 48,
+      "reward": 121
+    },
+    {
+      "id": 7,
+      "x": 16,
+      "y": 56,
+      "service_time": 27,
+      "reward": 130
+    },
+    {
+      "id": 8,
+      "x": 62,
+      "y": 77,
+      "service_time": 24,
+      "reward": 188
+    },
+    {
+      "id": 9,
+      "x": 89,
+      "y": 16,
+      "service_time": 29,
+      "reward": 159
+    },
+    {
+      "id": 10,
+      "x": 17,
+      "y": 42,
+      "service_time": 61,
+      "reward": 200
+    },
+    {
+      "id": 11,
+      "x": 73,
+      "y": 45,
+      "service_time": 32,
+      "reward": 103
+    },
+    {
+      "id": 12,
+      "x": 16,
+      "y": 42,
+      "service_time": 59,
+      "reward": 166
+    },
+    {
+      "id": 13,
+      "x": 10,
+      "y": 27,
+      "service_time": 61,
+      "reward": 190
+    },
+    {
+      "id": 14,
+      "x": 100,
+      "y": 53,
+      "service_time": 97,
+      "reward": 127
+    },
+    {
+      "id": 15,
+      "x": 59,
+      "y": 35,
+      "service_time": 55,
+      "reward": 146
+    },
+    {
+      "id": 16,
+      "x": 93,
+      "y": 50,
+      "service_time": 68,
+      "reward": 186
+    },
+    {
+      "id": 17,
+      "x": 82,
+      "y": 42,
+      "service_time": 100,
+      "reward": 122
+    },
+    {
+      "id": 18,
+      "x": 94,
+      "y": 52,
+      "service_time": 26,
+      "reward": 122
+    },
+    {
+      "id": 19,
+      "x": 24,
+      "y": 44,
+      "service_time": 59,
+      "reward": 175
+    },
+    {
+      "id": 20,
+      "x": 41,
+      "y": 92,
+      "service_time": 54,
+      "reward": 178
+    },
+    {
+      "id": 21,
+      "x": 45,
+      "y": 38,
+      "service_time": 21,
+      "reward": 119
+    },
+    {
+      "id": 22,
+      "x": 17,
+      "y": 67,
+      "service_time": 40,
+      "reward": 131
+    },
+    {
+      "id": 23,
+      "x": 4,
+      "y": 45,
+      "service_time": 96,
+      "reward": 197
+    },
+    {
+      "id": 24,
+      "x": 89,
+      "y": 44,
+      "service_time": 93,
+      "reward": 100
+    },
+    {
+      "id": 25,
+      "x": 91,
+      "y": 48,
+      "service_time": 35,
+      "reward": 152
+    },
+    {
+      "id": 26,
+      "x": 31,
+      "y": 38,
+      "service_time": 20,
+      "reward": 151
+    },
+    {
+      "id": 27,
+      "x": 87,
+      "y": 20,
+      "service_time": 70,
+      "reward": 199
+    },
+    {
+      "id": 28,
+      "x": 59,
+      "y": 42,
+      "service_time": 31,
+      "reward": 121
+    },
+    {
+      "id": 29,
+      "x": 86,
+      "y": 13,
+      "service_time": 28,
+      "reward": 101
+    },
+    {
+      "id": 30,
+      "x": 66,
+      "y": 57,
+      "service_time": 36,
+      "reward": 186
+    },
+    {
+      "id": 31,
+      "x": 54,
+      "y": 35,
+      "service_time": 84,
+      "reward": 109
+    },
+    {
+      "id": 32,
+      "x": 48,
+      "y": 84,
+      "service_time": 66,
+      "reward": 177
+    },
+    {
+      "id": 33,
+      "x": 53,
+      "y": 85,
+      "service_time": 28,
+      "reward": 104
+    },
+    {
+      "id": 34,
+      "x": 5,
+      "y": 88,
+      "service_time": 47,
+      "reward": 103
+    },
+    {
+      "id": 35,
+      "x": 14,
+      "y": 70,
+      "service_time": 20,
+      "reward": 154
+    },
+    {
+      "id": 36,
+      "x": 100,
+      "y": 60,
+      "service_time": 76,
+      "reward": 147
+    },
+    {
+      "id": 37,
+      "x": 93,
+      "y": 97,
+      "service_time": 42,
+      "reward": 179
+    },
+    {
+      "id": 38,
+      "x": 69,
+      "y": 57,
+      "service_time": 38,
+      "reward": 144
+    },
+    {
+      "id": 39,
+      "x": 64,
+      "y": 34,
+      "service_time": 85,
+      "reward": 177
+    },
+    {
+      "id": 40,
+      "x": 77,
+      "y": 99,
+      "service_time": 67,
+      "reward": 173
+    },
+    {
+      "id": 41,
+      "x": 62,
+      "y": 34,
+      "service_time": 40,
+      "reward": 147
+    },
+    {
+      "id": 42,
+      "x": 30,
+      "y": 98,
+      "service_time": 36,
+      "reward": 146
+    },
+    {
+      "id": 43,
+      "x": 11,
+      "y": 13,
+      "service_time": 36,
+      "reward": 114
+    },
+    {
+      "id": 44,
+      "x": 26,
+      "y": 47,
+      "service_time": 81,
+      "reward": 111
+    },
+    {
+      "id": 45,
+      "x": 99,
+      "y": 64,
+      "service_time": 79,
+      "reward": 176
+    },
+    {
+      "id": 46,
+      "x": 22,
+      "y": 27,
+      "service_time": 100,
+      "reward": 131
+    },
+    {
+      "id": 47,
+      "x": 44,
+      "y": 17,
+      "service_time": 76,
+      "reward": 141
+    },
+    {
+      "id": 48,
+      "x": 66,
+      "y": 64,
+      "service_time": 55,
+      "reward": 120
+    },
+    {
+      "id": 49,
+      "x": 68,
+      "y": 15,
+      "service_time": 48,
+      "reward": 131
+    },
+    {
+      "id": 50,
+      "x": 7,
+      "y": 29,
+      "service_time": 59,
+      "reward": 183
+    },
+    {
+      "id": 51,
+      "x": 42,
+      "y": 30,
+      "service_time": 42,
+      "reward": 151
+    },
+    {
+      "id": 52,
+      "x": 52,
+      "y": 62,
+      "service_time": 72,
+      "reward": 152
+    },
+    {
+      "id": 53,
+      "x": 32,
+      "y": 88,
+      "service_time": 49,
+      "reward": 103
+    },
+    {
+      "id": 54,
+      "x": 64,
+      "y": 88,
+      "service_time": 62,
+      "reward": 163
+    },
+    {
+      "id": 55,
+      "x": 83,
+      "y": 85,
+      "service_time": 24,
+      "reward": 101
+    },
+    {
+      "id": 56,
+      "x": 68,
+      "y": 7,
+      "service_time": 91,
+      "reward": 112
+    },
+    {
+      "id": 57,
+      "x": 18,
+      "y": 3,
+      "service_time": 73,
+      "reward": 106
+    },
+    {
+      "id": 58,
+      "x": 41,
+      "y": 97,
+      "service_time": 23,
+      "reward": 142
+    },
+    {
+      "id": 59,
+      "x": 7,
+      "y": 32,
+      "service_time": 67,
+      "reward": 169
+    },
+    {
+      "id": 60,
+      "x": 17,
+      "y": 22,
+      "service_time": 25,
+      "reward": 148
+    },
+    {
+      "id": 61,
+      "x": 9,
+      "y": 37,
+      "service_time": 80,
+      "reward": 171
+    },
+    {
+      "id": 62,
+      "x": 49,
+      "y": 45,
+      "service_time": 97,
+      "reward": 163
+    },
+    {
+      "id": 63,
+      "x": 70,
+      "y": 23,
+      "service_time": 61,
+      "reward": 171
+    },
+    {
+      "id": 64,
+      "x": 10,
+      "y": 60,
+      "service_time": 33,
+      "reward": 196
+    },
+    {
+      "id": 65,
+      "x": 39,
+      "y": 56,
+      "service_time": 87,
+      "reward": 109
+    },
+    {
+      "id": 66,
+      "x": 1,
+      "y": 18,
+      "service_time": 77,
+      "reward": 128
+    },
+    {
+      "id": 67,
+      "x": 64,
+      "y": 76,
+      "service_time": 77,
+      "reward": 192
+    },
+    {
+      "id": 68,
+      "x": 71,
+      "y": 77,
+      "service_time": 83,
+      "reward": 198
+    },
+    {
+      "id": 69,
+      "x": 95,
+      "y": 17,
+      "service_time": 61,
+      "reward": 174
+    },
+    {
+      "id": 70,
+      "x": 82,
+      "y": 72,
+      "service_time": 62,
+      "reward": 171
+    },
+    {
+      "id": 71,
+      "x": 89,
+      "y": 20,
+      "service_time": 36,
+      "reward": 180
+    },
+    {
+      "id": 72,
+      "x": 87,
+      "y": 74,
+      "service_time": 86,
+      "reward": 146
+    },
+    {
+      "id": 73,
+      "x": 81,
+      "y": 6,
+      "service_time": 38,
+      "reward": 101
+    },
+    {
+      "id": 74,
+      "x": 48,
+      "y": 15,
+      "service_time": 58,
+      "reward": 170
+    }
+  ]
+}

@@ -119,6 +119,29 @@ public class TinyCSP {
         }
     }
 
+    public void dfsNary(Consumer<int[]> onSolution) {
+        nRecur += 1;
+        // pickup a variable that is not yet fixed if any
+        Optional<Variable> notFixed = firstNotFixed();
+        //Optional<Variable> notFixed = smallestNotFixed();
+        if (!notFixed.isPresent()) { // all variables fixed, a solution is found
+            int[] solution = variables.stream().mapToInt(x -> x.dom.min()).toArray();
+            onSolution.accept(solution);
+        } else {
+            Variable y = notFixed.get();
+            for (int v = y.dom.min(); v <= y.dom.max(); v++) {
+                ArrayList<Domain> backup = backupDomains();
+                try {
+                    y.dom.fix(v);
+                    fixPoint();
+                    dfsNary(onSolution);
+                } catch (Inconsistency i) {
+                }
+                restoreDomains(backup);
+            }
+        }
+    }
+
     static class Inconsistency extends RuntimeException {
 
     }

@@ -53,6 +53,15 @@ public class Domain {
     }
 
     /**
+     * Gets the maximum of the domain
+     *
+     * @return the maximum of the domain
+     */
+    public int max() {
+        return values.previousSetBit(values.size() - 1);
+    }
+
+    /**
      * Removes value v
      *
      * @param v
@@ -85,4 +94,8 @@ public class Domain {
         return new Domain((BitSet) values.clone());
     }
 
+    @Override
+    public String toString() {
+        return values.toString();
+    }
 }
