@@ -156,8 +156,8 @@ public class IntVarImpl implements IntVar {
 
 
     protected void scheduleAll(StateStack<Constraint> constraints) {
-        for (int i = 0; i < constraints.size(); i++)
-            cp.schedule(constraints.get(i));
+        for (Constraint c : constraints)
+            cp.schedule(c);
     }
 
     @Override
