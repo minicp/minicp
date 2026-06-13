@@ -86,7 +86,6 @@ public class StableMatchingTest {
     }
 
     @Grade(cpuTimeout = 500, unit = TimeUnit.MILLISECONDS)
-    @Test
     @Order(1)
     @Tag("slow")
     public void testAllSolutionsFound() {

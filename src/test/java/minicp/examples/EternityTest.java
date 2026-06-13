@@ -8,6 +8,7 @@ import minicp.util.exception.NotImplementedException;
 import org.javagrader.ConditionalOrderingExtension;
 import org.javagrader.Grade;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EternityTest {
 
     @Grade(value = 1, cpuTimeout = 1)
-    @Test
+    @org.junit.jupiter.api.Test
     @Order(1)
     public void testTableContent() {
         try {
